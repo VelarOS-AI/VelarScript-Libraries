@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "packages": [
+    {
+      "name": "@velarscript/text-buffer",
+      "path": "packages/text-buffer",
+      "kind": "source-library",
+      "status": "stable",
+      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
+      "name": "@velarscript/noise",
+      "path": "packages/noise",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
+      "name": "@velarscript/msgpack",
+      "path": "packages/msgpack",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
+      "name": "@velarscript/compression",
+      "path": "packages/compression",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
+      "name": "@velarscript/editor-kit",
+      "path": "packages/editor-kit",
+      "kind": "tooling",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "targets": []
+    }
+  ]
+}

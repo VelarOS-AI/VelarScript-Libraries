@@ -1,0 +1,11 @@
+import {decode, encode, parse} from "../src/index.vel"
+
+type PackedUser:
+    id: string
+    score: number
+
+test "MessagePack values round-trip through an explicit Runtime Type":
+    const bytes = encode({id: "u-1", score: 42})
+    const user = parse(bytes, PackedUser)
+    assert user.id == "u-1" and user.score == 42 else "Typed MessagePack round-trip failed"
+    assert decode(bytes) != null else "Decoded payload unexpectedly disappeared"

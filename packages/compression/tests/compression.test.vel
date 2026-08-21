@@ -1,0 +1,31 @@
+import {Bytes, uint8Buffer} from "velar/binary"
+
+import {deflate, gunzip, gzip, inflate} from "../src/index.vel"
+
+def fixture() -> Bytes:
+    const buffer = uint8Buffer(8)
+    for value, index in [1, 1, 2, 3, 5, 8, 13, 21]:
+        buffer[index] = value
+    return buffer.toBytes()
+
+def sameBytes(left: Bytes, right: Bytes) -> bool:
+    if left.size != right.size:
+        return false
+    for index in range(left.size):
+        if left[index] != right[index]:
+            return false
+    return true
+
+test "DEFLATE and gzip preserve bounded binary values":
+    const source = fixture()
+    assert sameBytes(inflate(deflate(source)), source) else "DEFLATE round-trip changed the bytes"
+    assert sameBytes(gunzip(gzip(source)), source) else "gzip round-trip changed the bytes"
+
+test "decompression enforces the caller's output limit":
+    const archive = gzip(fixture())
+    let rejected = false
+    try:
+        gunzip(archive, maxBytes=4)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "gunzip exceeded maxBytes without rejection"

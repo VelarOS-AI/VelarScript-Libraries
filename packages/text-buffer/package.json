@@ -1,0 +1,32 @@
+{
+  "name": "@velarscript/text-buffer",
+  "version": "0.10.6",
+  "description": "A bounded incremental text buffer authored in pure VelarScript.",
+  "license": "Apache-2.0",
+  "files": [
+    "src/index.vel",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "velar format --check && velar check",
+    "test": "velar test"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
+    "directory": "packages/text-buffer"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "velar": {
+    "entry": "src/index.vel",
+    "targets": ["core", "node", "web", "desktop"],
+    "requires": { "capabilities": [] }
+  }
+}

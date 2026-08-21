@@ -1,0 +1,23 @@
+import {TextBuffer, TextEdit, TextHistory} from "../src/index.vel"
+
+test "text edits are atomic and preserve code-point positions":
+    const buffer = TextBuffer("ab😀\ncd")
+    const edits: List<TextEdit> = [
+        {start: 1, end: 3, inserted: "X"},
+        {start: 5, end: 6, inserted: "Z"},
+    ]
+    const transaction = buffer.apply(edits)
+    assert transaction.changes.size == 2 else "Expected one atomic two-edit transaction"
+    assert buffer.text() == "aX\ncZ" else "Unexpected text after the transaction"
+    const position = buffer.positionAt(buffer.size)
+    assert position.line == 1 and position.column == 2 else "Position mapping lost its code-point contract"
+
+test "history owns undo and redo without exposing rope internals":
+    const buffer = TextBuffer("owner")
+    const history = TextHistory(buffer, maxEntries=4, maxBytes=1024)
+    history.apply([{start: 5, end: 5, inserted: "!"}])
+    assert buffer.text() == "owner!" else "History did not apply the edit"
+    history.undo()
+    assert buffer.text() == "owner" else "Undo did not restore the original text"
+    history.redo()
+    assert buffer.text() == "owner!" else "Redo did not restore the edit"

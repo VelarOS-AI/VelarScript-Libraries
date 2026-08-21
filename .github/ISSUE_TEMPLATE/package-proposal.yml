@@ -1,0 +1,32 @@
+name: Package proposal
+description: Propose a project-neutral package backed by real reuse evidence.
+title: "[proposal] "
+labels: [proposal]
+body:
+  - type: input
+    id: identity
+    attributes:
+      label: Proposed package identity
+      placeholder: "@velarscript/example"
+    validations:
+      required: true
+  - type: textarea
+    id: consumers
+    attributes:
+      label: Existing consumers or duplicated bridges
+      description: Name at least two consumers or show the duplicated external boundary.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Public boundary and limits
+      description: Describe targets, capabilities, dependencies, resource limits, cancellation, and cleanup.
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: Why this is not product or Core ownership
+    validations:
+      required: true

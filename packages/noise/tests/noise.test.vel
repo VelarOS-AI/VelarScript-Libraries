@@ -1,0 +1,16 @@
+import {simplex2, simplex3} from "../src/index.vel"
+
+test "equal seeds produce equal deterministic fields":
+    const first = simplex2("world-7")
+    const second = simplex2("world-7")
+    assert first(4.25, -9.5) == second(4.25, -9.5) else "Equal seeds diverged"
+    assert simplex3(17)(0, 0, 0) == 0 else "Simplex origin should be stable"
+
+test "non-finite coordinates are rejected at the adapter boundary":
+    const field = simplex2("bounded")
+    let rejected = false
+    try:
+        field(0 / 0, 1)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "A non-finite coordinate crossed the adapter"

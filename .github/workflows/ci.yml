@@ -1,0 +1,42 @@
+name: Validate libraries
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+
+  packed-consumer:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        velar: ["0.12.1", "latest"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+          cache: npm
+      - run: npm ci
+      - name: Verify packed consumers
+        env:
+          VELAR_CLI_VERSION: ${{ matrix.velar }}
+        run: npm run pack:check
