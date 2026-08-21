@@ -79,6 +79,14 @@ class RopeNode:
         self.tail = tail
         self.starts = starts
 
+const surrogatePattern: string = r"[\uD800-\uDFFF]"
+
+/// Replaces every unpaired surrogate with U+FFFD so rope lengths stay additive.
+def normalizedText(text: string) -> string:
+    if not Text.matches(text, surrogatePattern):
+        return text
+    return Text.replaceMatches(text, surrogatePattern, Text.fromCodePoint(0xFFFD))
+
 def leafNode(text: string) -> RopeNode?:
     if text == "":
         return null
@@ -135,7 +143,9 @@ def joinNonEmpty(left: RopeNode, right: RopeNode) -> RopeNode:
     const leftText = left.text
     const rightText = right.text
     if leftText != null and rightText != null and left.length + right.length <= 4096:
-        return leafNode(leftText + rightText) ?? left
+        const merged = leafNode(leftText + rightText) ?? left
+        assert merged.length == left.length + right.length else "Invalid TextBuffer rope join length"
+        return merged
     if left.height > right.height + 1:
         const leftLeft = requiredLeft(left)
         const leftRight = requiredRight(left)
@@ -262,8 +272,9 @@ export class TextBuffer:
     private let version: number = 0
 
     constructor(text: string = ""):
-        assert Text.utf8Size(text) <= TextBuffer.maxBytes else "TextBuffer content cannot exceed 16 MiB of UTF-8 text"
-        self.root = ropeFromText(text)
+        const content = normalizedText(text)
+        assert Text.utf8Size(content) <= TextBuffer.maxBytes else "TextBuffer content cannot exceed 16 MiB of UTF-8 text"
+        self.root = ropeFromText(content)
 
     /// Current Unicode code-point length.
     get size() -> number:
@@ -310,21 +321,24 @@ export class TextBuffer:
         let removedBytes = 0
         let insertedBytes = 0
         let changes: List<TextChange> = []
+        let normalized: List<TextEdit> = []
         for edit in edits:
             self.requireRange(edit.start, edit.end)
             assert first or edit.start >= previousEnd else "TextBuffer transaction edits must be ordered and non-overlapping"
+            const inserted = normalizedText(edit.inserted)
             const removed = self.slice(edit.start, edit.end)
             removedBytes += Text.utf8Size(removed)
-            insertedBytes += Text.utf8Size(edit.inserted)
-            changes.append({start: edit.start, removed, inserted: edit.inserted, beforeRevision, afterRevision: beforeRevision + 1})
+            insertedBytes += Text.utf8Size(inserted)
+            normalized.append({start: edit.start, end: edit.end, inserted})
+            changes.append({start: edit.start, removed, inserted, beforeRevision, afterRevision: beforeRevision + 1})
             previousEnd = edit.end
             first = false
         assert self.byteSize - removedBytes + insertedBytes <= TextBuffer.maxBytes else "TextBuffer content cannot exceed 16 MiB of UTF-8 text"
         let nextRoot = self.root
-        let index = edits.size
+        let index = normalized.size
         while index > 0:
             index -= 1
-            const edit = edits[index]
+            const edit = normalized[index]
             nextRoot = replaceNode(nextRoot, edit.start, edit.end, edit.inserted)
         assert (nextRoot?.leaves ?? 0) <= TextBuffer.maxLeaves else "TextBuffer cannot exceed 1000000 leaves"
         self.root = nextRoot
@@ -357,18 +371,15 @@ export class TextBuffer:
     def offsetAt(line: number, column: number) -> number:
         self.requireLine(line)
         assert column.floor() == column and column >= 0 else "TextBuffer column must be a non-negative integer"
-        const content = self.lineText(line)
-        assert column <= content.size else "TextBuffer column is outside the line"
-        return self.lineStart(line) + column
+        const start = self.lineStart(line)
+        assert start + column <= self.lineEnd(line, start) else "TextBuffer column is outside the line"
+        return start + column
 
     /// Returns one line without its line terminator.
     def lineText(line: number) -> string:
         self.requireLine(line)
         const start = self.lineStart(line)
-        let end = line + 1 < self.lineCount ? self.lineStart(line + 1) - 1 : self.size
-        if end > start and self.slice(end - 1, end) == "\r":
-            end -= 1
-        return self.slice(start, end)
+        return self.slice(start, self.lineEnd(line, start))
 
     /// Reads a line-aligned viewport; endLine is exclusive and may equal lineCount.
     def lineSlice(startLine: number, endLine: number) -> TextLineSlice:
@@ -386,6 +397,14 @@ export class TextBuffer:
         assert root != null else "TextBuffer line is outside the document"
         return lineStartIn(root, line)
 
+    private def lineEnd(line: number, start: number) -> number:
+        if line + 1 >= self.lineCount:
+            return self.size
+        const end = self.lineStart(line + 1) - 1
+        if end > start and self.slice(end - 1, end) == "\r":
+            return end - 1
+        return end
+
     private def requireOffset(offset: number):
         assert offset.floor() == offset and offset >= 0 and offset <= self.size else "TextBuffer offset is outside the document"
 
@@ -400,7 +419,9 @@ export class TextBuffer:
     private def requireLineBoundary(line: number):
         assert line.floor() == line and line >= 0 and line <= self.lineCount else "TextBuffer line boundary is outside the document"
 
-/// Bounded undo and redo ownership for one TextBuffer, including IME edit groups.
+/// Bounded undo and redo ownership for one TextBuffer. An open IME edit group
+/// additionally retains its own steps and the history begin captured, both of
+/// which commit and cancel release.
 export class TextHistory:
     private static const maxAllowedBytes: number = 256 * 1024 * 1024
     private const buffer: TextBuffer
@@ -411,8 +432,11 @@ export class TextHistory:
     private let redoEntries: List<HistoryEntry> = []
     private let undoBytes: number = 0
     private let groupSteps: List<HistoryStep>? = null
+    private let groupBytes: number = 0
     private let groupBeforeSelection: TextSelection? = null
     private let groupAfterSelection: TextSelection? = null
+    private let groupUndoEntries: List<HistoryEntry> = []
+    private let groupUndoBytes: number = 0
 
     constructor(buffer: TextBuffer, maxEntries: number = 1000, maxBytes: number = 32 * 1024 * 1024):
         assert maxEntries.floor() == maxEntries and maxEntries > 0 and maxEntries <= 1000000 else "TextHistory maxEntries must be an integer from 1 to 1000000"
@@ -422,11 +446,15 @@ export class TextHistory:
         self.byteLimit = maxBytes
         self.expectedRevision = buffer.revision
 
+    /// Whether the buffer still holds the revision this history last recorded.
+    get isAttached() -> bool:
+        return self.buffer.revision == self.expectedRevision
+
     get canUndo() -> bool:
-        return self.groupSteps == null and self.undoEntries.size > 0
+        return self.isAttached and self.groupSteps == null and self.undoEntries.size > 0
 
     get canRedo() -> bool:
-        return self.groupSteps == null and self.redoEntries.size > 0
+        return self.isAttached and self.groupSteps == null and self.redoEntries.size > 0
 
     /// Applies one edit transaction and records it, or appends it to the active group.
     def apply(edits: List<TextEdit>, beforeSelection: TextSelection? = null, afterSelection: TextSelection? = null) -> TextTransaction:
@@ -442,8 +470,9 @@ export class TextHistory:
         const group = self.groupSteps
         if group != null:
             group.append(step)
+            self.groupBytes += step.bytes
             self.groupAfterSelection = copySelection(afterSelection)
-            self.redoEntries = []
+            self.trimUndo()
         else:
             self.redoEntries = []
             self.pushUndo({steps: [step], beforeSelection: copySelection(beforeSelection), afterSelection: copySelection(afterSelection), bytes: step.bytes})
@@ -455,8 +484,11 @@ export class TextHistory:
         assert self.groupSteps == null else "TextHistory already has an active group"
         self.requireSelection(beforeSelection, self.buffer.size)
         self.groupSteps = []
+        self.groupBytes = 0
         self.groupBeforeSelection = copySelection(beforeSelection)
         self.groupAfterSelection = copySelection(beforeSelection)
+        self.groupUndoEntries = self.undoEntries.copy()
+        self.groupUndoBytes = self.undoBytes
 
     /// Commits the active group as one bounded history entry.
     def commit(afterSelection: TextSelection? = null):
@@ -470,22 +502,30 @@ export class TextHistory:
         for step in steps:
             bytes += step.bytes
         self.groupSteps = null
+        self.groupBytes = 0
         self.groupBeforeSelection = null
         self.groupAfterSelection = null
+        self.groupUndoEntries = []
+        self.groupUndoBytes = 0
         if steps.size > 0:
             self.redoEntries = []
             self.pushUndo({steps, beforeSelection, afterSelection: copySelection(committedSelection), bytes})
 
-    /// Reverts every edit in the active group without creating an undo entry.
+    /// Reverts every edit in the active group and restores the history begin captured.
     def cancel() -> TextSelection?:
         self.requireAttached()
         const steps = self.groupSteps
         assert steps != null else "TextHistory has no active group"
         const selection = copySelection(self.groupBeforeSelection)
         self.revertSteps(steps)
+        self.undoEntries = self.groupUndoEntries
+        self.undoBytes = self.groupUndoBytes
         self.groupSteps = null
+        self.groupBytes = 0
         self.groupBeforeSelection = null
         self.groupAfterSelection = null
+        self.groupUndoEntries = []
+        self.groupUndoBytes = 0
         return selection
 
     /// Undoes one normal edit or one committed group.
@@ -509,12 +549,19 @@ export class TextHistory:
         self.pushUndo(entry)
         return copySelection(entry.afterSelection)
 
-    /// Drops history while keeping attachment to the current buffer revision.
+    /// Drops history, abandons any active group without reverting it, and
+    /// re-adopts the buffer's current revision.
     def clear():
-        self.requireReady()
         self.undoEntries = []
         self.redoEntries = []
         self.undoBytes = 0
+        self.groupSteps = null
+        self.groupBytes = 0
+        self.groupBeforeSelection = null
+        self.groupAfterSelection = null
+        self.groupUndoEntries = []
+        self.groupUndoBytes = 0
+        self.expectedRevision = self.buffer.revision
 
     private def revertSteps(steps: List<HistoryStep>):
         let index = steps.size
@@ -526,16 +573,20 @@ export class TextHistory:
     private def pushUndo(entry: HistoryEntry):
         self.undoEntries.append(entry)
         self.undoBytes += entry.bytes
-        while self.undoEntries.size > self.entryLimit or self.undoBytes > self.byteLimit:
+        self.trimUndo()
+
+    /// Evicts the oldest entries, always keeping the most recent one recorded.
+    private def trimUndo():
+        while self.undoEntries.size > 1 and (self.undoEntries.size > self.entryLimit or self.undoBytes + self.groupBytes > self.byteLimit):
             const removed = self.undoEntries.pop(0)
             self.undoBytes -= removed.bytes
 
     private def requireAttached():
-        assert self.buffer.revision == self.expectedRevision else "TextHistory buffer revision changed outside this history"
+        assert self.isAttached else "TextHistory buffer revision changed outside this history"
 
     private def requireReady():
         self.requireAttached()
-        assert self.groupSteps == null else "TextHistory cannot undo, redo, or clear an active group"
+        assert self.groupSteps == null else "TextHistory cannot undo or redo an active group"
 
     private def requireSelection(selection: TextSelection?, size: number):
         if selection == null:

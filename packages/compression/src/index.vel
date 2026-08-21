@@ -40,6 +40,25 @@ def checkedLimit(value: number) -> number:
 def inputChunk(source: Bytes, start: number, end: number) -> Bytes:
     return Bytes.parse(sliceBytes(source, start, end))
 
+def inputChunkSize(maximum: number) -> number:
+    const estimated = (maximum / 1032).ceil()
+    return estimated < 256 ? 256 : estimated > 65536 ? 65536 : estimated
+
+def productiveInput(consumed: number, produced: number) -> bool:
+    return consumed <= 1024 * 1024 + produced * 64
+
+def feedStream(value: Bytes, maximum: number, push: (Bytes, bool) -> number):
+    if value.size == 0:
+        push(value, true)
+    else:
+        const inputBytes = inputChunkSize(maximum)
+        let offset = 0
+        while offset < value.size:
+            const end = offset + inputBytes < value.size ? offset + inputBytes : value.size
+            const produced = push(inputChunk(value, offset, end), end >= value.size)
+            offset = end
+            assert productiveInput(offset, produced) else "Decompression consumed too much input for the output it produced"
+
 def joined(chunks: List<Bytes>, size: number) -> Bytes:
     return Bytes.parse(joinBytes(chunks, size))
 
@@ -55,17 +74,10 @@ export def inflate(value: Bytes, maxBytes: number = 67108864) -> Bytes:
         assert size <= maximum else "Decompressed output exceeds maxBytes"
         chunks.append(chunk)
     const stream = Unzlib(consume)
-    if value.size == 0:
-        stream.push(value, true)
-    else:
-        let offset = 0
-        while offset < value.size:
-            const remaining = maximum - size + 1
-            const estimated = (remaining / 1032).floor()
-            const inputBytes = estimated < 1 ? 1 : estimated > 256 ? 256 : estimated
-            const end = offset + inputBytes < value.size ? offset + inputBytes : value.size
-            stream.push(inputChunk(value, offset, end), end >= value.size)
-            offset = end
+    def push(chunk: Bytes, final: bool) -> number:
+        stream.push(chunk, final)
+        return size
+    feedStream(value, maximum, push)
     return joined(chunks, size)
 
 export def gzip(value: Bytes, level: number = 6) -> Bytes:
@@ -80,15 +92,8 @@ export def gunzip(value: Bytes, maxBytes: number = 67108864) -> Bytes:
         assert size <= maximum else "Decompressed output exceeds maxBytes"
         chunks.append(chunk)
     const stream = Gunzip(consume)
-    if value.size == 0:
-        stream.push(value, true)
-    else:
-        let offset = 0
-        while offset < value.size:
-            const remaining = maximum - size + 1
-            const estimated = (remaining / 1032).floor()
-            const inputBytes = estimated < 1 ? 1 : estimated > 256 ? 256 : estimated
-            const end = offset + inputBytes < value.size ? offset + inputBytes : value.size
-            stream.push(inputChunk(value, offset, end), end >= value.size)
-            offset = end
+    def push(chunk: Bytes, final: bool) -> number:
+        stream.push(chunk, final)
+        return size
+    feedStream(value, maximum, push)
     return joined(chunks, size)

@@ -21,3 +21,125 @@ test "history owns undo and redo without exposing rope internals":
     assert buffer.text() == "owner" else "Undo did not restore the original text"
     history.redo()
     assert buffer.text() == "owner!" else "Redo did not restore the edit"
+
+def assertRoundTrip(content: string, label: string):
+    const buffer = TextBuffer(content)
+    for offset in range(buffer.size + 1):
+        const position = buffer.positionAt(offset)
+        const mapped = buffer.offsetAt(position.line, position.column)
+        const insideCrLf = offset > 0 and offset < buffer.size and buffer.slice(offset - 1, offset) == "\r" and buffer.slice(offset, offset + 1) == "\n"
+        assert mapped == (insideCrLf ? offset - 1 : offset) else "Position mapping did not round-trip in " + label
+
+test "every offset round-trips through positionAt and offsetAt":
+    assertRoundTrip("", "an empty document")
+    assertRoundTrip("alpha\r\nbeta\r", "a document ending in a lone carriage return")
+    assertRoundTrip("\r", "a single carriage return")
+    assertRoundTrip("one\ntwo\n", "a line-feed document")
+    assertRoundTrip("alpha\r\nbeta\r\n", "a carriage-return line-feed document")
+    assertRoundTrip("a😀b\ncd😀", "a document with astral characters")
+
+test "a trailing carriage return is content on the final line":
+    const buffer = TextBuffer("alpha\r\nbeta\r\n")
+    buffer.delete(buffer.size - 1, buffer.size)
+    assert buffer.lineText(0) == "alpha" else "A carriage-return terminator leaked into the line"
+    assert buffer.lineText(1) == "beta\r" else "A final carriage return was stripped as a terminator"
+    assert buffer.offsetAt(1, 5) == 12 else "offsetAt rejected the position positionAt produced"
+    let rejected = false
+    try:
+        buffer.offsetAt(1, 6)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "offsetAt accepted a column outside the line"
+
+test "one oversized edit keeps its own undo entry":
+    const buffer = TextBuffer("")
+    const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
+    for index in range(5):
+        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    history.apply([{start: buffer.size, end: buffer.size, inserted: "b".repeat(2000)}])
+    assert history.canUndo else "An oversized edit erased its own undo entry"
+    history.undo()
+    assert buffer.text() == "aaaaa" else "Undo did not revert the oversized edit"
+
+test "a group's bytes evict older entries while the group itself stays undoable":
+    const buffer = TextBuffer("")
+    const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
+    for index in range(5):
+        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    history.begin()
+    for index in range(50):
+        history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
+    history.commit()
+    assert history.canUndo else "A committed group erased its own undo entry"
+    assert history.canRedo == false else "A committed group did not start a new branch of history"
+    history.undo()
+    assert buffer.text() == "aaaaa" else "Undo did not revert the whole group"
+    assert history.canUndo == false else "The group's bytes did not evict the older entries they displaced"
+
+test "a cancelled group restores the undo history its bytes displaced":
+    const buffer = TextBuffer("")
+    const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
+    for index in range(5):
+        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    history.begin()
+    for index in range(50):
+        history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
+    history.cancel()
+    assert buffer.text() == "aaaaa" else "Cancel did not revert the group"
+    let depth = 0
+    while history.canUndo:
+        history.undo()
+        depth += 1
+    assert depth == 5 else "Cancel kept the entries the open group had evicted"
+    assert buffer.text() == "" else "The restored entries no longer inverted the document"
+
+test "a detached history reports no undo and recovers through clear":
+    const buffer = TextBuffer("owner")
+    const history = TextHistory(buffer)
+    history.apply([{start: 5, end: 5, inserted: "!"}])
+    assert history.canUndo else "History did not record the edit"
+    buffer.insert(0, "X")
+    assert history.isAttached == false else "History stayed attached across an outside edit"
+    assert history.canUndo == false else "Detached history still advertised an undo"
+    assert history.canRedo == false else "Detached history still advertised a redo"
+    history.clear()
+    assert history.isAttached else "clear did not re-adopt the buffer revision"
+    history.apply([{start: 0, end: 0, inserted: "Y"}])
+    assert buffer.text() == "YXowner!" else "History did not resume after clear"
+
+test "clear recovers a detached history that still holds an active group":
+    const buffer = TextBuffer("owner")
+    const history = TextHistory(buffer)
+    history.apply([{start: 5, end: 5, inserted: "!"}])
+    history.begin()
+    history.apply([{start: 0, end: 0, inserted: "g"}])
+    let refused = false
+    try:
+        history.undo()
+    catch error:
+        refused = error.message == "TextHistory cannot undo or redo an active group"
+    assert refused else "Undo stopped refusing an active group"
+    buffer.insert(0, "X")
+    assert history.isAttached == false else "History stayed attached across an outside edit"
+    history.clear()
+    assert history.isAttached else "clear did not re-adopt the buffer revision"
+    assert history.canUndo == false else "clear kept the abandoned group"
+    history.apply([{start: 0, end: 0, inserted: "Y"}])
+    assert buffer.text() == "YXgowner!" else "History did not resume after clear"
+
+test "cancelling a group preserves the redo stack":
+    const buffer = TextBuffer("hello")
+    const history = TextHistory(buffer)
+    history.apply([{start: 5, end: 5, inserted: " world"}])
+    history.undo()
+    assert history.canRedo else "Undo did not enable redo"
+    history.begin()
+    history.apply([{start: 5, end: 5, inserted: "ni"}])
+    history.cancel()
+    assert buffer.text() == "hello" else "Cancel did not revert the composition"
+    assert history.canRedo else "Cancelling a composition destroyed the redo stack"
+    history.begin()
+    history.commit()
+    assert history.canRedo else "An empty committed group destroyed the redo stack"
+    history.redo()
+    assert buffer.text() == "hello world" else "Redo did not restore the undone edit"

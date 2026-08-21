@@ -1,0 +1,51 @@
+import {TextBuffer, TextHistory} from "../src/index.vel"
+
+extern js()`
+    export function loneHigh() { return String.fromCharCode(0xD83D); }
+    export function loneLow() { return String.fromCharCode(0xDE00); }
+`:
+    export def loneHigh() -> string
+    export def loneLow() -> string
+
+test "an unpaired surrogate is replaced without changing any offset":
+    const buffer = TextBuffer("x" + loneHigh() + "y")
+    assert buffer.size == 3 else "Normalization changed the code-point length"
+    assert buffer.slice(1, 2) == Text.fromCodePoint(0xFFFD) else "An unpaired surrogate survived the constructor"
+    assert buffer.text() == "x" + Text.fromCodePoint(0xFFFD) + "y" else "Unexpected normalized text"
+
+test "a well-formed astral pair survives normalization":
+    const buffer = TextBuffer("a" + loneHigh() + loneLow() + "b")
+    assert buffer.size == 3 else "A well-formed surrogate pair was split"
+    assert buffer.text() == "a😀b" else "A well-formed surrogate pair was rewritten"
+
+test "a leaf merge cannot pair two inserted surrogate halves":
+    const buffer = TextBuffer("x" + loneHigh())
+    const history = TextHistory(buffer)
+    assert buffer.size == 2 else "Normalization changed the code-point length"
+    history.apply([{start: 2, end: 2, inserted: loneLow()}])
+    assert buffer.size == 3 else "A leaf merge lost a code point"
+    history.undo()
+    assert buffer.size == 2 else "Undo did not restore the code-point length"
+    assert buffer.text() == "x" + Text.fromCodePoint(0xFFFD) else "Undo did not restore the text"
+
+test "rope offsets and materialized text agree after a surrogate insert":
+    const buffer = TextBuffer("a".repeat(4096) + loneHigh() + "MARK" + "b".repeat(4096))
+    assert buffer.size == 8197 else "Normalization changed the code-point length"
+    buffer.insert(4097, loneLow())
+    const text = buffer.text()
+    assert buffer.size == text.size else "Rope length diverged from the materialized text"
+    assert buffer.byteSize == Text.utf8Size(text) else "Rope byte length diverged from the materialized text"
+    assert buffer.slice(4090, 4100).size == 10 else "slice returned the wrong number of code points"
+    assert buffer.slice(4098, 4102) == "MARK" else "Rope offsets moved the marker"
+    assert buffer.slice(4098, 4102) == text.slice(4098, 4102) else "Rope and text name different characters at the same offset"
+
+test "normalization has no code-point ceiling of its own":
+    // A List cannot hold more than 1000000 items, so normalizing one code point
+    // at a time would reject a document far inside the 16 MiB content bound.
+    const content = "a".repeat(1000000) + loneHigh() + "b".repeat(1000000)
+    const buffer = TextBuffer(content)
+    assert buffer.size == 2000001 else "Normalization changed the code-point length"
+    assert buffer.slice(1000000, 1000001) == Text.fromCodePoint(0xFFFD) else "An unpaired surrogate survived the constructor"
+    buffer.insert(0, "c".repeat(1000000) + loneLow())
+    assert buffer.size == 3000002 else "A large inserted string was not normalized in place"
+    assert buffer.slice(1000000, 1000001) == Text.fromCodePoint(0xFFFD) else "An unpaired surrogate survived apply"

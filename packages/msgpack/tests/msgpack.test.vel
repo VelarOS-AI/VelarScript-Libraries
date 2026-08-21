@@ -1,11 +1,109 @@
+import {Bytes, uint8Buffer} from "velar/binary"
+
 import {decode, encode, parse} from "../src/index.vel"
 
 type PackedUser:
     id: string
     score: number
 
+type PackedBlob:
+    blob: Bytes
+
+def nested(levels: number) -> Bytes:
+    const buffer = uint8Buffer(levels + 1)
+    for index in range(levels):
+        buffer[index] = 0x91
+    buffer[levels] = 0xC0
+    return buffer.toBytes()
+
+def filled(size: number, byte: number) -> Bytes:
+    const buffer = uint8Buffer(size)
+    for index in range(size):
+        buffer[index] = byte
+    return buffer.toBytes()
+
+def bytesOf(values: List<number>) -> Bytes:
+    const buffer = uint8Buffer(values.size)
+    for index in range(values.size):
+        buffer[index] = values[index]
+    return buffer.toBytes()
+
+def headedNesting(header: List<number>, levels: number) -> Bytes:
+    const buffer = uint8Buffer(header.size + levels + 1)
+    for index in range(header.size):
+        buffer[index] = header[index]
+    for index in range(levels):
+        buffer[header.size + index] = 0x91
+    buffer[header.size + levels] = 0xC0
+    return buffer.toBytes()
+
+def accepted(value: Bytes) -> bool:
+    try:
+        decode(value)
+    catch error:
+        return false
+    return true
+
+def rejected(action: () -> unknown) -> bool:
+    try:
+        action()
+    catch error:
+        return error.name == "AssertionError"
+    return false
+
 test "MessagePack values round-trip through an explicit Runtime Type":
     const bytes = encode({id: "u-1", score: 42})
     const user = parse(bytes, PackedUser)
     assert user.id == "u-1" and user.score == 42 else "Typed MessagePack round-trip failed"
     assert decode(bytes) != null else "Decoded payload unexpectedly disappeared"
+
+test "decoding rejects nesting deeper than the adapter's limit":
+    const bomb = nested(200000)
+    assert rejected(() => decode(bomb)) else "A 200000-level document decoded without rejection"
+    const overLimit = nested(513)
+    assert rejected(() => decode(overLimit)) else "A 513-level document decoded without rejection"
+
+test "decoding still accepts documents nested up to the limit":
+    assert decode(nested(512)) != null else "A 512-level document was rejected"
+    assert decode(nested(8)) != null else "An ordinarily nested document was rejected"
+
+test "the nesting scan skips payloads instead of reading them as type bytes":
+    const blob = filled(40000, 0x91)
+    const restored = parse(encode({blob}), PackedBlob)
+    assert restored.blob.size == blob.size else "A binary payload of container type bytes changed size"
+    assert restored.blob[0] == 0x91 and restored.blob[39999] == 0x91 else "A binary payload of container type bytes changed value"
+
+test "decoding rejects a truncated document with the adapter's own error":
+    const truncated = filled(1, 0x92)
+    assert rejected(() => decode(truncated)) else "A truncated document decoded without rejection"
+
+test "decoding rejects bytes left over after the document ends":
+    const trailing = bytesOf([0x92, 0x01, 0x02, 0x03])
+    assert rejected(() => decode(trailing)) else "A document with a trailing byte decoded without rejection"
+
+test "decoding rejects the extensions that re-enter the decoder behind the scan":
+    for extension in [0x62, 0x65, 0x69, 0x73, 0x78]:
+        const bomb = headedNesting([0xD4, extension, 0x00], 200000)
+        assert rejected(() => decode(bomb)) else f"An extension {extension} hid 200000 levels from the scan"
+        const short = bytesOf([0xD4, extension, 0x00, 0x92, 0x01, 0x02])
+        assert rejected(() => decode(short)) else f"An extension {extension} decoded values the scan never saw"
+
+test "decoding still accepts the extensions msgpackr reads from the payload alone":
+    assert accepted(bytesOf([0xD7, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])) else "A timestamp extension was rejected"
+    assert accepted(bytesOf([0xD6, 0xFF, 0, 0, 0, 0])) else "A 32-bit timestamp extension was rejected"
+    assert accepted(bytesOf([0xD4, 0x00, 0x00])) else "An absent-value extension was rejected"
+
+test "encoding rejects the containers MessagePack cannot round-trip":
+    const cache: Map<string, number> = Map()
+    cache.set("a", 1)
+    assert rejected(() => encode(cache)) else "A Map encoded without rejection"
+    assert rejected(() => encode({level: [{cache}]})) else "A nested Map encoded without rejection"
+    const tags: Set<number> = Set()
+    tags.add(7)
+    assert rejected(() => encode(tags)) else "A Set encoded without rejection"
+    assert rejected(() => encode({level: [{tags}]})) else "A nested Set encoded without rejection"
+    assert decode(encode({level: [{a: 1}]})) != null else "An ordinary nested record was rejected"
+
+test "encoding rejects a record key msgpackr would silently rename":
+    assert rejected(() => encode({__proto__: 5})) else "A __proto__ key encoded without rejection"
+    assert rejected(() => encode({level: [{__proto__: 5}]})) else "A nested __proto__ key encoded without rejection"

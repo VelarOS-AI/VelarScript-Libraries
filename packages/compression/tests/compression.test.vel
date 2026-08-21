@@ -1,4 +1,5 @@
 import {Bytes, uint8Buffer} from "velar/binary"
+import {monotonic} from "velar/time"
 
 import {deflate, gunzip, gzip, inflate} from "../src/index.vel"
 
@@ -8,13 +9,68 @@ def fixture() -> Bytes:
         buffer[index] = value
     return buffer.toBytes()
 
+def pattern(size: number) -> Bytes:
+    const buffer = uint8Buffer(size)
+    for index in range(size):
+        buffer[index] = (index * 7 + (index / 13).floor()) % 251
+    return buffer.toBytes()
+
+def incompressible(size: number) -> Bytes:
+    const buffer = uint8Buffer(size)
+    let index = 0
+    while index < size:
+        buffer[index] = Math.randomInt(0, 256)
+        index += 1
+    return buffer.toBytes()
+
+def zeroYield(blocks: number) -> Bytes:
+    const buffer = uint8Buffer(2 + blocks * 5)
+    buffer[0] = 0x78
+    buffer[1] = 0x01
+    for index in range(blocks):
+        buffer[2 + index * 5 + 3] = 0xff
+        buffer[2 + index * 5 + 4] = 0xff
+    return buffer.toBytes()
+
 def sameBytes(left: Bytes, right: Bytes) -> bool:
     if left.size != right.size:
         return false
-    for index in range(left.size):
+    let index = 0
+    while index < left.size:
         if left[index] != right[index]:
             return false
+        index += 1
     return true
+
+def rejectionCost(archive: Bytes, limit: number) -> number:
+    const started = monotonic()
+    let name = ""
+    try:
+        inflate(archive, maxBytes=limit)
+    catch error:
+        name = error.name
+    const elapsed = monotonic() - started
+    assert name == "AssertionError" else "A zero-yield stream was not rejected with an assertion error"
+    return elapsed
+
+def commented(archive: Bytes, comment: number) -> Bytes:
+    const buffer = uint8Buffer(archive.size + comment + 1)
+    let index = 0
+    while index < 10:
+        buffer[index] = archive[index]
+        index += 1
+    buffer[3] = 0x10
+    let cursor = 10
+    while cursor < 10 + comment:
+        buffer[cursor] = 0x61
+        cursor += 1
+    buffer[cursor] = 0
+    cursor += 1
+    while index < archive.size:
+        buffer[cursor] = archive[index]
+        index += 1
+        cursor += 1
+    return buffer.toBytes()
 
 test "DEFLATE and gzip preserve bounded binary values":
     const source = fixture()
@@ -29,3 +85,43 @@ test "decompression enforces the caller's output limit":
     catch error:
         rejected = error.name == "AssertionError"
     assert rejected else "gunzip exceeded maxBytes without rejection"
+
+test "a tight output budget still decompresses a multi-kilobyte payload":
+    const source = pattern(8192)
+    assert sameBytes(inflate(deflate(source), maxBytes=8192), source) else "DEFLATE round-trip changed the bytes under a tight budget"
+    assert sameBytes(gunzip(gzip(source), maxBytes=8192), source) else "gzip round-trip changed the bytes under a tight budget"
+
+test "inflate enforces the caller's output limit":
+    const archive = deflate(fixture())
+    let rejected = false
+    try:
+        inflate(archive, maxBytes=4)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "inflate exceeded maxBytes without rejection"
+
+test "decompression rejects a stream that consumes input without producing output":
+    const hostile = zeroYield(240000)
+    let rejected = false
+    try:
+        inflate(hostile)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "inflate read a zero-yield stream to the end"
+
+test "the productive-input bound does not reject a large incompressible payload":
+    const source = incompressible(2 * 1024 * 1024)
+    const archive = deflate(source)
+    assert archive.size > 1024 * 1024 else "The payload must exceed the productive-input slack to exercise the bound"
+    assert sameBytes(inflate(archive), source) else "DEFLATE round-trip rejected or changed an incompressible payload"
+
+test "a tight output budget does not multiply the cost of a hostile stream":
+    const hostile = zeroYield(240000)
+    const relaxed = rejectionCost(hostile, 67108864)
+    const tight = rejectionCost(hostile, 1024)
+    assert tight <= relaxed * 4 + 100 else "A tight maxBytes multiplied the cost of the same hostile stream"
+
+test "a realistic gzip header does not trip the productive-input bound":
+    const source = pattern(4096)
+    const archive = commented(gzip(source), 64 * 1024)
+    assert sameBytes(gunzip(archive), source) else "gunzip rejected a gzip member carrying a 64 KiB comment header"

@@ -6,16 +6,162 @@ extern module "msgpackr":
 
 import js {pack, unpack} from "msgpackr"
 
-/// Encodes one value and validates the adapter's bounded byte result.
+extern js()`
+    export function unsupportedTag(value, maxDepth) {
+      if (value === null || typeof value !== "object" || ArrayBuffer.isView(value)) return "";
+      if (maxDepth <= 0) return "depth";
+      if (value instanceof Map) return "map";
+      if (value instanceof Set) return "set";
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          const tag = unsupportedTag(item, maxDepth - 1);
+          if (tag !== "") return tag;
+        }
+        return "";
+      }
+      for (const key of Object.keys(value)) {
+        if (key === "__proto__") return "proto";
+        const tag = unsupportedTag(value[key], maxDepth - 1);
+        if (tag !== "") return tag;
+      }
+      return "";
+    }
+
+    function uintAt(bytes, offset, width) {
+      let result = 0;
+      for (let index = 0; index < width; index++) result = result * 256 + bytes[offset + index];
+      return result;
+    }
+
+    // 0x00 (undefined) and 0xFF (timestamp) are the only extensions msgpackr reads from the
+    // payload alone; every other registered handler re-enters the decoder at the bytes that
+    // follow, which this scan has already classified.
+    const readableExtensions = [0x00, 0xff];
+
+    export function nestingTag(bytes, maxDepth) {
+      const size = bytes.length;
+      const counts = [];
+      let depth = 0;
+      let offset = 0;
+      for (;;) {
+        if (offset >= size) return "truncated";
+        const tag = bytes[offset];
+        let children = 0;
+        let width = 1;
+        let extensionAt = -1;
+        if (tag <= 0x7f || tag >= 0xe0 || tag === 0xc0 || tag === 0xc2 || tag === 0xc3) width = 1;
+        else if (tag <= 0x8f) children = (tag - 0x80) * 2;
+        else if (tag <= 0x9f) children = tag - 0x90;
+        else if (tag <= 0xbf) width = 1 + (tag - 0xa0);
+        else switch (tag) {
+          case 0xc1: return "reserved";
+          case 0xcc: case 0xd0: width = 2; break;
+          case 0xcd: case 0xd1: width = 3; break;
+          case 0xca: case 0xce: case 0xd2: width = 5; break;
+          case 0xcb: case 0xcf: case 0xd3: width = 9; break;
+          case 0xd4: width = 3; extensionAt = offset + 1; break;
+          case 0xd5: width = 4; extensionAt = offset + 1; break;
+          case 0xd6: width = 6; extensionAt = offset + 1; break;
+          case 0xd7: width = 10; extensionAt = offset + 1; break;
+          case 0xd8: width = 18; extensionAt = offset + 1; break;
+          case 0xc4: case 0xd9:
+            if (offset + 2 > size) return "truncated";
+            width = 2 + uintAt(bytes, offset + 1, 1);
+            break;
+          case 0xc5: case 0xda:
+            if (offset + 3 > size) return "truncated";
+            width = 3 + uintAt(bytes, offset + 1, 2);
+            break;
+          case 0xc6: case 0xdb:
+            if (offset + 5 > size) return "truncated";
+            width = 5 + uintAt(bytes, offset + 1, 4);
+            break;
+          case 0xc7:
+            if (offset + 2 > size) return "truncated";
+            width = 3 + uintAt(bytes, offset + 1, 1);
+            extensionAt = offset + 2;
+            break;
+          case 0xc8:
+            if (offset + 3 > size) return "truncated";
+            width = 4 + uintAt(bytes, offset + 1, 2);
+            extensionAt = offset + 3;
+            break;
+          case 0xc9:
+            if (offset + 5 > size) return "truncated";
+            width = 6 + uintAt(bytes, offset + 1, 4);
+            extensionAt = offset + 5;
+            break;
+          case 0xdc:
+            if (offset + 3 > size) return "truncated";
+            children = uintAt(bytes, offset + 1, 2);
+            width = 3;
+            break;
+          case 0xdd:
+            if (offset + 5 > size) return "truncated";
+            children = uintAt(bytes, offset + 1, 4);
+            width = 5;
+            break;
+          case 0xde:
+            if (offset + 3 > size) return "truncated";
+            children = uintAt(bytes, offset + 1, 2) * 2;
+            width = 3;
+            break;
+          default:
+            if (offset + 5 > size) return "truncated";
+            children = uintAt(bytes, offset + 1, 4) * 2;
+            width = 5;
+            break;
+        }
+        offset += width;
+        if (offset > size) return "truncated";
+        if (extensionAt >= 0 && !readableExtensions.includes(bytes[extensionAt])) return "extension";
+        if (children > 0) {
+          counts[depth] = children;
+          depth += 1;
+          if (depth > maxDepth) return "depth";
+        } else {
+          while (depth > 0 && (counts[depth - 1] -= 1) === 0) depth -= 1;
+          if (depth === 0) return offset === size ? "" : "trailing";
+        }
+      }
+    }
+`:
+    export def unsupportedTag(value: unknown, maxDepth: number) -> string
+    export def nestingTag(value: Bytes, maxDepth: number) -> string
+
+const maximumNesting = 512
+
+/// Rejects the values msgpackr would encode into something that decodes back as a different value.
+def checkedValue(value: unknown) -> unknown:
+    const tag = unsupportedTag(value, maximumNesting)
+    assert tag != "map" else "MessagePack cannot encode a Map; convert it to a record or to a List of entries"
+    assert tag != "set" else "MessagePack cannot encode a Set; convert it to a List"
+    assert tag != "proto" else "MessagePack cannot encode a record key named __proto__"
+    assert tag != "depth" else f"MessagePack values cannot nest deeper than {maximumNesting} levels"
+    return value
+
+/// Walks the document's type bytes so hostile nesting fails here instead of overflowing msgpackr's stack.
+/// The walk must account for every byte: an extension whose payload ends the document early is exactly
+/// how a hostile producer hides a bomb from the scan and still feeds it to the decoder.
+def checkedNesting(value: Bytes) -> Bytes:
+    const tag = nestingTag(value, maximumNesting)
+    assert tag != "depth" else f"MessagePack input cannot nest deeper than {maximumNesting} levels"
+    assert tag != "truncated" else "MessagePack input ends inside a value"
+    assert tag != "trailing" else "MessagePack input carries bytes after the document"
+    assert tag != "reserved" else "MessagePack input uses the reserved type byte 0xC1"
+    assert tag != "extension" else "MessagePack input uses an extension type the adapter does not decode"
+    return value
+
+/// Encodes one value from the adapter's supported domain and validates the bounded byte result.
 export def encode(value: unknown) -> Bytes:
-    const output = Bytes.parse(pack(value))
+    const output = Bytes.parse(pack(checkedValue(value)))
     assert output.size <= 64 * 1024 * 1024 else "MessagePack output cannot exceed 64 MiB"
     return output
 
-/// Decodes one bounded MessagePack document as untrusted data.
+/// Decodes one bounded, depth-limited MessagePack document as untrusted data.
 export def decode(value: Bytes) -> unknown:
     assert value.size <= 64 * 1024 * 1024 else "MessagePack input cannot exceed 64 MiB"
-    return unpack(value)
+    return unpack(checkedNesting(value))
 
 /// Decodes and validates one MessagePack document at the adapter boundary.
 export def parse<T>(value: Bytes, target: Type<T>) -> T:

@@ -4,5 +4,24 @@
 
 - Move ownership to the independent VelarScript Libraries repository.
 - Add package-local binary round-trip, output-bound, and packed-consumer gates.
+- Size the decompression input chunk from `maxBytes` once instead of from the
+  bytes produced so far. A tight budget previously floored the chunk at one
+  byte, so a 64 MiB input became roughly 67 million synchronous pushes; the
+  chunk is now `ceil(maxBytes / 1032)` clamped to 256 bytes through 64 KiB.
+  The deliberate trade is a transient output overshoot of one chunk times 1032
+  before `maxBytes` aborts the stream — about `maxBytes`, and 258 KiB for any
+  smaller budget, which is exactly what the previous 256-byte chunk ceiling
+  already allowed at a wide budget. The README states the bound.
+- Reject a decompression stream that consumes more than 1 MiB of input without
+  producing at least one output byte for every 64 input bytes. The threshold
+  sits far above any legitimate stream — DEFLATE never expands its input by
+  more than a fraction of a percent, and even a sync-flush-heavy stream stays
+  well under 64 input bytes per output byte — while a zero-yield stream of
+  empty stored blocks now aborts after roughly 1 MiB instead of after the
+  whole input. A gzip member whose header metadata alone exceeds 1 MiB fails
+  the same bound rather than decoding; the previous code accepted such a
+  member only after seconds to minutes of one-byte pushes — an 8 MiB comment
+  field took 158 seconds — so the README documents the header as consumed
+  input.
 
 Version 0.1.0 was published from the VelarScript Core repository.
