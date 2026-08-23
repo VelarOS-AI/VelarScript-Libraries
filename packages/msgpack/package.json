@@ -28,7 +28,7 @@
   "velar": {
     "entry": "src/index.vel",
     "targets": ["core", "node", "web", "desktop"],
-    "requires": { "capabilities": [] }
+    "requires": { "capabilities": [], "language": ">=0.13 <0.14" }
   },
   "dependencies": {
     "msgpackr": "^2.0.5"

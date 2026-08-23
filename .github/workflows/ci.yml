@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        velar: ["0.12.1", "latest"]
+        velar: ["0.13.0", "latest"]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

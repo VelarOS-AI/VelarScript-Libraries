@@ -1,0 +1,75 @@
+/// The smallest engine-neutral execution surface. A driver owns concurrency,
+/// transactions, cancellation, and cleanup; this record only executes one
+/// already-authored parameterized statement.
+export type DatabaseExecutor:
+    execute: (text: string, parameters: List<unknown>) -> Promise<number>
+    one: (text: string, parameters: List<unknown>) -> Promise<unknown>
+    all: (text: string, parameters: List<unknown>) -> Promise<List<unknown>>
+
+/// A named write contract with an explicit affected-row invariant.
+export type DatabaseCommand:
+    readonly text: string
+    readonly minimumAffected: number
+    readonly maximumAffected: number
+
+/// A named read contract. Runtime row validation remains in this value and is
+/// applied immediately after untrusted driver data crosses the boundary.
+export type DatabaseQuery<T>:
+    readonly text: string
+    readonly maximumRows: number
+    readonly parse: (unknown) -> T
+
+export class DatabaseAffectedRowsError extends Error:
+    constructor(const affected: number, const minimum: number, const maximum: number):
+        super(f"Database command affected {affected} rows; expected {minimum} through {maximum}")
+
+export class DatabaseRowNotFoundError extends Error:
+    constructor(message: string = "Database query returned no row"):
+        super(message)
+
+def statementText(value: string) -> string:
+    assert not value.isBlank() and value.size <= 1024 * 1024 else "Database statement must be non-blank text no longer than 1 MiB"
+    return value
+
+def rowLimit(value: number, label: string) -> number:
+    assert value.isInteger() and value >= 1 and value <= 1000000 else f"{label} must be an integer from 1 through 1000000"
+    return value
+
+/// Declares one parameterized write without coupling it to a database engine.
+export def command(text: string, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
+    assert minimumAffected.isInteger() and minimumAffected >= 0 and minimumAffected <= 1000000 else "Database command minimumAffected must be an integer from 0 through 1000000"
+    assert maximumAffected.isInteger() and maximumAffected >= minimumAffected and maximumAffected <= 1000000 else "Database command maximumAffected must be an integer from minimumAffected through 1000000"
+    return {text: statementText(text), minimumAffected, maximumAffected}
+
+/// Declares one typed query. The driver still enforces its connection-wide
+/// ceiling; maximumRows narrows the bound for this particular operation.
+export def query<T>(text: string, RowType: Type<T>, maximumRows: number = 10000) -> DatabaseQuery<T>:
+    const parseRow: (unknown) -> T = value => RowType.parse(value)
+    return {text: statementText(text), maximumRows: rowLimit(maximumRows, "Database query maximumRows"), parse: parseRow}
+
+/// Executes a write and enforces its declared affected-row invariant.
+export async def execute(executor: DatabaseExecutor, operation: DatabaseCommand, parameters: List<unknown> = []) -> number:
+    const affected = await executor.execute(operation.text, parameters.copy())
+    if affected < operation.minimumAffected or affected > operation.maximumAffected:
+        throw DatabaseAffectedRowsError(affected, operation.minimumAffected, operation.maximumAffected)
+    return affected
+
+/// Reads and validates an optional row.
+export async def one<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = []) -> T?:
+    const row = await executor.one(operation.text, parameters.copy())
+    if row == null:
+        return null
+    return operation.parse(row)
+
+/// Reads one required row and gives absence an explicit application-facing error.
+export async def requireOne<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = [], message: string = "Database query returned no row") -> T:
+    const row = await one(executor, operation, parameters)
+    if row == null:
+        throw DatabaseRowNotFoundError(message)
+    return row
+
+/// Reads a bounded list and validates every row before returning it.
+export async def all<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = []) -> List<T>:
+    const rows = await executor.all(operation.text, parameters.copy())
+    assert rows.size <= operation.maximumRows else f"Database query returned more than its {operation.maximumRows} row limit"
+    return rows.map(row => operation.parse(row))

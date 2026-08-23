@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — Unreleased
+## 0.1.0 — 2026-08-23
 
 - Add the editor-neutral VelarScript language-service descriptor.
 - Add protocol 4/5 compatibility checks against the server initialize result.

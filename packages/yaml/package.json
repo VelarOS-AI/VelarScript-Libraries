@@ -1,8 +1,9 @@
 {
-  "name": "@velarscript/text-buffer",
-  "version": "0.10.6",
-  "description": "A bounded incremental text buffer authored in pure VelarScript.",
+  "name": "@velarscript/yaml",
+  "version": "0.1.0",
+  "description": "Bounded strict YAML parsing for VelarScript data boundaries.",
   "license": "Apache-2.0",
+  "type": "module",
   "files": [
     "src/index.vel",
     "README.md",
@@ -19,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
-    "directory": "packages/text-buffer"
+    "directory": "packages/yaml"
   },
   "publishConfig": {
     "access": "public"
@@ -27,6 +28,9 @@
   "velar": {
     "entry": "src/index.vel",
     "targets": ["core", "node", "web", "desktop"],
-    "requires": { "capabilities": [], "language": ">=0.13 <0.14" }
+    "requires": {"capabilities": [], "language": ">=0.13 <0.14"}
+  },
+  "dependencies": {
+    "yaml": "^2.9.0"
   }
 }

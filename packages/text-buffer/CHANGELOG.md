@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.10.6 — Unreleased
+## 0.10.6 — 2026-08-23
 
 - Move ownership to the independent VelarScript Libraries repository.
 - Add package-local format, check, execution, and packed-consumer gates.
@@ -9,9 +9,10 @@
   surrogate halves into one code point and desynchronize `size`, `byteSize`,
   `slice`, and `text` for every offset after the seam. Text carrying an
   unpaired surrogate no longer round-trips byte-for-byte.
-- Keep a trailing carriage return on the final line of `lineText`, where it is
-  content rather than a terminator. `offsetAt` previously rejected the position
-  `positionAt` had just produced for such a document.
+- Follow VelarScript 0.13's line model for a trailing lone carriage return: it
+  terminates the line and creates a final empty line. Canonicalize the interior
+  offset of a `\r\n` pair to the position before the pair so `positionAt` never
+  produces a negative column and every representable position round-trips.
 - Bound an `offsetAt` column against the cached line metrics instead of
   materializing the whole line, restoring the O(log n) cost the rope exists for.
 - Never evict the undo entry currently being pushed, so one edit larger than

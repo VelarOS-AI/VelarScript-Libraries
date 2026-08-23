@@ -1,0 +1,634 @@
+/// Per-connection bounds. Every operation is serialized through one Worker;
+/// queueCapacity bounds admitted operations waiting for that connection.
+import {DatabaseExecutor} from "@velarscript/database"
+
+export type SqliteOptions:
+    busyTimeoutMilliseconds: number?
+    queueCapacity: number?
+    maxRows: number?
+    maxResultBytes: number?
+
+extern js()`
+    import { AsyncLocalStorage } from "node:async_hooks";
+    import { Worker } from "node:worker_threads";
+
+    const TOKEN = Object.freeze({});
+    const connectionStates = new WeakMap();
+    const transactionStates = new WeakMap();
+    const transactionContext = new AsyncLocalStorage();
+
+    export class NativeSqliteError extends Error {
+      constructor(message = "SQLite operation failed", sqliteCode = null, operation = "unknown", retryable = false) {
+        super(message);
+        this.name = "NativeSqliteError";
+        this.sqliteCode = sqliteCode;
+        this.operation = operation;
+        this.retryable = retryable;
+      }
+    }
+
+    export class NativeSqliteBackpressureError extends NativeSqliteError {
+      constructor(message = "SQLite queue is full") {
+        super(message, "SQLITE_BACKPRESSURE", "queue", true);
+        this.name = "NativeSqliteBackpressureError";
+      }
+    }
+
+    export class NativeSqliteConcurrencyError extends NativeSqliteError {
+      constructor(message = "SQLite connection cannot be used from its transaction callback") {
+        super(message, "SQLITE_CONCURRENCY", "transaction", true);
+        this.name = "NativeSqliteConcurrencyError";
+      }
+    }
+
+    function integer(value, fallback, minimum, maximum, label) {
+      const selected = value == null ? fallback : value;
+      if (!Number.isSafeInteger(selected) || selected < minimum || selected > maximum) {
+        throw new TypeError(label + " must be an integer from " + minimum + " through " + maximum);
+      }
+      return selected;
+    }
+
+    function checkedOptions(value) {
+      if (value === null || typeof value !== "object" || Array.isArray(value)) throw new TypeError("SQLite options must be a record");
+      const allowed = new Set(["busyTimeoutMilliseconds", "queueCapacity", "maxRows", "maxResultBytes"]);
+      for (const key of Object.keys(value)) if (!allowed.has(key)) throw new TypeError("Unknown SQLite option " + key);
+      return {
+        busyTimeoutMilliseconds: integer(value.busyTimeoutMilliseconds, 2000, 1, 60000, "SQLite busy timeout"),
+        queueCapacity: integer(value.queueCapacity, 64, 1, 1024, "SQLite queue capacity"),
+        maxRows: integer(value.maxRows, 10000, 1, 1000000, "SQLite row limit"),
+        maxResultBytes: integer(value.maxResultBytes, 64 * 1024 * 1024, 1, 128 * 1024 * 1024, "SQLite result byte limit"),
+      };
+    }
+
+    function workerMain() {
+      const { Buffer } = require("node:buffer");
+      const { parentPort, workerData } = require("node:worker_threads");
+      const { DatabaseSync } = require("node:sqlite");
+      let database = null;
+      let closed = false;
+
+      function failure(message, code, operation, retryable = false) {
+        const error = new Error(message);
+        error.code = code;
+        error.operation = operation;
+        error.retryable = retryable;
+        return error;
+      }
+
+      function errorData(error, operation) {
+        const message = error instanceof Error ? error.message : String(error);
+        const rawCode = error && typeof error === "object" ? error.errstr ?? error.code ?? null : null;
+        const code = rawCode == null ? null : String(rawCode);
+        const upper = code == null ? "" : code.toUpperCase();
+        return {
+          message,
+          sqliteCode: code,
+          operation: error && typeof error.operation === "string" ? error.operation : operation,
+          retryable: error && error.retryable === true || upper.includes("BUSY") || upper.includes("LOCKED"),
+        };
+      }
+
+      function sqlText(value, operation) {
+        if (typeof value !== "string" || value.length === 0 || value.length > 1024 * 1024 || value.includes("\0")) {
+          throw failure("SQLite SQL must be non-empty text no longer than 1 MiB", "SQLITE_INPUT", operation);
+        }
+        return value;
+      }
+
+      function parameter(value, budget) {
+        if (value === null) return null;
+        if (typeof value === "boolean") return value ? 1 : 0;
+        if (typeof value === "string") {
+          budget.value += Buffer.byteLength(value, "utf8");
+          return value;
+        }
+        if (typeof value === "number") {
+          if (!Number.isFinite(value)) throw failure("SQLite number parameters must be finite", "SQLITE_INPUT", "params");
+          if (Number.isInteger(value) && !Number.isSafeInteger(value)) throw failure("SQLite integer parameters must be safe integers", "SQLITE_INPUT", "params");
+          budget.value += 8;
+          return value;
+        }
+        if (value instanceof Uint8Array) {
+          budget.value += value.byteLength;
+          return value;
+        }
+        throw failure("SQLite parameters support only null, bool, string, finite number, and Bytes", "SQLITE_INPUT", "params");
+      }
+
+      function parameters(value) {
+        if (!Array.isArray(value) || value.length > 999) throw failure("SQLite parameters must be a List with at most 999 values", "SQLITE_INPUT", "params");
+        const budget = { value: 0 };
+        const output = value.map(item => parameter(item, budget));
+        if (budget.value > workerData.maxResultBytes) throw failure("SQLite parameters exceed the connection byte limit", "SQLITE_INPUT", "params");
+        return output;
+      }
+
+      function count(value, label) {
+        const number = typeof value === "bigint" ? Number(value) : value;
+        if (!Number.isSafeInteger(number) || number < 0) throw failure(label + " is outside VelarScript's safe integer range", "SQLITE_INTEGER_RANGE", "result");
+        return number;
+      }
+
+      function resultValue(value, budget, field) {
+        if (value === null) return null;
+        if (typeof value === "string") {
+          budget.value += Buffer.byteLength(value, "utf8");
+          return value;
+        }
+        if (typeof value === "number") {
+          if (!Number.isFinite(value)) throw failure("SQLite returned a non-finite number in " + field, "SQLITE_RESULT", "result");
+          budget.value += 8;
+          return value;
+        }
+        if (typeof value === "bigint") {
+          const number = Number(value);
+          if (!Number.isSafeInteger(number)) throw failure("SQLite returned an integer outside VelarScript's safe range in " + field, "SQLITE_INTEGER_RANGE", "result");
+          budget.value += 8;
+          return number;
+        }
+        if (value instanceof Uint8Array) {
+          budget.value += value.byteLength;
+          return value;
+        }
+        throw failure("SQLite returned an unsupported value in " + field, "SQLITE_RESULT", "result");
+      }
+
+      function resultRow(value, budget) {
+        if (value === null || typeof value !== "object" || Array.isArray(value)) throw failure("SQLite returned a non-record row", "SQLITE_RESULT", "result");
+        const output = Object.create(null);
+        for (const key of Object.keys(value)) {
+          budget.value += Buffer.byteLength(key, "utf8");
+          output[key] = resultValue(value[key], budget, key);
+          if (budget.value > workerData.maxResultBytes) throw failure("SQLite result exceeds the connection byte limit", "SQLITE_RESULT_LIMIT", "result");
+        }
+        return output;
+      }
+
+      function statement(sql, operation) {
+        const prepared = database.prepare(sqlText(sql, operation));
+        if (typeof prepared.setReadBigInts === "function") prepared.setReadBigInts(true);
+        return prepared;
+      }
+
+      function execute(message) {
+        const prepared = statement(message.sql, "execute");
+        const result = prepared.run(...parameters(message.params));
+        return count(result.changes, "SQLite affected row count");
+      }
+
+      function one(message) {
+        const prepared = statement(message.sql, "one");
+        const row = prepared.get(...parameters(message.params));
+        if (row === undefined) return null;
+        return resultRow(row, { value: 0 });
+      }
+
+      function all(message) {
+        const prepared = statement(message.sql, "all");
+        const rows = [];
+        const budget = { value: 0 };
+        for (const row of prepared.iterate(...parameters(message.params))) {
+          if (rows.length >= workerData.maxRows) throw failure("SQLite result exceeds the connection row limit", "SQLITE_ROW_LIMIT", "all");
+          rows.push(resultRow(row, budget));
+        }
+        return rows;
+      }
+
+      function dispatch(message) {
+        if (closed) throw failure("SQLite connection is closed", "SQLITE_CLOSED", message.operation);
+        if (message.operation === "execute") return execute(message);
+        if (message.operation === "one") return one(message);
+        if (message.operation === "all") return all(message);
+        if (message.operation === "begin") {
+          if (database.isTransaction) throw failure("SQLite transaction is already active", "SQLITE_TRANSACTION", "begin", true);
+          database.exec("BEGIN IMMEDIATE");
+          return null;
+        }
+        if (message.operation === "commit") {
+          if (!database.isTransaction) throw failure("SQLite transaction is not active", "SQLITE_TRANSACTION", "commit");
+          database.exec("COMMIT");
+          return null;
+        }
+        if (message.operation === "rollback") {
+          if (database.isTransaction) database.exec("ROLLBACK");
+          return null;
+        }
+        if (message.operation === "close") {
+          try {
+            if (database.isTransaction) database.exec("ROLLBACK");
+          } finally {
+            database.close();
+            closed = true;
+          }
+          return null;
+        }
+        throw failure("Unknown SQLite operation", "SQLITE_PROTOCOL", String(message.operation));
+      }
+
+      try {
+        database = new DatabaseSync(workerData.path, { timeout: workerData.busyTimeoutMilliseconds });
+        database.exec("PRAGMA foreign_keys = ON");
+        parentPort.postMessage({ kind: "ready" });
+      } catch (error) {
+        parentPort.postMessage({ kind: "ready", error: errorData(error, "open") });
+        parentPort.close();
+        return;
+      }
+
+      parentPort.on("message", message => {
+        try {
+          const value = dispatch(message);
+          parentPort.postMessage({ kind: "response", id: message.id, value });
+          if (message.operation === "close") parentPort.close();
+        } catch (error) {
+          parentPort.postMessage({ kind: "response", id: message.id, error: errorData(error, message.operation) });
+        }
+      });
+    }
+
+    function nativeError(value) {
+      return new NativeSqliteError(value.message, value.sqliteCode, value.operation, value.retryable);
+    }
+
+    function failPending(state, error) {
+      if (state.readyReject !== null) {
+        state.readyReject(error);
+        state.readyReject = null;
+        state.readyResolve = null;
+      }
+      for (const pending of state.pending.values()) pending.reject(error);
+      state.pending.clear();
+    }
+
+    function request(state, operation, sql = "", params = []) {
+      if (state.closed) return Promise.reject(new NativeSqliteError("SQLite connection is closed", "SQLITE_CLOSED", operation));
+      const id = state.nextId++;
+      return new Promise((resolve, reject) => {
+        state.pending.set(id, { resolve, reject });
+        try {
+          state.worker.postMessage({ id, operation, sql, params });
+        } catch (error) {
+          state.pending.delete(id);
+          reject(error);
+        }
+      });
+    }
+
+    function stateOf(connection) {
+      const state = connectionStates.get(connection);
+      if (!state) throw new TypeError("Invalid SQLite connection");
+      return state;
+    }
+
+    function transactionStateOf(transaction) {
+      const state = transactionStates.get(transaction);
+      if (!state || !state.active) throw new NativeSqliteConcurrencyError("SQLite transaction is no longer active");
+      return state;
+    }
+
+    function transactionRequest(transaction, operation, sql = "", params = []) {
+      const state = transactionStateOf(transaction);
+      if (state.busy) return Promise.reject(new NativeSqliteConcurrencyError("SQLite transaction operations must be awaited one at a time"));
+      state.busy = true;
+      return request(state.connection, operation, sql, params).finally(() => { state.busy = false; });
+    }
+
+    function enqueue(state, operation) {
+      if (state.closed || state.closing) return Promise.reject(new NativeSqliteError("SQLite connection is closed", "SQLITE_CLOSED", "queue"));
+      if (transactionContext.getStore() === state) return Promise.reject(new NativeSqliteConcurrencyError());
+      if (state.queued >= state.queueCapacity) return Promise.reject(new NativeSqliteBackpressureError());
+      state.queued += 1;
+      const running = state.tail.then(operation, operation);
+      state.tail = running.then(() => null, () => null);
+      return running.finally(() => { state.queued -= 1; });
+    }
+
+    export class NativeSqliteTransaction {
+      constructor(token, state) {
+        if (token !== TOKEN) throw new TypeError("SQLite transactions are created by connection.transaction");
+        transactionStates.set(this, state);
+      }
+
+      execute(sql, params = []) { return transactionRequest(this, "execute", sql, params); }
+      one(sql, params = []) { return transactionRequest(this, "one", sql, params); }
+      all(sql, params = []) { return transactionRequest(this, "all", sql, params); }
+    }
+
+    export class NativeSqliteConnection {
+      constructor(token, state) {
+        if (token !== TOKEN) throw new TypeError("Use openSqlite to create a SQLite connection");
+        connectionStates.set(this, state);
+      }
+
+      execute(sql, params = []) {
+        const state = stateOf(this);
+        return enqueue(state, () => request(state, "execute", sql, params));
+      }
+
+      one(sql, params = []) {
+        const state = stateOf(this);
+        return enqueue(state, () => request(state, "one", sql, params));
+      }
+
+      all(sql, params = []) {
+        const state = stateOf(this);
+        return enqueue(state, () => request(state, "all", sql, params));
+      }
+
+      transaction(operation) {
+        if (typeof operation !== "function") return Promise.reject(new TypeError("SQLite transaction requires an async operation"));
+        const state = stateOf(this);
+        return enqueue(state, async () => {
+          await request(state, "begin");
+          const transactionState = { connection: state, active: true, busy: false };
+          const transaction = new NativeSqliteTransaction(TOKEN, transactionState);
+          try {
+            await transactionContext.run(state, () => operation(transaction));
+            await transactionRequest(transaction, "commit");
+            transactionState.active = false;
+            return null;
+          } catch (error) {
+            try {
+              if (transactionState.active) await transactionRequest(transaction, "rollback");
+            } catch {
+              state.closing = true;
+              state.worker.terminate();
+            } finally {
+              transactionState.active = false;
+            }
+            throw error;
+          }
+        });
+      }
+
+      close() {
+        const state = stateOf(this);
+        if (state.closePromise !== null) return state.closePromise;
+        if (transactionContext.getStore() === state) return Promise.reject(new NativeSqliteConcurrencyError("SQLite connection cannot close inside its transaction callback"));
+        state.closing = true;
+        state.closePromise = state.tail.then(async () => {
+          try {
+            if (!state.closed) await request(state, "close");
+            await state.exited;
+          } finally {
+            state.closed = true;
+          }
+        });
+        return state.closePromise;
+      }
+    }
+
+    export async function openNativeSqlite(path, options = {}) {
+      if (typeof path !== "string" || path.trim() === "" || path.length > 4096 || path.includes("\0")) throw new TypeError("SQLite path must be non-empty bounded text");
+      const checked = checkedOptions(options);
+      const source = "(" + workerMain.toString() + ")()";
+      const worker = new Worker(source, { eval: true, workerData: { path, ...checked } });
+      let readyResolve;
+      let readyReject;
+      let exitResolve;
+      const ready = new Promise((resolve, reject) => { readyResolve = resolve; readyReject = reject; });
+      const exited = new Promise(resolve => { exitResolve = resolve; });
+      const state = {
+        worker,
+        readyResolve,
+        readyReject,
+        exited,
+        pending: new Map(),
+        nextId: 1,
+        queueCapacity: checked.queueCapacity,
+        queued: 0,
+        tail: Promise.resolve(),
+        closing: false,
+        closed: false,
+        closePromise: null,
+      };
+      worker.on("message", message => {
+        if (message.kind === "ready") {
+          const resolve = state.readyResolve;
+          const reject = state.readyReject;
+          state.readyResolve = null;
+          state.readyReject = null;
+          if (message.error) reject(nativeError(message.error));
+          else resolve();
+          return;
+        }
+        if (message.kind !== "response") return;
+        const pending = state.pending.get(message.id);
+        if (!pending) return;
+        state.pending.delete(message.id);
+        if (message.error) pending.reject(nativeError(message.error));
+        else pending.resolve(message.value);
+      });
+      worker.on("error", error => {
+        state.closed = true;
+        failPending(state, new NativeSqliteError(error.message, "SQLITE_WORKER", "worker"));
+      });
+      worker.on("exit", code => {
+        exitResolve(code);
+        if (code !== 0 && !state.closed) {
+          state.closed = true;
+          failPending(state, new NativeSqliteError("SQLite Worker exited with code " + code, "SQLITE_WORKER", "worker"));
+        }
+      });
+      await ready;
+      return new NativeSqliteConnection(TOKEN, state);
+    }
+`:
+    export class NativeSqliteError:
+        const message: string
+        const sqliteCode: string?
+        const operation: string
+        const retryable: bool
+
+    export class NativeSqliteBackpressureError:
+        const message: string
+
+    export class NativeSqliteConcurrencyError:
+        const message: string
+
+    export class NativeSqliteTransaction:
+        async def execute(sql: string, params: List<unknown> = []) -> number
+        async def one(sql: string, params: List<unknown> = []) -> unknown
+        async def all(sql: string, params: List<unknown> = []) -> List<unknown>
+
+    export class NativeSqliteConnection:
+        async def execute(sql: string, params: List<unknown> = []) -> number
+        async def one(sql: string, params: List<unknown> = []) -> unknown
+        async def all(sql: string, params: List<unknown> = []) -> List<unknown>
+        async def transaction(operation: (NativeSqliteTransaction) -> Promise<null>) -> null
+        async def close() -> null
+
+    export async def openNativeSqlite(path: string, options: SqliteOptions = {}) -> NativeSqliteConnection
+
+/// A checked SQLite failure. sqliteCode preserves the driver result code when
+/// Node exposes one; retryable is true for busy, locked, and queue pressure.
+export class SqliteError extends Error:
+    const sqliteCode: string?
+    const operation: string
+    const retryable: bool
+
+    constructor(message: string, sqliteCode: string? = null, operation: string = "unknown", retryable: bool = false):
+        super(message)
+        self.sqliteCode = sqliteCode
+        self.operation = operation
+        self.retryable = retryable
+
+export class SqliteBackpressureError extends SqliteError:
+    constructor(message: string = "SQLite queue is full"):
+        super(message, "SQLITE_BACKPRESSURE", "queue", true)
+
+export class SqliteConcurrencyError extends SqliteError:
+    constructor(message: string = "SQLite connection cannot be used from its transaction callback"):
+        super(message, "SQLITE_CONCURRENCY", "transaction", true)
+
+def sqliteFailure(error: NativeSqliteError) -> SqliteError:
+    if error is NativeSqliteBackpressureError:
+        return SqliteBackpressureError(error.message)
+    if error is NativeSqliteConcurrencyError:
+        return SqliteConcurrencyError(error.message)
+    if error is NativeSqliteError:
+        return SqliteError(error.message, error.sqliteCode, error.operation, error.retryable)
+    return SqliteError(error.message)
+
+export class SqliteTransaction:
+    constructor(private const native: NativeSqliteTransaction):
+        pass
+
+    async def execute(sql: string, params: List<unknown> = []) -> number:
+        try:
+            return await self.native.execute(sql, params)
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    /// Projects this transaction into the engine-neutral functional operation layer.
+    def executor() -> DatabaseExecutor:
+        async def executeStatement(text: string, parameters: List<unknown>) -> number:
+            return await self.execute(text, parameters)
+
+        async def oneRow(text: string, parameters: List<unknown>) -> unknown:
+            try:
+                return await self.native.one(text, parameters)
+            catch error:
+                if error is NativeSqliteError:
+                    throw sqliteFailure(error)
+                throw SqliteError(error.message)
+
+        async def allRows(text: string, parameters: List<unknown>) -> List<unknown>:
+            try:
+                return await self.native.all(text, parameters)
+            catch error:
+                if error is NativeSqliteError:
+                    throw sqliteFailure(error)
+                throw SqliteError(error.message)
+
+        return {execute: executeStatement, one: oneRow, all: allRows}
+
+    async def one<T>(sql: string, RowType: Type<T>, params: List<unknown> = []) -> T?:
+        try:
+            const row = await self.native.one(sql, params)
+            if row == null:
+                return null
+            return RowType.parse(row)
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    async def all<T>(sql: string, RowType: Type<T>, params: List<unknown> = []) -> List<T>:
+        try:
+            const rows = await self.native.all(sql, params)
+            return rows.map(row => RowType.parse(row))
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+export class SqliteConnection:
+    constructor(private const native: NativeSqliteConnection):
+        pass
+
+    async def execute(sql: string, params: List<unknown> = []) -> number:
+        try:
+            return await self.native.execute(sql, params)
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    /// Projects this connection into the engine-neutral functional operation layer.
+    def executor() -> DatabaseExecutor:
+        async def executeStatement(text: string, parameters: List<unknown>) -> number:
+            return await self.execute(text, parameters)
+
+        async def oneRow(text: string, parameters: List<unknown>) -> unknown:
+            try:
+                return await self.native.one(text, parameters)
+            catch error:
+                if error is NativeSqliteError:
+                    throw sqliteFailure(error)
+                throw SqliteError(error.message)
+
+        async def allRows(text: string, parameters: List<unknown>) -> List<unknown>:
+            try:
+                return await self.native.all(text, parameters)
+            catch error:
+                if error is NativeSqliteError:
+                    throw sqliteFailure(error)
+                throw SqliteError(error.message)
+
+        return {execute: executeStatement, one: oneRow, all: allRows}
+
+    async def one<T>(sql: string, RowType: Type<T>, params: List<unknown> = []) -> T?:
+        try:
+            const row = await self.native.one(sql, params)
+            if row == null:
+                return null
+            return RowType.parse(row)
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    async def all<T>(sql: string, RowType: Type<T>, params: List<unknown> = []) -> List<T>:
+        try:
+            const rows = await self.native.all(sql, params)
+            return rows.map(row => RowType.parse(row))
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    async def transaction<T>(operation: (SqliteTransaction) -> Promise<T>) -> T:
+        const results: List<T> = []
+        async def run<T>(native: NativeSqliteTransaction):
+            results.append(await operation(SqliteTransaction(native)))
+        try:
+            await self.native.transaction(run)
+            assert results.size == 1 else "SQLite transaction did not return exactly one result"
+            return results[0]
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw error
+
+    async def close():
+        try:
+            await self.native.close()
+        catch error:
+            if error is NativeSqliteError:
+                throw sqliteFailure(error)
+            throw SqliteError(error.message)
+
+    @dispose:
+        await self.close()
+
+export async def openSqlite(path: string, options: SqliteOptions = {}) -> SqliteConnection:
+    try:
+        return SqliteConnection(await openNativeSqlite(path, options))
+    catch error:
+        if error is NativeSqliteError:
+            throw sqliteFailure(error)
+        throw SqliteError(error.message)

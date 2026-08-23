@@ -1,0 +1,44 @@
+import {DatabaseAffectedRowsError, DatabaseExecutor, all, command, execute, one, query, requireOne} from "../src/index.vel"
+
+type User:
+    id: number
+    name: string
+
+def fakeExecutor(rows: List<unknown>, affected: number = 1) -> DatabaseExecutor:
+    async def executeStatement(text: string, parameters: List<unknown>) -> number:
+        return affected
+
+    async def oneRow(text: string, parameters: List<unknown>) -> unknown:
+        return rows.get(0)
+
+    async def allRows(text: string, parameters: List<unknown>) -> List<unknown>:
+        return rows.copy()
+
+    return {execute: executeStatement, one: oneRow, all: allRows}
+
+test "query operations validate untrusted rows at one reusable boundary":
+    const users = query("SELECT id, name FROM users", User, maximumRows=2)
+    const executor = fakeExecutor([{id: 1, name: "Ada"}])
+    const user = await one(executor, users)
+    assert user != null and user.name == "Ada" else "Optional row changed"
+    assert (await requireOne(executor, users)).id == 1 else "Required row changed"
+    assert (await all(executor, users)).size == 1 else "Row list changed"
+
+test "commands enforce affected-row contracts without modeling tables":
+    const insert = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
+    assert await execute(fakeExecutor([], affected=1), insert, [1, "Ada"]) == 1 else "Affected row count changed"
+    let rejected = false
+    try:
+        await execute(fakeExecutor([], affected=2), insert, [1, "Ada"])
+    catch error:
+        rejected = error is DatabaseAffectedRowsError
+    assert rejected else "Command affected-row drift was accepted"
+
+test "query-specific row limits narrow the driver boundary":
+    const users = query("SELECT id, name FROM users", User, maximumRows=1)
+    let rejected = false
+    try:
+        await all(fakeExecutor([{id: 1, name: "Ada"}, {id: 2, name: "Lin"}]), users)
+    catch error:
+        rejected = error.name == "AssertionError"
+    assert rejected else "Query row limit was not enforced"

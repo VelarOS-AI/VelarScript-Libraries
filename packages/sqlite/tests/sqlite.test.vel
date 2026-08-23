@@ -1,0 +1,77 @@
+import {SqliteConcurrencyError, SqliteError, SqliteTransaction, openSqlite} from "../src/index.vel"
+import {command, execute, query, requireOne} from "@velarscript/database"
+
+type UserRow:
+    id: number
+    name: string
+
+type CountRow:
+    count: number
+
+test "SQLite executes parameterized statements and validates result rows":
+    using database = await openSqlite(":memory:")
+    await database.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+    await database.execute("INSERT INTO users (id, name) VALUES (?, ?)", [1, "Ada"])
+    const user = await database.one("SELECT id, name FROM users WHERE id = ?", UserRow, [1])
+    assert user != null else "Inserted user was not found"
+    assert user.name == "Ada" else "SQLite text changed"
+    const users = await database.all("SELECT id, name FROM users ORDER BY id", UserRow)
+    assert users.size == 1 else "SQLite returned the wrong row count"
+
+test "SQLite projects the functional database operation layer":
+    using database = await openSqlite(":memory:")
+    await database.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+    const insertUser = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
+    const findUser = query("SELECT id, name FROM users WHERE id = ?", UserRow, maximumRows=1)
+    await execute(database.executor(), insertUser, [1, "Ada"])
+    const user = await requireOne(database.executor(), findUser, [1])
+    assert user.name == "Ada" else "Functional database projection changed the row"
+
+test "transaction callbacks commit or roll back as one owned operation":
+    using database = await openSqlite(":memory:")
+    await database.execute("CREATE TABLE events (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+
+    async def commit(transaction: SqliteTransaction) -> string:
+        await transaction.execute("INSERT INTO events (id, name) VALUES (?, ?)", [1, "kept"])
+        return "committed"
+
+    assert await database.transaction(commit) == "committed" else "Transaction result changed"
+
+    async def rollback(transaction: SqliteTransaction):
+        await transaction.execute("INSERT INTO events (id, name) VALUES (?, ?)", [2, "removed"])
+        throw Error("rollback")
+
+    let rejected = false
+    try:
+        await database.transaction(rollback)
+    catch error:
+        rejected = error.message == "rollback"
+    assert rejected else "Transaction callback failure was replaced"
+    const count = await database.one("SELECT COUNT(*) AS count FROM events", CountRow)
+    assert count != null and count.count == 1 else "Failed transaction was not rolled back"
+
+test "connection use inside its transaction callback fails instead of deadlocking":
+    using database = await openSqlite(":memory:")
+    await database.execute("CREATE TABLE values_table (value INTEGER NOT NULL)")
+
+    async def misuse(transaction: SqliteTransaction):
+        await database.execute("INSERT INTO values_table (value) VALUES (1)")
+
+    let rejected = false
+    try:
+        await database.transaction(misuse)
+    catch error:
+        rejected = error is SqliteConcurrencyError
+    assert rejected else "Reentrant connection use did not fail with SqliteConcurrencyError"
+
+test "row and queue limits are explicit connection bounds":
+    using database = await openSqlite(":memory:", {maxRows: 1, queueCapacity: 1})
+    await database.execute("CREATE TABLE numbers (value INTEGER NOT NULL)")
+    await database.execute("INSERT INTO numbers (value) VALUES (1), (2)")
+    let rowLimitRejected = false
+    try:
+        await database.all("SELECT value FROM numbers ORDER BY value", CountRow)
+    catch error:
+        if error is SqliteError:
+            rowLimitRejected = error.sqliteCode == "SQLITE_ROW_LIMIT"
+    assert rowLimitRejected else "SQLite row limit was not enforced"

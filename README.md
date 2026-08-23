@@ -2,21 +2,24 @@
 
 Officially maintained, optional libraries and adapters for VelarScript.
 
-This repository is deliberately separate from
-[VelarScript Core](https://github.com/VelarOS-AI/VelarScript). Packages here are
+This repository is deliberately separate from the
+[VelarScript main repository](https://github.com/VelarOS-AI/VelarScript). Packages here are
 installed explicitly, use independent semantic versions, and never acquire a
-`velar/*` Standard-module name or compiler privilege. Core does not depend on
-this repository.
+`velar/*` Standard-module name or compiler privilege. The VelarScript main
+repository does not depend on this repository.
 
 ## Packages
 
 | Package | Kind | Status | Purpose |
 | --- | --- | --- | --- |
+| `@velarscript/database` | source library | experimental | Typed query and command descriptors over bounded executors |
 | `@velarscript/text-buffer` | source library | stable | Bounded incremental editor text storage |
 | `@velarscript/noise` | adapter | experimental | Deterministic simplex noise |
 | `@velarscript/msgpack` | adapter | experimental | Bounded MessagePack encoding and validation |
 | `@velarscript/compression` | adapter | experimental | Bounded DEFLATE and gzip |
 | `@velarscript/editor-kit` | tooling | experimental | Editor-neutral metadata for launching `velar lsp` |
+| `@velarscript/yaml` | adapter | experimental | Strict, bounded YAML parsing |
+| `@velarscript/sqlite` | adapter | experimental | Worker-isolated SQLite capability for Node applications |
 
 Install only what the application uses:
 

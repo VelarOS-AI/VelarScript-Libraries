@@ -2,11 +2,19 @@
   "formatVersion": 1,
   "packages": [
     {
+      "name": "@velarscript/database",
+      "path": "packages/database",
+      "kind": "source-library",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
       "name": "@velarscript/text-buffer",
       "path": "packages/text-buffer",
       "kind": "source-library",
       "status": "stable",
-      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -14,7 +22,7 @@
       "path": "packages/noise",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -22,7 +30,7 @@
       "path": "packages/msgpack",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -30,7 +38,7 @@
       "path": "packages/compression",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -38,8 +46,24 @@
       "path": "packages/editor-kit",
       "kind": "tooling",
       "status": "experimental",
-      "supportedVelarScript": ">=0.12.1 <0.13.0",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
       "targets": []
+    },
+    {
+      "name": "@velarscript/yaml",
+      "path": "packages/yaml",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
+      "name": "@velarscript/sqlite",
+      "path": "packages/sqlite",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.13.0 <0.14.0",
+      "targets": ["node"]
     }
   ]
 }

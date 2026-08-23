@@ -18,25 +18,15 @@ multi-edit transactions, and bounded undo/redo history.
 `lineCount`, `lineStart`, `lineText`, `positionAt`, `offsetAt`, and `lineSlice`
 take their model from `Text.lineStarts`, which is what they are built on.
 
-Against the VelarScript this package pins (`0.12.1`) that means line feed
-(`\n`) alone: a lone carriage return does not start a line, so a CR-only
-document is one line to this buffer, while the compiler's own numbering treats
-`\r\n`, a lone `\r`, and `\n` all as terminators. Diagnostics reported by the
-toolchain therefore do not necessarily agree with the line numbers reported
-here. Map positions through one model or the other, never both.
-
-That disagreement is closed in the language after `0.12.1`: `Text.lines` and
-`Text.lineStarts` now end a line at any of the three, matching both the
-compiler and the fact that the language itself ends a statement at a lone `\r`.
-Because this buffer reads its model from `Text.lineStarts` rather than
-implementing one, it follows that change on the release that adopts it, and the
-paragraph above stops applying. Revisit this section when `supportedVelarScript`
-moves.
+On the supported VelarScript 0.13 line, `Text.lines` and `Text.lineStarts` end a
+line at `\r\n`, a lone `\r`, or `\n`. The buffer reads that model rather than
+implementing a second one, so editor positions and compiler diagnostics agree
+on line boundaries.
 
 Within that model a `\r\n` pair is one terminator: `lineText` drops the `\r`
-that precedes a terminating `\n`, and `positionAt` reports the offset between
-`\r` and `\n` as the column of the `\r`. A trailing `\r` on the final line has
-no terminator after it, so it is content and `lineText` keeps it.
+that precedes a terminating `\n`, and `positionAt` canonicalizes the offset
+between `\r` and `\n` to the position immediately before the pair. A trailing
+lone `\r` is also a terminator and therefore creates a final empty line.
 
 ## Unpaired surrogates
 

@@ -38,15 +38,16 @@ test "every offset round-trips through positionAt and offsetAt":
     assertRoundTrip("alpha\r\nbeta\r\n", "a carriage-return line-feed document")
     assertRoundTrip("a😀b\ncd😀", "a document with astral characters")
 
-test "a trailing carriage return is content on the final line":
+test "a trailing carriage return terminates the final line":
     const buffer = TextBuffer("alpha\r\nbeta\r\n")
     buffer.delete(buffer.size - 1, buffer.size)
     assert buffer.lineText(0) == "alpha" else "A carriage-return terminator leaked into the line"
-    assert buffer.lineText(1) == "beta\r" else "A final carriage return was stripped as a terminator"
-    assert buffer.offsetAt(1, 5) == 12 else "offsetAt rejected the position positionAt produced"
+    assert buffer.lineText(1) == "beta" else "A final carriage return leaked into the line"
+    assert buffer.lineText(2) == "" else "A final carriage return did not create the trailing empty line"
+    assert buffer.offsetAt(2, 0) == buffer.size else "offsetAt rejected the trailing line position"
     let rejected = false
     try:
-        buffer.offsetAt(1, 6)
+        buffer.offsetAt(1, 5)
     catch error:
         rejected = error.name == "AssertionError"
     assert rejected else "offsetAt accepted a column outside the line"

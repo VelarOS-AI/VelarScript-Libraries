@@ -363,9 +363,12 @@ export class TextBuffer:
         const root = self.root
         if root == null:
             return {line: 0, column: 0}
-        const metrics = prefixMetrics(root, offset)
         const insideCrLf = offset > 0 and offset < self.size and self.slice(offset - 1, offset) == "\r" and self.slice(offset, offset + 1) == "\n"
-        return {line: metrics.newlines, column: insideCrLf ? metrics.tail - 1 : metrics.tail}
+        if insideCrLf:
+            const beforeCarriageReturn = prefixMetrics(root, offset - 1)
+            return {line: beforeCarriageReturn.newlines, column: beforeCarriageReturn.tail}
+        const metrics = prefixMetrics(root, offset)
+        return {line: metrics.newlines, column: metrics.tail}
 
     /// Maps one zero-based line and Unicode code-point column to an offset.
     def offsetAt(line: number, column: number) -> number:

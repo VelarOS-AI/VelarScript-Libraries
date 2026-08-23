@@ -101,7 +101,7 @@ try {
   const consumer = join(temporary, "consumer");
   await mkdir(packs, { recursive: true });
   await mkdir(consumer, { recursive: true });
-  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.12.1";
+  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.13.0";
   const dependencies = { "@velarscript/cli": velarVersion };
   const artifacts = [];
 
@@ -140,26 +140,59 @@ try {
   }, null, 2)}\n`, "utf8");
   await writeFile(join(consumer, "main.vel"), `
 import {deflate, inflate} from "@velarscript/compression"
+import {query} from "@velarscript/database"
 import {encode, parse} from "@velarscript/msgpack"
 import {simplex2} from "@velarscript/noise"
 import {TextBuffer} from "@velarscript/text-buffer"
+import {parseYaml} from "@velarscript/yaml"
 
 type PackedUser:
     id: string
     name: string
+
+type PackedConfiguration:
+    port: number
 
 const buffer = TextBuffer("A😀\\nB")
 buffer.insert(buffer.size, "!")
 const wire = deflate(encode({id: "u-1", name: "Ada"}))
 const user = parse(inflate(wire), PackedUser)
 const field = simplex2("packed-consumer")
-print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}")
+const configuration = PackedConfiguration.parse(parseYaml("port: 3000"))
+const packedUserQuery = query("SELECT id, name FROM users WHERE id = ?", PackedUser, maximumRows=1)
+print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configuration.port}:{packedUserQuery.maximumRows}")
 `.trimStart(), "utf8");
 
   const cli = join(consumer, "node_modules", ".bin", velarExecutable);
   await run(cli, ["build", "main.vel", "--out-dir", "dist"], consumer);
   const execution = await run(process.execPath, [join(consumer, "dist", "main.js")], consumer);
-  assert.equal(execution.stdout, "5:B!:Ada:0\n");
+  assert.equal(execution.stdout, "5:B!:Ada:0:3000:1\n");
+
+  const nodeConsumer = join(consumer, "node-consumer");
+  await mkdir(join(nodeConsumer, "tests"), { recursive: true });
+  await writeFile(join(nodeConsumer, "velar.json"), `${JSON.stringify({
+    formatVersion: 2,
+    entry: "tests/sqlite.test.vel",
+    extensions: ["@velarscript/node"],
+  }, null, 2)}\n`, "utf8");
+  await writeFile(join(nodeConsumer, "tests", "sqlite.test.vel"), `
+import {command, execute, query, requireOne} from "@velarscript/database"
+import {openSqlite} from "@velarscript/sqlite"
+
+type PackedUser:
+    id: string
+    name: string
+
+test "packed SQLite and database packages execute together":
+    using database = await openSqlite(":memory:")
+    await database.execute("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL)")
+    const insertUser = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
+    const findUser = query("SELECT id, name FROM users WHERE id = ?", PackedUser, maximumRows=1)
+    await execute(database.executor(), insertUser, ["u-2", "Lin"])
+    const stored = await requireOne(database.executor(), findUser, ["u-2"])
+    assert stored.name == "Lin" else "Packed SQLite result changed"
+`.trimStart(), "utf8");
+  await run(cli, ["test"], nodeConsumer);
 
   const editorKit = await import(pathToFileURL(join(consumer, "node_modules", "@velarscript", "editor-kit", "dist", "index.js")).href);
   assert.equal(editorKit.VelarLanguageService.command, "velar");

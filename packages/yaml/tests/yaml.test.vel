@@ -1,0 +1,33 @@
+import {parseYaml} from "../src/index.vel"
+
+type ServiceConfiguration:
+    name: string
+    enabled: bool
+    ports: List<number>
+
+test "strict YAML parsing returns untrusted data for caller validation":
+    const configuration = ServiceConfiguration.parse(parseYaml("
+        name: api
+        enabled: true
+        ports: [3000, 3001]
+    "))
+    assert configuration.name == "api" else "YAML name changed"
+    assert equals(configuration.ports, [3000, 3001]) else "YAML list changed"
+
+test "duplicate keys and oversized documents fail at the adapter boundary":
+    let duplicateRejected = false
+    try:
+        parseYaml("
+            name: first
+            name: second
+        ")
+    catch error:
+        duplicateRejected = true
+    assert duplicateRejected else "Duplicate YAML keys were accepted"
+
+    let sizeRejected = false
+    try:
+        parseYaml("name: oversized", maxBytes=4)
+    catch error:
+        sizeRejected = true
+    assert sizeRejected else "An oversized YAML document was accepted"
