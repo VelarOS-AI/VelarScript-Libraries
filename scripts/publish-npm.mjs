@@ -19,7 +19,7 @@ async function npm(args) {
 
 async function registryVersion(identity) {
   try {
-    const { stdout } = await npm(["view", identity, "version", "--json"]);
+    const { stdout } = await npm(["view", identity, "version", "--json", "--prefer-online"]);
     return JSON.parse(stdout);
   } catch (error) {
     if (String(error.stderr).includes("E404")) return null;
@@ -73,7 +73,13 @@ for (const release of releases) {
 
 if (!dryRun) {
   for (const release of releases) {
-    const { stdout } = await npm(["view", release.name, "dist-tags.latest", "--json"]);
+    const { stdout } = await npm([
+      "view",
+      release.name,
+      "dist-tags.latest",
+      "--json",
+      "--prefer-online",
+    ]);
     if (JSON.parse(stdout) !== release.version) {
       throw new Error(`${release.name} latest does not match ${release.version}`);
     }
