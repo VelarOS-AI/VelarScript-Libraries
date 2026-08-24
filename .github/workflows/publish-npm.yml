@@ -1,113 +1,28 @@
-name: Publish npm OpenVoxel companion set
+name: Publish npm libraries
 
 on:
   workflow_dispatch:
-    inputs:
-      commit:
-        description: Exact tagged Libraries commit to publish
-        required: true
-        type: string
-      confirm:
-        description: Type publish to authorize all four registry publications
-        required: true
-        type: string
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: npm-openvoxel-companion-set
+  group: npm-libraries
   cancel-in-progress: false
 
 jobs:
   publish:
-    if: ${{ inputs.confirm == 'publish' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: "24.x"
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-      - name: Use a trusted-publishing npm client
-        run: npm install --global npm@latest
-      - name: Verify the complete release set
-        env:
-          RELEASE_COMMIT: ${{ inputs.commit }}
-        run: |
-          set -euo pipefail
-          [[ "$RELEASE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          test "$(git rev-parse HEAD)" = "$RELEASE_COMMIT"
-
-          for workspace in database yaml msgpack sqlite; do
-            manifest="packages/${workspace}/package.json"
-            package_name="$(node -p "require('./${manifest}').name")"
-            version="$(node -p "require('./${manifest}').version")"
-            tag="${package_name}@${version}"
-
-            test "$package_name" = "@velarscript-labs/${workspace}"
-            [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
-            test "$(git rev-list -n 1 "$tag")" = "$RELEASE_COMMIT"
-          done
-      - name: Publish all four packages with provenance
+      - run: npm install --global npm@latest
+      - run: npm run publish:npm
         env:
           NODE_AUTH_TOKEN: ""
-          NPM_CONFIG_PREFER_ONLINE: "true"
-        run: |
-          set -euo pipefail
-
-          publish_workspace() {
-            workspace="$1"
-            manifest="packages/${workspace}/package.json"
-            package_name="$(node -p "require('./${manifest}').name")"
-            version="$(node -p "require('./${manifest}').version")"
-            identity="${package_name}@${version}"
-            expected_integrity="$(
-              npm pack --dry-run --ignore-scripts --json --workspace "$package_name" |
-                node -e 'let source = ""; process.stdin.on("data", chunk => source += chunk); process.stdin.on("end", () => process.stdout.write(JSON.parse(source)[0].integrity))'
-            )"
-
-            registry_integrity=""
-            if registry_integrity="$(
-              npm view "$identity" dist.integrity --json 2>/dev/null |
-                node -e 'let source = ""; process.stdin.on("data", chunk => source += chunk); process.stdin.on("end", () => { const value = JSON.parse(source); if (typeof value === "string") process.stdout.write(value) })'
-            )" && test -n "$registry_integrity"; then
-              test "$registry_integrity" = "$expected_integrity"
-              echo "$identity is already published with the expected integrity"
-              return
-            fi
-
-            npm publish --workspace "$package_name" --access public --provenance --tag latest --ignore-scripts
-
-            registry_integrity=""
-            for attempt in $(seq 1 30); do
-              if registry_integrity="$(
-                npm view "$identity" dist.integrity --json 2>/dev/null |
-                  node -e 'let source = ""; process.stdin.on("data", chunk => source += chunk); process.stdin.on("end", () => { const value = JSON.parse(source); if (typeof value === "string") process.stdout.write(value) })'
-              )" && test "$registry_integrity" = "$expected_integrity"; then
-                break
-              fi
-              sleep 5
-            done
-            test "$registry_integrity" = "$expected_integrity"
-          }
-
-          publish_workspace database
-          publish_workspace yaml
-          publish_workspace msgpack
-          publish_workspace sqlite
-      - name: Verify the synchronized latest tags
-        run: |
-          set -euo pipefail
-          for workspace in database yaml msgpack sqlite; do
-            manifest="packages/${workspace}/package.json"
-            package_name="$(node -p "require('./${manifest}').name")"
-            version="$(node -p "require('./${manifest}').version")"
-            test "$(npm view "$package_name" dist-tags.latest)" = "$version"
-          done
