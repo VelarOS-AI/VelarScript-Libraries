@@ -1,5 +1,5 @@
-import {SqliteConcurrencyError, SqliteError, SqliteTransaction, openSqlite} from "../src/index.vel"
-import {command, execute, query, requireOne} from "@velarscript-labs/database"
+import {SqliteConcurrencyError, SqliteError, SqliteJournalMode, SqliteTransaction, openSqlite, sqliteIdentifier, sqliteLiteral} from "../src/index.vel"
+import {DatabaseParameterStyle, command, execute, query, requireOne, sqlConcat, sqlParameter, sqlTuple, trustedSql} from "@velarscript-labs/database"
 
 type UserRow:
     id: number
@@ -8,37 +8,131 @@ type UserRow:
 type CountRow:
     count: number
 
-test "SQLite executes parameterized statements and validates result rows":
-    using database = await openSqlite(":memory:")
-    await database.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
-    await database.execute("INSERT INTO users (id, name) VALUES (?, ?)", [1, "Ada"])
-    const user = await database.one("SELECT id, name FROM users WHERE id = ?", UserRow, [1])
+type DefaultRow:
+    name: string
+
+test "SQLite executes structured statements and validates result rows":
+    using database = await openSqlite(":memory:", {journalMode: SqliteJournalMode.memory})
+    await database.execute(trustedSql("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)"))
+    await database.execute(sqlConcat([
+        trustedSql("INSERT INTO users (id, name) VALUES "),
+        sqlTuple([1, "Ada"]),
+    ]))
+    const user = await database.one(sqlConcat([
+        trustedSql("SELECT id, name FROM users WHERE id = "),
+        sqlParameter(1),
+    ]), UserRow)
     assert user != null else "Inserted user was not found"
     assert user.name == "Ada" else "SQLite text changed"
-    const users = await database.all("SELECT id, name FROM users ORDER BY id", UserRow)
+    const users = await database.all(trustedSql("SELECT id, name FROM users ORDER BY id"), UserRow)
     assert users.size == 1 else "SQLite returned the wrong row count"
 
 test "SQLite projects the functional database operation layer":
     using database = await openSqlite(":memory:")
-    await database.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
-    const insertUser = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
-    const findUser = query("SELECT id, name FROM users WHERE id = ?", UserRow, maximumRows=1)
-    await execute(database.executor(), insertUser, [1, "Ada"])
-    const user = await requireOne(database.executor(), findUser, [1])
+    await database.execute(trustedSql("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)"))
+    const insertUser = command(sqlConcat([
+        trustedSql("INSERT INTO users (id, name) VALUES "),
+        sqlTuple([1, "Ada"]),
+    ]), minimumAffected = 1, maximumAffected = 1)
+    const findUser = query(sqlConcat([
+        trustedSql("SELECT id, name FROM users WHERE id = "),
+        sqlParameter(1),
+    ]), UserRow, maximumRows = 1)
+    await execute(database.executor(), insertUser)
+    const user = await requireOne(database.executor(), findUser)
     assert user.name == "Ada" else "Functional database projection changed the row"
+
+test "bound attack text remains data and cannot change the statement":
+    using database = await openSqlite(":memory:")
+    await database.execute(trustedSql("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)"))
+    const attack = "Ada'); DROP TABLE users; --"
+    await database.execute(sqlConcat([
+        trustedSql("INSERT INTO users (id, name) VALUES "),
+        sqlTuple([1, attack]),
+    ]))
+    const user = await database.one(sqlConcat([
+        trustedSql("SELECT id, name FROM users WHERE name = "),
+        sqlParameter(attack),
+    ]), UserRow)
+    assert user != null and user.name == attack else "Bound attack text did not round-trip as data"
+    const table = await database.one(sqlConcat([
+        trustedSql("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name = "),
+        sqlParameter("users"),
+    ]), CountRow)
+    assert table != null and table.count == 1 else "Bound value changed database structure"
+
+test "SQLite rejects multiple statements and raw placeholders before execution":
+    using database = await openSqlite(":memory:")
+    let multipleRejected = false
+    try:
+        await database.execute(trustedSql("CREATE TABLE hidden (value INTEGER); DROP TABLE hidden"))
+    catch error:
+        if error is SqliteError:
+            multipleRejected = error.sqliteCode == "SQLITE_INPUT"
+    assert multipleRejected else "Multiple SQLite statements were accepted"
+
+    let placeholderRejected = false
+    try:
+        await database.one(trustedSql("SELECT ? AS count"), CountRow)
+    catch error:
+        if error is SqliteError:
+            placeholderRejected = error.sqliteCode == "SQLITE_INPUT"
+    assert placeholderRejected else "Raw SQLite placeholder was accepted"
+
+test "SQLite literal escaping is limited to grammar positions that cannot bind":
+    using database = await openSqlite(":memory:")
+    const defaultName = "Ada'); DROP TABLE defaults_table; --"
+    await database.execute(sqlConcat([
+        trustedSql("CREATE TABLE defaults_table (name TEXT NOT NULL DEFAULT "),
+        sqliteLiteral(defaultName),
+        trustedSql(")"),
+    ]))
+    await database.execute(trustedSql("INSERT INTO defaults_table DEFAULT VALUES"))
+    const stored = await database.one(trustedSql("SELECT name FROM defaults_table"), DefaultRow)
+    assert stored != null and stored.name == defaultName else "SQLite literal escaping changed the default"
+
+test "SQLite identifiers are quoted as one name instead of executable grammar":
+    const identifier = sqliteIdentifier(`users"; DROP TABLE users; --`)
+    const prepared = identifier.render(DatabaseParameterStyle.questionMark)
+    assert prepared.text == `"users""; DROP TABLE users; --"` else "SQLite identifier quoting changed"
+    assert prepared.parameters.size == 0 else "SQLite identifier unexpectedly bound values"
+
+test "SQLite denies attached databases at the driver policy boundary":
+    using database = await openSqlite(":memory:")
+    let rejected = false
+    try:
+        await database.execute(trustedSql("ATTACH DATABASE ':memory:' AS extra"))
+    catch error:
+        rejected = error is SqliteError
+    assert rejected else "SQLite ATTACH bypassed the connection policy"
+
+test "read-only connections reject write-oriented journal configuration":
+    let rejected = false
+    try:
+        const database = await openSqlite(":memory:", {readOnly: true, journalMode: SqliteJournalMode.wal})
+        await database.close()
+    catch error:
+        rejected = error is SqliteError
+    assert rejected else "Read-only SQLite accepted a journal mode change"
 
 test "transaction callbacks commit or roll back as one owned operation":
     using database = await openSqlite(":memory:")
-    await database.execute("CREATE TABLE events (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+    await database.execute(trustedSql("CREATE TABLE events (id INTEGER PRIMARY KEY, name TEXT NOT NULL)"))
 
     async def commit(transaction: SqliteTransaction) -> string:
-        await transaction.execute("INSERT INTO events (id, name) VALUES (?, ?)", [1, "kept"])
+        await transaction.execute(sqlConcat([
+            trustedSql("INSERT INTO events (id, name) VALUES "),
+            sqlTuple([1, "kept"]),
+        ]))
         return "committed"
 
     assert await database.transaction(commit) == "committed" else "Transaction result changed"
 
     async def rollback(transaction: SqliteTransaction):
-        await transaction.execute("INSERT INTO events (id, name) VALUES (?, ?)", [2, "removed"])
+        await transaction.execute(sqlConcat([
+            trustedSql("INSERT INTO events (id, name) VALUES "),
+            sqlTuple([2, "removed"]),
+        ]))
         throw Error("rollback")
 
     let rejected = false
@@ -47,15 +141,15 @@ test "transaction callbacks commit or roll back as one owned operation":
     catch error:
         rejected = error.message == "rollback"
     assert rejected else "Transaction callback failure was replaced"
-    const count = await database.one("SELECT COUNT(*) AS count FROM events", CountRow)
+    const count = await database.one(trustedSql("SELECT COUNT(*) AS count FROM events"), CountRow)
     assert count != null and count.count == 1 else "Failed transaction was not rolled back"
 
 test "connection use inside its transaction callback fails instead of deadlocking":
     using database = await openSqlite(":memory:")
-    await database.execute("CREATE TABLE values_table (value INTEGER NOT NULL)")
+    await database.execute(trustedSql("CREATE TABLE values_table (value INTEGER NOT NULL)"))
 
     async def misuse(transaction: SqliteTransaction):
-        await database.execute("INSERT INTO values_table (value) VALUES (1)")
+        await database.execute(trustedSql("INSERT INTO values_table (value) VALUES (1)"))
 
     let rejected = false
     try:
@@ -66,11 +160,16 @@ test "connection use inside its transaction callback fails instead of deadlockin
 
 test "row and queue limits are explicit connection bounds":
     using database = await openSqlite(":memory:", {maxRows: 1, queueCapacity: 1})
-    await database.execute("CREATE TABLE numbers (value INTEGER NOT NULL)")
-    await database.execute("INSERT INTO numbers (value) VALUES (1), (2)")
+    await database.execute(trustedSql("CREATE TABLE numbers (value INTEGER NOT NULL)"))
+    await database.execute(sqlConcat([
+        trustedSql("INSERT INTO numbers (value) VALUES "),
+        sqlTuple([1]),
+        trustedSql(", "),
+        sqlTuple([2]),
+    ]))
     let rowLimitRejected = false
     try:
-        await database.all("SELECT value FROM numbers ORDER BY value", CountRow)
+        await database.all(trustedSql("SELECT value AS count FROM numbers ORDER BY value"), CountRow)
     catch error:
         if error is SqliteError:
             rowLimitRejected = error.sqliteCode == "SQLITE_ROW_LIMIT"

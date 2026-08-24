@@ -1,21 +1,130 @@
-/// The smallest engine-neutral execution surface. A driver owns concurrency,
-/// transactions, cancellation, and cleanup; this record only executes one
-/// already-authored parameterized statement.
+/// One rendered statement ready for a database driver. Applications build the
+/// opaque DatabaseStatement value instead of authoring placeholder text.
+export type PreparedDatabaseStatement:
+    readonly text: string
+    readonly parameters: List<unknown>
+
+/// The placeholder spelling is a driver concern. The statement retains the
+/// original fragment/value boundary until a driver deliberately renders it.
+export enum DatabaseParameterStyle:
+    questionMark
+    dollarNumber
+    colonNumber
+
+export type DatabaseStatementData:
+    readonly fragments: List<string>
+    readonly parameters: List<unknown>
+
+def checkedFragment(value: string) -> string:
+    assert value.size <= 1024 * 1024 and not value.has(Text.fromCodePoint(0)) else "Database SQL fragments must contain no NUL and be no longer than 1 MiB"
+    return value
+
+def checkedStatementText(value: string) -> string:
+    assert not value.isBlank() and value.size <= 1024 * 1024 and not value.has(Text.fromCodePoint(0)) else "Database statement must be non-blank text with no NUL and no longer than 1 MiB"
+    return value
+
+/// The concrete class remains module-private. Consumers receive the exported
+/// alias through the factories below and cannot construct an unchecked shape.
+class ComposedDatabaseStatement:
+    constructor(private const fragments: List<string>, private const parameters: List<unknown>):
+        assert fragments.size == parameters.size + 1 else "Database statements require exactly one more SQL fragment than bound parameters"
+        assert parameters.size <= 1000000 else "Database statements support at most 1000000 bound parameters"
+        let textSize = 0
+        for fragment in fragments:
+            textSize += checkedFragment(fragment).size
+        assert textSize <= 1024 * 1024 else "Database statement SQL must be no longer than 1 MiB"
+
+    def data() -> DatabaseStatementData:
+        return {fragments: self.fragments.copy(), parameters: self.parameters.copy()}
+
+    /// Rendering is intentionally delayed until the driver selects its dialect.
+    def render(style: DatabaseParameterStyle) -> PreparedDatabaseStatement:
+        let text = self.fragments[0]
+        for parameter, index in self.parameters:
+            match style:
+                case DatabaseParameterStyle.questionMark:
+                    text += "?"
+                case DatabaseParameterStyle.dollarNumber:
+                    text += "$" + str(index + 1)
+                case DatabaseParameterStyle.colonNumber:
+                    text += ":" + str(index + 1)
+            text += self.fragments[index + 1]
+        return {text: checkedStatementText(text), parameters: self.parameters.copy()}
+
+export type DatabaseStatement = ComposedDatabaseStatement
+
+/// SQL grammar is trusted application source, never request or persisted data.
+/// The explicit name keeps every raw grammar boundary searchable in review.
+export def trustedSql(text: string) -> DatabaseStatement:
+    assert not text.isBlank() else "Trusted SQL must be non-blank"
+    return ComposedDatabaseStatement([checkedFragment(text)], [])
+
+/// Velar's explicit equivalent of a safe SQL template tag. Fragments are
+/// trusted application grammar; parameters remain structurally bound values.
+export def trustedSqlTemplate(fragments: List<string>, parameters: List<unknown>) -> DatabaseStatement:
+    return ComposedDatabaseStatement(fragments.copy(), parameters.copy())
+
+/// Adds one runtime value. Drivers render this position as a bound parameter;
+/// the value is never interpolated into SQL text.
+export def sqlParameter(value: unknown) -> DatabaseStatement:
+    return ComposedDatabaseStatement(["", ""], [value])
+
+/// Concatenates already-separated SQL structure without converting values to text.
+export def sqlConcat(statements: List<DatabaseStatement>) -> DatabaseStatement:
+    const fragments: List<string> = [""]
+    const parameters: List<unknown> = []
+    for statement in statements:
+        const data = statement.data()
+        fragments[fragments.size - 1] += data.fragments[0]
+        for parameter, index in data.parameters:
+            parameters.append(parameter)
+            fragments.append(data.fragments[index + 1])
+    return ComposedDatabaseStatement(fragments, parameters)
+
+/// Joins safe statements with one trusted grammar separator.
+export def sqlJoin(statements: List<DatabaseStatement>, separator: DatabaseStatement) -> DatabaseStatement:
+    const parts: List<DatabaseStatement> = []
+    for statement, index in statements:
+        if index > 0:
+            parts.append(separator)
+        parts.append(statement)
+    return sqlConcat(parts)
+
+/// Builds a non-empty comma-separated list of bound values.
+export def sqlParameters(values: List<unknown>) -> DatabaseStatement:
+    assert values.size > 0 else "SQL parameter lists must not be empty"
+    return sqlJoin(values.map(value => sqlParameter(value)), trustedSql(", "))
+
+/// Builds one non-empty parenthesized row of bound values.
+export def sqlTuple(values: List<unknown>) -> DatabaseStatement:
+    return sqlConcat([trustedSql("("), sqlParameters(values), trustedSql(")")])
+
+/// Builds non-empty, equally-sized rows for VALUES and row-value IN clauses.
+export def sqlRows(rows: List<List<unknown>>) -> DatabaseStatement:
+    assert rows.size > 0 else "SQL row lists must not be empty"
+    const width = rows[0].size
+    assert width > 0 else "SQL rows must not be empty"
+    for row in rows:
+        assert row.size == width else "SQL rows must all have the same width"
+    return sqlJoin(rows.map(row => sqlTuple(row)), trustedSql(", "))
+
+/// The smallest engine-neutral execution surface. A driver owns rendering,
+/// concurrency, transactions, cancellation, and cleanup.
 export type DatabaseExecutor:
-    execute: (text: string, parameters: List<unknown>) -> Promise<number>
-    one: (text: string, parameters: List<unknown>) -> Promise<unknown>
-    all: (text: string, parameters: List<unknown>) -> Promise<List<unknown>>
+    execute: (statement: DatabaseStatement) -> Promise<number>
+    one: (statement: DatabaseStatement) -> Promise<unknown>
+    all: (statement: DatabaseStatement) -> Promise<List<unknown>>
 
 /// A named write contract with an explicit affected-row invariant.
 export type DatabaseCommand:
-    readonly text: string
+    statement: DatabaseStatement
     readonly minimumAffected: number
     readonly maximumAffected: number
 
 /// A named read contract. Runtime row validation remains in this value and is
 /// applied immediately after untrusted driver data crosses the boundary.
 export type DatabaseQuery<T>:
-    readonly text: string
+    statement: DatabaseStatement
     readonly maximumRows: number
     readonly parse: (unknown) -> T
 
@@ -27,49 +136,47 @@ export class DatabaseRowNotFoundError extends Error:
     constructor(message: string = "Database query returned no row"):
         super(message)
 
-def statementText(value: string) -> string:
-    assert not value.isBlank() and value.size <= 1024 * 1024 else "Database statement must be non-blank text no longer than 1 MiB"
-    return value
-
 def rowLimit(value: number, label: string) -> number:
     assert value.isInteger() and value >= 1 and value <= 1000000 else f"{label} must be an integer from 1 through 1000000"
     return value
 
-/// Declares one parameterized write without coupling it to a database engine.
-export def command(text: string, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
+/// Declares one structured write without coupling it to a database engine.
+export def command(statement: DatabaseStatement, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
     assert minimumAffected.isInteger() and minimumAffected >= 0 and minimumAffected <= 1000000 else "Database command minimumAffected must be an integer from 0 through 1000000"
     assert maximumAffected.isInteger() and maximumAffected >= minimumAffected and maximumAffected <= 1000000 else "Database command maximumAffected must be an integer from minimumAffected through 1000000"
-    return {text: statementText(text), minimumAffected, maximumAffected}
+    statement.render(DatabaseParameterStyle.questionMark)
+    return {statement, minimumAffected, maximumAffected}
 
 /// Declares one typed query. The driver still enforces its connection-wide
 /// ceiling; maximumRows narrows the bound for this particular operation.
-export def query<T>(text: string, RowType: Type<T>, maximumRows: number = 10000) -> DatabaseQuery<T>:
+export def query<T>(statement: DatabaseStatement, RowType: Type<T>, maximumRows: number = 10000) -> DatabaseQuery<T>:
     const parseRow: (unknown) -> T = value => RowType.parse(value)
-    return {text: statementText(text), maximumRows: rowLimit(maximumRows, "Database query maximumRows"), parse: parseRow}
+    statement.render(DatabaseParameterStyle.questionMark)
+    return {statement, maximumRows: rowLimit(maximumRows, "Database query maximumRows"), parse: parseRow}
 
 /// Executes a write and enforces its declared affected-row invariant.
-export async def execute(executor: DatabaseExecutor, operation: DatabaseCommand, parameters: List<unknown> = []) -> number:
-    const affected = await executor.execute(operation.text, parameters.copy())
+export async def execute(executor: DatabaseExecutor, operation: DatabaseCommand) -> number:
+    const affected = await executor.execute(operation.statement)
     if affected < operation.minimumAffected or affected > operation.maximumAffected:
         throw DatabaseAffectedRowsError(affected, operation.minimumAffected, operation.maximumAffected)
     return affected
 
 /// Reads and validates an optional row.
-export async def one<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = []) -> T?:
-    const row = await executor.one(operation.text, parameters.copy())
+export async def one<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>) -> T?:
+    const row = await executor.one(operation.statement)
     if row == null:
         return null
     return operation.parse(row)
 
 /// Reads one required row and gives absence an explicit application-facing error.
-export async def requireOne<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = [], message: string = "Database query returned no row") -> T:
-    const row = await one(executor, operation, parameters)
+export async def requireOne<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, message: string = "Database query returned no row") -> T:
+    const row = await one(executor, operation)
     if row == null:
         throw DatabaseRowNotFoundError(message)
     return row
 
 /// Reads a bounded list and validates every row before returning it.
-export async def all<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, parameters: List<unknown> = []) -> List<T>:
-    const rows = await executor.all(operation.text, parameters.copy())
+export async def all<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>) -> List<T>:
+    const rows = await executor.all(operation.statement)
     assert rows.size <= operation.maximumRows else f"Database query returned more than its {operation.maximumRows} row limit"
     return rows.map(row => operation.parse(row))

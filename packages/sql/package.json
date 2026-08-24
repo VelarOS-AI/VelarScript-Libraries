@@ -1,7 +1,7 @@
 {
-  "name": "@velarscript-labs/sqlite",
-  "version": "0.3.0",
-  "description": "Injection-resistant bounded SQLite capability for VelarScript Node applications.",
+  "name": "@velarscript-labs/sql",
+  "version": "0.1.0",
+  "description": "Injection-resistant Velar-style SQL DML builders over structured database statements.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
@@ -17,12 +17,12 @@
     "test": "velar test"
   },
   "engines": {
-    "node": ">=24.12"
+    "node": ">=24"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
-    "directory": "packages/sqlite"
+    "directory": "packages/sql"
   },
   "publishConfig": {
     "access": "public"
@@ -32,12 +32,11 @@
   },
   "velar": {
     "entry": "src/index.vel",
-    "artifacts": { "node": "dist/velar-library.json" },
-    "targets": ["node"],
-    "requires": {"capabilities": ["node"], "language": ">=0.13 <0.15"}
+    "artifacts": { "core": "dist/velar-library.json" },
+    "targets": ["core", "node", "web", "desktop"],
+    "requires": {"capabilities": [], "language": ">=0.13 <0.15"}
   },
   "dependencies": {
-    "@velarscript-labs/database": "0.3.0",
-    "sqlite3-parser": "0.7.1"
+    "@velarscript-labs/database": "0.3.0"
   }
 }

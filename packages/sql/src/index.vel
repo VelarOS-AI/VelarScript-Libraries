@@ -1,0 +1,373 @@
+import {DatabaseCommand, DatabaseParameterStyle, DatabaseQuery, DatabaseStatement, command, query, sqlConcat, sqlJoin, sqlParameter, sqlRows, trustedSql} from "@velarscript-labs/database"
+
+def checkedIdentifier(value: string, label: string) -> string:
+    assert not value.isBlank() else f"{label} must not be blank"
+    assert value.size <= 255 else f"{label} must be no longer than 255 characters"
+    assert not value.has(Text.fromCodePoint(0)) else f"{label} must not contain NUL"
+    return value
+
+def quotedIdentifier(value: string, label: string = "SQL identifier") -> DatabaseStatement:
+    const identifier = checkedIdentifier(value, label)
+    return trustedSql(`"` + identifier.replaceAll(`"`, `""`) + `"`)
+
+def quotedPath(parts: List<string>, label: string) -> DatabaseStatement:
+    assert parts.size > 0 else f"{label} must contain at least one identifier"
+    return sqlJoin(parts.map(part => quotedIdentifier(part, label)), trustedSql("."))
+
+def checkedOptionalIdentifier(value: string?, label: string) -> string?:
+    if value == null:
+        return null
+    return checkedIdentifier(value, label)
+
+class ComposedSqlTable:
+    constructor(private const name: string, private const schema: string?, private const alias: string?):
+        checkedIdentifier(name, "SQL table name")
+        checkedOptionalIdentifier(schema, "SQL schema name")
+        checkedOptionalIdentifier(alias, "SQL table alias")
+
+    def reference() -> DatabaseStatement:
+        const parts = self.schema == null ? [self.name] : [self.schema, self.name]
+        const name = quotedPath(parts, "SQL table name")
+        if self.alias == null:
+            return name
+        return sqlConcat([name, trustedSql(" AS "), quotedIdentifier(self.alias, "SQL table alias")])
+
+    def writeTarget() -> DatabaseStatement:
+        assert self.alias == null else "SQL write targets must not use a table alias"
+        const parts = self.schema == null ? [self.name] : [self.schema, self.name]
+        return quotedPath(parts, "SQL table name")
+
+export type SqlTable = ComposedSqlTable
+
+/// Creates a safely quoted table reference. Schema and alias are separate
+/// identifier parts; callers never build dotted identifier text themselves.
+export def sqlTable(name: string, schema: string? = null, alias: string? = null) -> SqlTable:
+    return ComposedSqlTable(name, schema, alias)
+
+class ComposedSqlExpression:
+    constructor(private const value: DatabaseStatement):
+        value.render(DatabaseParameterStyle.questionMark)
+
+    def statement() -> DatabaseStatement:
+        return self.value
+
+export type SqlExpression = ComposedSqlExpression
+
+/// References one column, optionally qualified by a table name or alias.
+export def sqlColumn(name: string, qualifier: string? = null) -> SqlExpression:
+    const column = quotedIdentifier(name, "SQL column name")
+    if qualifier == null:
+        return ComposedSqlExpression(column)
+    return ComposedSqlExpression(sqlConcat([
+        quotedIdentifier(qualifier, "SQL column qualifier"),
+        trustedSql("."),
+        column,
+    ]))
+
+/// Adds one bound runtime value to an expression.
+export def sqlValue(value: unknown) -> SqlExpression:
+    return ComposedSqlExpression(sqlParameter(value))
+
+class ComposedSqlField:
+    constructor(private const expression: SqlExpression?, private const qualifier: string?, private const alias: string?):
+        checkedOptionalIdentifier(qualifier, "SQL field qualifier")
+        checkedOptionalIdentifier(alias, "SQL field alias")
+        assert expression != null or alias == null else "SQL wildcard fields cannot have aliases"
+
+    def statement() -> DatabaseStatement:
+        let value = trustedSql("*")
+        if self.expression == null:
+            if self.qualifier != null:
+                value = sqlConcat([quotedIdentifier(self.qualifier, "SQL field qualifier"), trustedSql(".*")])
+        else:
+            value = self.expression.statement()
+        if self.alias == null:
+            return value
+        return sqlConcat([value, trustedSql(" AS "), quotedIdentifier(self.alias, "SQL field alias")])
+
+export type SqlField = ComposedSqlField
+
+/// Selects one expression and optionally maps its database spelling to a row field.
+export def sqlField(expression: SqlExpression, alias: string? = null) -> SqlField:
+    return ComposedSqlField(expression, null, alias)
+
+/// Common shorthand for selecting one named column.
+export def sqlNamedField(name: string, alias: string? = null, qualifier: string? = null) -> SqlField:
+    return sqlField(sqlColumn(name, qualifier=qualifier), alias=alias)
+
+/// Selects every column, optionally from one qualified table reference.
+export def sqlAllFields(qualifier: string? = null) -> SqlField:
+    return ComposedSqlField(null, qualifier, null)
+
+class ComposedSqlPredicate:
+    constructor(private const value: DatabaseStatement):
+        value.render(DatabaseParameterStyle.questionMark)
+
+    def statement() -> DatabaseStatement:
+        return self.value
+
+export type SqlPredicate = ComposedSqlPredicate
+
+def binaryPredicate(left: SqlExpression, operator: string, right: SqlExpression) -> SqlPredicate:
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        left.statement(),
+        trustedSql(" " + operator + " "),
+        right.statement(),
+        trustedSql(")"),
+    ]))
+
+export def sqlEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, "=", right)
+
+export def sqlNotEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, "<>", right)
+
+export def sqlLessThan(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, "<", right)
+
+export def sqlLessThanOrEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, "<=", right)
+
+export def sqlGreaterThan(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, ">", right)
+
+export def sqlGreaterThanOrEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
+    return binaryPredicate(left, ">=", right)
+
+export def sqlLike(left: SqlExpression, pattern: unknown) -> SqlPredicate:
+    return binaryPredicate(left, "LIKE", sqlValue(pattern))
+
+/// Common shorthand for comparing one named column with a bound value.
+export def sqlColumnEqual(name: string, value: unknown, qualifier: string? = null) -> SqlPredicate:
+    return sqlEqual(sqlColumn(name, qualifier=qualifier), sqlValue(value))
+
+export def sqlColumnNotEqual(name: string, value: unknown, qualifier: string? = null) -> SqlPredicate:
+    return sqlNotEqual(sqlColumn(name, qualifier=qualifier), sqlValue(value))
+
+export def sqlIsNull(expression: SqlExpression) -> SqlPredicate:
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        expression.statement(),
+        trustedSql(" IS NULL)"),
+    ]))
+
+export def sqlIsNotNull(expression: SqlExpression) -> SqlPredicate:
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        expression.statement(),
+        trustedSql(" IS NOT NULL)"),
+    ]))
+
+export def sqlBetween(expression: SqlExpression, minimum: unknown, maximum: unknown) -> SqlPredicate:
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        expression.statement(),
+        trustedSql(" BETWEEN "),
+        sqlParameter(minimum),
+        trustedSql(" AND "),
+        sqlParameter(maximum),
+        trustedSql(")"),
+    ]))
+
+/// The explicit predicate for an intentional unfiltered update or delete.
+export def sqlAllRows() -> SqlPredicate:
+    return ComposedSqlPredicate(trustedSql("(1 = 1)"))
+
+export def sqlNoRows() -> SqlPredicate:
+    return ComposedSqlPredicate(trustedSql("(1 = 0)"))
+
+export def sqlNot(predicate: SqlPredicate) -> SqlPredicate:
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("(NOT "),
+        predicate.statement(),
+        trustedSql(")"),
+    ]))
+
+def joinedPredicates(predicates: List<SqlPredicate>, separator: string, empty: SqlPredicate) -> SqlPredicate:
+    if predicates.size == 0:
+        return empty
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        sqlJoin(predicates.map(predicate => predicate.statement()), trustedSql(separator)),
+        trustedSql(")"),
+    ]))
+
+/// Combines predicates with SQL AND. The empty conjunction matches all rows.
+export def sqlAnd(predicates: List<SqlPredicate>) -> SqlPredicate:
+    return joinedPredicates(predicates, " AND ", sqlAllRows())
+
+/// Combines predicates with SQL OR. The empty disjunction matches no rows.
+export def sqlOr(predicates: List<SqlPredicate>) -> SqlPredicate:
+    return joinedPredicates(predicates, " OR ", sqlNoRows())
+
+export def sqlInValues(expression: SqlExpression, values: List<unknown>) -> SqlPredicate:
+    if values.size == 0:
+        return sqlNoRows()
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        expression.statement(),
+        trustedSql(" IN ("),
+        sqlJoin(values.map(value => sqlParameter(value)), trustedSql(", ")),
+        trustedSql("))"),
+    ]))
+
+export def sqlTupleIn(expressions: List<SqlExpression>, rows: List<List<unknown>>) -> SqlPredicate:
+    assert expressions.size > 0 else "SQL tuple predicates require at least one expression"
+    if rows.size == 0:
+        return sqlNoRows()
+    for row in rows:
+        assert row.size == expressions.size else "SQL tuple predicate rows must match the expression width"
+    return ComposedSqlPredicate(sqlConcat([
+        trustedSql("("),
+        sqlJoin(expressions.map(expression => expression.statement()), trustedSql(", ")),
+        trustedSql(") IN ("),
+        sqlRows(rows),
+        trustedSql(")"),
+    ]))
+
+class ComposedSqlOrder:
+    constructor(private const expression: SqlExpression, private const descending: bool):
+        pass
+
+    def statement() -> DatabaseStatement:
+        return sqlConcat([
+            self.expression.statement(),
+            trustedSql(self.descending ? " DESC" : " ASC"),
+        ])
+
+export type SqlOrder = ComposedSqlOrder
+
+export def sqlAscending(expression: SqlExpression) -> SqlOrder:
+    return ComposedSqlOrder(expression, false)
+
+export def sqlDescending(expression: SqlExpression) -> SqlOrder:
+    return ComposedSqlOrder(expression, true)
+
+class ComposedSqlJoin:
+    constructor(private const kind: string, private const table: SqlTable, private const predicate: SqlPredicate?):
+        pass
+
+    def statement() -> DatabaseStatement:
+        const base = sqlConcat([trustedSql(" " + self.kind + " "), self.table.reference()])
+        if self.predicate == null:
+            return base
+        return sqlConcat([base, trustedSql(" ON "), self.predicate.statement()])
+
+export type SqlJoin = ComposedSqlJoin
+
+export def sqlInnerJoin(table: SqlTable, predicate: SqlPredicate) -> SqlJoin:
+    return ComposedSqlJoin("INNER JOIN", table, predicate)
+
+export def sqlLeftJoin(table: SqlTable, predicate: SqlPredicate) -> SqlJoin:
+    return ComposedSqlJoin("LEFT JOIN", table, predicate)
+
+export def sqlCrossJoin(table: SqlTable) -> SqlJoin:
+    return ComposedSqlJoin("CROSS JOIN", table, null)
+
+def checkedLimit(value: number, label: string, minimum: number) -> number:
+    assert value.isInteger() and value >= minimum and value <= 1000000 else f"{label} must be an integer from {minimum} through 1000000"
+    return value
+
+/// Builds a common ANSI-quoted SELECT statement from typed predicates and
+/// bound values. Dialect-specific clauses stay outside this API.
+export def selectStatement(table: SqlTable, fields: List<SqlField>, joins: List<SqlJoin> = [], where: SqlPredicate? = null, orderBy: List<SqlOrder> = [], limit: number? = null, offset: number? = null, distinct: bool = false) -> DatabaseStatement:
+    assert fields.size > 0 else "SQL SELECT requires at least one field"
+    assert offset == null or limit != null else "SQL SELECT offset requires a limit for portable behavior"
+    const parts: List<DatabaseStatement> = [
+        trustedSql(distinct ? "SELECT DISTINCT " : "SELECT "),
+        sqlJoin(fields.map(field => field.statement()), trustedSql(", ")),
+        trustedSql(" FROM "),
+        table.reference(),
+    ]
+    for join in joins:
+        parts.append(join.statement())
+    if where != null:
+        parts.append(trustedSql(" WHERE "))
+        parts.append(where.statement())
+    if orderBy.size > 0:
+        parts.append(trustedSql(" ORDER BY "))
+        parts.append(sqlJoin(orderBy.map(order => order.statement()), trustedSql(", ")))
+    if limit != null:
+        parts.append(trustedSql(" LIMIT "))
+        parts.append(sqlParameter(checkedLimit(limit, "SQL SELECT limit", 1)))
+    if offset != null:
+        parts.append(trustedSql(" OFFSET "))
+        parts.append(sqlParameter(checkedLimit(offset, "SQL SELECT offset", 0)))
+    return sqlConcat(parts)
+
+/// Builds a row-validating database query directly from a SELECT description.
+export def selectQuery<T>(table: SqlTable, fields: List<SqlField>, RowType: Type<T>, joins: List<SqlJoin> = [], where: SqlPredicate? = null, orderBy: List<SqlOrder> = [], limit: number? = null, offset: number? = null, distinct: bool = false, maximumRows: number = 10000) -> DatabaseQuery<T>:
+    return query(selectStatement(table, fields, joins=joins, where=where, orderBy=orderBy, limit=limit, offset=offset, distinct=distinct), RowType, maximumRows=maximumRows)
+
+def checkedColumns(columns: List<string>) -> List<DatabaseStatement>:
+    assert columns.size > 0 else "SQL write operations require at least one column"
+    const seen: Set<string> = Set()
+    const statements: List<DatabaseStatement> = []
+    for column in columns:
+        const checked = checkedIdentifier(column, "SQL write column name")
+        assert checked not in seen else f"SQL write column '{checked}' is duplicated"
+        seen.add(checked)
+        statements.append(quotedIdentifier(checked, "SQL write column name"))
+    return statements
+
+export def insertStatement(table: SqlTable, columns: List<string>, rows: List<List<unknown>>) -> DatabaseStatement:
+    const names = checkedColumns(columns)
+    assert rows.size > 0 else "SQL INSERT requires at least one row"
+    for row in rows:
+        assert row.size == names.size else "SQL INSERT rows must match the column count"
+    return sqlConcat([
+        trustedSql("INSERT INTO "),
+        table.writeTarget(),
+        trustedSql(" ("),
+        sqlJoin(names, trustedSql(", ")),
+        trustedSql(") VALUES "),
+        sqlRows(rows),
+    ])
+
+export def insertCommand(table: SqlTable, columns: List<string>, rows: List<List<unknown>>, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
+    return command(insertStatement(table, columns, rows), minimumAffected=minimumAffected, maximumAffected=maximumAffected)
+
+class ComposedSqlAssignment:
+    constructor(private const column: string, private const expression: SqlExpression):
+        checkedIdentifier(column, "SQL assignment column name")
+
+    def statement() -> DatabaseStatement:
+        return sqlConcat([
+            quotedIdentifier(self.column, "SQL assignment column name"),
+            trustedSql(" = "),
+            self.expression.statement(),
+        ])
+
+export type SqlAssignment = ComposedSqlAssignment
+
+export def sqlAssign(column: string, expression: SqlExpression) -> SqlAssignment:
+    return ComposedSqlAssignment(column, expression)
+
+export def sqlSet(column: string, value: unknown) -> SqlAssignment:
+    return sqlAssign(column, sqlValue(value))
+
+export def updateStatement(table: SqlTable, assignments: List<SqlAssignment>, where: SqlPredicate) -> DatabaseStatement:
+    assert assignments.size > 0 else "SQL UPDATE requires at least one assignment"
+    return sqlConcat([
+        trustedSql("UPDATE "),
+        table.writeTarget(),
+        trustedSql(" SET "),
+        sqlJoin(assignments.map(assignment => assignment.statement()), trustedSql(", ")),
+        trustedSql(" WHERE "),
+        where.statement(),
+    ])
+
+export def updateCommand(table: SqlTable, assignments: List<SqlAssignment>, where: SqlPredicate, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
+    return command(updateStatement(table, assignments, where), minimumAffected=minimumAffected, maximumAffected=maximumAffected)
+
+export def deleteStatement(table: SqlTable, where: SqlPredicate) -> DatabaseStatement:
+    return sqlConcat([
+        trustedSql("DELETE FROM "),
+        table.writeTarget(),
+        trustedSql(" WHERE "),
+        where.statement(),
+    ])
+
+export def deleteCommand(table: SqlTable, where: SqlPredicate, minimumAffected: number = 0, maximumAffected: number = 1000000) -> DatabaseCommand:
+    return command(deleteStatement(table, where), minimumAffected=minimumAffected, maximumAffected=maximumAffected)

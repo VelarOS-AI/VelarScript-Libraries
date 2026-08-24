@@ -13,6 +13,7 @@ repository does not depend on this repository.
 | Package | Kind | Status | Purpose |
 | --- | --- | --- | --- |
 | `@velarscript-labs/database` | source library | experimental | Typed query and command descriptors over bounded executors |
+| `@velarscript-labs/sql` | source library | experimental | Safe Vel-style SQL DML builders over structured statements |
 | `@velarscript-labs/text-buffer` | source library | stable | Bounded incremental editor text storage |
 | `@velarscript-labs/noise` | adapter | experimental | Deterministic simplex noise |
 | `@velarscript-labs/msgpack` | adapter | experimental | Bounded MessagePack encoding and validation |

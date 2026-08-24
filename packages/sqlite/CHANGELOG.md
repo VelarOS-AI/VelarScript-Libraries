@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 — 2026-08-24
+
+- Accept only opaque structured Database statements; runtime values now reach
+  Node's `SQLTagStore` exclusively as bound values and prepared statements are
+  cached with a bounded LRU.
+- Parse every statement with SQLite's own grammar-derived `sqlite3-parser` and
+  reject invalid, multi-statement, trailing, or raw-placeholder SQL before it
+  reaches the native driver.
+- Enable defensive mode, foreign keys, safe integer reads, disabled extensions,
+  strict parameter names, explicit SQLite resource limits, and an authorizer
+  that denies attached databases and extension loading.
+- Add checked journal/read-only/cache options, an escaped `sqliteLiteral`
+  helper for DDL and PRAGMA positions, and a quoted `sqliteIdentifier` helper
+  for runtime-selected table or column names.
+
 ## 0.2.2 — 2026-08-24
 
 - Publish the readable `.vel` source together with frozen Node-targeted Velar

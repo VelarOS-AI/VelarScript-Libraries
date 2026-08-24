@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/sql",
+    "version": "0.1.0"
+  },
+  "target": "core",
+  "compilerVersion": "0.14.2",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "2e564f29b5a2e3804db0a7f7084218988ecda1b53504b5527a3f14ed6eb86e69"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "c2766432594e220bb809efa33cdbf03809175b3513277cd1946dc18f4398eb69",
+      "sourceMap": "8cd7ddb7ad1db2dbddbebdf5a400f3b7659b7bb672a92dadf99b04304222426b",
+      "interface": "17c749b55bcb6d17d320c8fd2c119bfc8b9ac257b6b5d8beb2f9f7d11e4d9748"
+    }
+  }
+}

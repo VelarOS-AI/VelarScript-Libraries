@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — 2026-08-24
+
+- Replace raw `(text, parameters)` execution with opaque composable statements
+  that preserve SQL fragments and bound runtime values until driver rendering.
+- Add safe parameter, tuple, row-list, concatenation, and dialect placeholder
+  rendering helpers; raw SQL grammar is now an explicit `trustedSql` boundary.
+- Make commands and queries own their complete statement so parameters cannot
+  drift from the operation contract at execution time.
+
 ## 0.2.2 — 2026-08-24
 
 - Publish the readable `.vel` source together with frozen Velar library ABI 1

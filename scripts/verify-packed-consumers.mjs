@@ -157,9 +157,9 @@ try {
   }, null, 2)}\n`, "utf8");
   await writeFile(join(consumer, "main.vel"), `
 import {deflate, inflate} from "@velarscript-labs/compression"
-import {query} from "@velarscript-labs/database"
 import {encode, parse} from "@velarscript-labs/msgpack"
 import {simplex2} from "@velarscript-labs/noise"
+import {selectQuery, sqlColumnEqual, sqlNamedField, sqlTable} from "@velarscript-labs/sql"
 import {TextBuffer} from "@velarscript-labs/text-buffer"
 import {parseYaml} from "@velarscript-labs/yaml"
 
@@ -176,7 +176,13 @@ const wire = deflate(encode({id: "u-1", name: "Ada"}))
 const user = parse(inflate(wire), PackedUser)
 const field = simplex2("packed-consumer")
 const configuration = PackedConfiguration.parse(parseYaml("port: 3000"))
-const packedUserQuery = query("SELECT id, name FROM users WHERE id = ?", PackedUser, maximumRows=1)
+const packedUserQuery = selectQuery(
+    sqlTable("users"),
+    [sqlNamedField("id"), sqlNamedField("name")],
+    PackedUser,
+    where=sqlColumnEqual("id", "u-1"),
+    maximumRows=1,
+)
 print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configuration.port}:{packedUserQuery.maximumRows}")
 `.trimStart(), "utf8");
 
@@ -193,7 +199,8 @@ print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configurat
     extensions: ["@velarscript/node"],
   }, null, 2)}\n`, "utf8");
   await writeFile(join(nodeConsumer, "tests", "sqlite.test.vel"), `
-import {command, execute, query, requireOne} from "@velarscript-labs/database"
+import {execute, requireOne, trustedSql} from "@velarscript-labs/database"
+import {insertCommand, selectQuery, sqlColumnEqual, sqlNamedField, sqlTable} from "@velarscript-labs/sql"
 import {openSqlite} from "@velarscript-labs/sqlite"
 
 type PackedUser:
@@ -202,11 +209,24 @@ type PackedUser:
 
 test "packed SQLite and database packages execute together":
     using database = await openSqlite(":memory:")
-    await database.execute("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL)")
-    const insertUser = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
-    const findUser = query("SELECT id, name FROM users WHERE id = ?", PackedUser, maximumRows=1)
-    await execute(database.executor(), insertUser, ["u-2", "Lin"])
-    const stored = await requireOne(database.executor(), findUser, ["u-2"])
+    await database.execute(trustedSql("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL)"))
+    const users = sqlTable("users")
+    const insertUser = insertCommand(
+        users,
+        ["id", "name"],
+        [["u-2", "Lin"]],
+        minimumAffected=1,
+        maximumAffected=1,
+    )
+    const findUser = selectQuery(
+        users,
+        [sqlNamedField("id"), sqlNamedField("name")],
+        PackedUser,
+        where=sqlColumnEqual("id", "u-2"),
+        maximumRows=1,
+    )
+    await execute(database.executor(), insertUser)
+    const stored = await requireOne(database.executor(), findUser)
     assert stored.name == "Lin" else "Packed SQLite result changed"
 `.trimStart(), "utf8");
   await run(cli, ["test"], nodeConsumer);

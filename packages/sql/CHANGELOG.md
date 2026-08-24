@@ -1,0 +1,11 @@
+# Changelog
+
+## 0.1.0 — 2026-08-24
+
+- Add Velar-style SELECT, join, insert, update, and delete builders over opaque
+  structured database statements.
+- Add checked ANSI identifier quoting, bound predicates, tuple membership,
+  ordering, pagination, typed query construction, and affected-row commands.
+- Add named-column selection and bound comparison shorthands for common cases.
+- Require explicit predicates for updates and deletes, with `sqlAllRows()` as
+  the searchable opt-in for intentional whole-table writes.

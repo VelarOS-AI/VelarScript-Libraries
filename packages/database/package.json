@@ -1,7 +1,7 @@
 {
   "name": "@velarscript-labs/database",
-  "version": "0.2.2",
-  "description": "Functional typed query and command operations for VelarScript database drivers.",
+  "version": "0.3.0",
+  "description": "Injection-resistant structured SQL operations for VelarScript database drivers.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [

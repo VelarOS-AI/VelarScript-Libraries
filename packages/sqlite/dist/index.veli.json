@@ -10,6 +10,40 @@
           "tag": "map",
           "value": [
             [
+              "SqliteJournalMode",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "enumObject"
+                  ],
+                  [
+                    "name",
+                    "SqliteJournalMode"
+                  ],
+                  [
+                    "identity",
+                    "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "delete",
+                        "truncate",
+                        "persist",
+                        "memory",
+                        "wal",
+                        "off"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
               "SqliteOptions",
               {
                 "tag": "object",
@@ -37,7 +71,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#type:SqliteOptions"
+                          "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#type:SqliteOptions"
                         ]
                       ]
                     }
@@ -60,7 +94,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ]
                 ]
               }
@@ -80,7 +114,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
@@ -100,7 +134,135 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConcurrencyError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "sqliteLiteral",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "unknown"
+                            ],
+                            [
+                              "boundary",
+                              true
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "class"
+                        ],
+                        [
+                          "name",
+                          "ComposedDatabaseStatement"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "sqliteIdentifier",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "class"
+                        ],
+                        [
+                          "name",
+                          "ComposedDatabaseStatement"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
+                        ]
+                      ]
+                    }
                   ]
                 ]
               }
@@ -120,7 +282,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
@@ -140,7 +302,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
@@ -181,7 +343,7 @@
                             ],
                             [
                               "identity",
-                              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#type:SqliteOptions"
+                              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#type:SqliteOptions"
                             ]
                           ]
                         }
@@ -226,7 +388,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConnection"
+                                "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConnection"
                               ]
                             ]
                           }
@@ -245,6 +407,8 @@
         {
           "tag": "set",
           "value": [
+            "sqliteLiteral",
+            "sqliteIdentifier",
             "openSqlite"
           ]
         }
@@ -375,12 +539,92 @@
                         ]
                       ]
                     }
+                  ],
+                  [
+                    "statementCacheCapacity",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "journalMode",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "enum"
+                              ],
+                              [
+                                "name",
+                                "SqliteJournalMode"
+                              ],
+                              [
+                                "identity",
+                                "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "readOnly",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "bool"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#type:SqliteOptions",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#type:SqliteOptions",
               {
                 "tag": "map",
                 "value": [
@@ -479,12 +723,200 @@
                         ]
                       ]
                     }
+                  ],
+                  [
+                    "statementCacheCapacity",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "journalMode",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "enum"
+                              ],
+                              [
+                                "name",
+                                "SqliteJournalMode"
+                              ],
+                              [
+                                "identity",
+                                "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "readOnly",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "bool"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:PreparedDatabaseStatement",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "text",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "string"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "list"
+                        ],
+                        [
+                          "element",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "unknown"
+                              ],
+                              [
+                                "boundary",
+                                true
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseStatementData",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "fragments",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "list"
+                        ],
+                        [
+                          "element",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "string"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "list"
+                        ],
+                        [
+                          "element",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "unknown"
+                              ],
+                              [
+                                "boundary",
+                                true
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor",
               {
                 "tag": "map",
                 "value": [
@@ -507,32 +939,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -544,14 +959,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -599,32 +1013,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -636,14 +1033,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -695,32 +1091,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -732,14 +1111,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -811,32 +1189,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -848,14 +1209,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -903,32 +1263,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -940,14 +1283,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -999,32 +1341,15 @@
                                 "value": [
                                   [
                                     "kind",
-                                    "string"
-                                  ]
-                                ]
-                              },
-                              {
-                                "tag": "object",
-                                "value": [
-                                  [
-                                    "kind",
-                                    "list"
+                                    "class"
                                   ],
                                   [
-                                    "element",
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "unknown"
-                                        ],
-                                        [
-                                          "boundary",
-                                          true
-                                        ]
-                                      ]
-                                    }
+                                    "name",
+                                    "ComposedDatabaseStatement"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1036,14 +1361,13 @@
                           {
                             "tag": "array",
                             "value": [
-                              "text",
-                              "parameters"
+                              "statement"
                             ]
                           }
                         ],
                         [
                           "requiredParameters",
-                          2
+                          1
                         ],
                         [
                           "result",
@@ -1092,18 +1416,26 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseCommand",
               {
                 "tag": "map",
                 "value": [
                   [
-                    "text",
+                    "statement",
                     {
                       "tag": "object",
                       "value": [
                         [
                           "kind",
-                          "string"
+                          "class"
+                        ],
+                        [
+                          "name",
+                          "ComposedDatabaseStatement"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                         ]
                       ]
                     }
@@ -1144,11 +1476,30 @@
           "tag": "map",
           "value": [
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:PreparedDatabaseStatement",
               {
                 "tag": "set",
                 "value": [
                   "text",
+                  "parameters"
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseStatementData",
+              {
+                "tag": "set",
+                "value": [
+                  "fragments",
+                  "parameters"
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseCommand",
+              {
+                "tag": "set",
+                "value": [
                   "minimumAffected",
                   "maximumAffected"
                 ]
@@ -1164,19 +1515,27 @@
           "value": [
             [
               "SqliteOptions",
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#type:SqliteOptions"
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#type:SqliteOptions"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor",
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:PreparedDatabaseStatement",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:PreparedDatabaseStatement"
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseStatementData",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseStatementData"
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
             ],
             [
               "DatabaseExecutor",
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand",
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand"
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseCommand"
             ]
           ]
         }
@@ -1185,14 +1544,111 @@
         "typeAliases",
         {
           "tag": "map",
-          "value": []
+          "value": [
+            [
+              "DatabaseStatement",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "class"
+                  ],
+                  [
+                    "name",
+                    "ComposedDatabaseStatement"
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
+                  ]
+                ]
+              }
+            ]
+          ]
         }
       ],
       [
         "enums",
         {
           "tag": "map",
-          "value": []
+          "value": [
+            [
+              "SqliteJournalMode",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "delete",
+                        "truncate",
+                        "persist",
+                        "memory",
+                        "wal",
+                        "off"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "package:@velarscript-labs/sqlite@0.3.0/src/index.vel#enum:SqliteJournalMode"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "delete",
+                        "truncate",
+                        "persist",
+                        "memory",
+                        "wal",
+                        "off"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "package:@velarscript-labs/database@0.3.0/src/index.vel#enum:DatabaseParameterStyle",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "package:@velarscript-labs/database@0.3.0/src/index.vel#enum:DatabaseParameterStyle"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "questionMark",
+                        "dollarNumber",
+                        "colonNumber"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
         }
       ],
       [
@@ -1693,7 +2149,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -1719,6 +2191,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -1730,7 +2206,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -1785,7 +2261,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -1811,6 +2303,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -1822,7 +2318,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -1881,7 +2377,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -1907,6 +2419,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -1918,7 +2434,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -2077,7 +2593,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -2103,6 +2635,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -2114,7 +2650,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -2169,7 +2705,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -2195,6 +2747,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -2206,7 +2762,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -2265,7 +2821,23 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "list"
+                                        ],
+                                        [
+                                          "element",
+                                          {
+                                            "tag": "object",
+                                            "value": [
+                                              [
+                                                "kind",
+                                                "string"
+                                              ]
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     },
@@ -2291,6 +2863,10 @@
                                               ]
                                             ]
                                           }
+                                        ],
+                                        [
+                                          "readonlyView",
+                                          true
                                         ]
                                       ]
                                     }
@@ -2302,7 +2878,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
+                                    "fragments",
                                     "params"
                                   ]
                                 }
@@ -2789,7 +3365,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ]
                 ]
               }
@@ -2831,7 +3407,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -2895,7 +3471,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
@@ -2937,7 +3513,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -3001,7 +3577,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConcurrencyError"
                   ]
                 ]
               }
@@ -3102,32 +3678,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
-                                        ]
-                                      ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
+                                          "class"
                                         ],
                                         [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -3139,8 +3698,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "params"
+                                    "statement"
                                   ]
                                 }
                               ],
@@ -3217,7 +3775,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -3253,7 +3811,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -3285,31 +3851,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -3319,9 +3860,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -3404,7 +3944,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -3436,31 +3984,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -3470,9 +3993,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -3560,7 +4082,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
@@ -3665,32 +4187,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
-                                        ]
-                                      ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
+                                          "class"
                                         ],
                                         [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -3702,8 +4207,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "params"
+                                    "statement"
                                   ]
                                 }
                               ],
@@ -3780,7 +4284,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -3816,7 +4320,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -3848,31 +4360,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -3882,9 +4369,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -3967,7 +4453,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -3999,31 +4493,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -4033,9 +4502,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -4138,7 +4606,7 @@
                                                   ],
                                                   [
                                                     "identity",
-                                                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction"
+                                                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction"
                                                   ]
                                                 ]
                                               }
@@ -4321,13 +4789,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError",
               {
                 "tag": "object",
                 "value": [
@@ -4554,13 +5022,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteBackpressureError",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteBackpressureError",
               {
                 "tag": "object",
                 "value": [
@@ -4596,7 +5064,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -4660,13 +5128,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConcurrencyError",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConcurrencyError",
               {
                 "tag": "object",
                 "value": [
@@ -4702,7 +5170,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -4766,13 +5234,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConcurrencyError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction",
               {
                 "tag": "object",
                 "value": [
@@ -4867,32 +5335,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
-                                        ]
-                                      ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
+                                          "class"
                                         ],
                                         [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -4904,8 +5355,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "params"
+                                    "statement"
                                   ]
                                 }
                               ],
@@ -4982,7 +5432,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -5018,7 +5468,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5050,31 +5508,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -5084,9 +5517,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -5169,7 +5601,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5201,31 +5641,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -5235,9 +5650,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -5325,13 +5739,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConnection",
+              "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConnection",
               {
                 "tag": "object",
                 "value": [
@@ -5430,32 +5844,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
-                                        ]
-                                      ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
+                                          "class"
                                         ],
                                         [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -5467,8 +5864,7 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "params"
+                                    "statement"
                                   ]
                                 }
                               ],
@@ -5545,7 +5941,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -5581,7 +5977,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5613,31 +6017,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -5647,9 +6026,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -5732,7 +6110,15 @@
                                       "value": [
                                         [
                                           "kind",
-                                          "string"
+                                          "class"
+                                        ],
+                                        [
+                                          "name",
+                                          "ComposedDatabaseStatement"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5764,31 +6150,6 @@
                                           }
                                         ]
                                       ]
-                                    },
-                                    {
-                                      "tag": "object",
-                                      "value": [
-                                        [
-                                          "kind",
-                                          "list"
-                                        ],
-                                        [
-                                          "element",
-                                          {
-                                            "tag": "object",
-                                            "value": [
-                                              [
-                                                "kind",
-                                                "unknown"
-                                              ],
-                                              [
-                                                "boundary",
-                                                true
-                                              ]
-                                            ]
-                                          }
-                                        ]
-                                      ]
                                     }
                                   ]
                                 }
@@ -5798,9 +6159,8 @@
                                 {
                                   "tag": "array",
                                   "value": [
-                                    "sql",
-                                    "RowType",
-                                    "params"
+                                    "statement",
+                                    "RowType"
                                   ]
                                 }
                               ],
@@ -5903,7 +6263,7 @@
                                                   ],
                                                   [
                                                     "identity",
-                                                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteTransaction"
+                                                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteTransaction"
                                                   ]
                                                 ]
                                               }
@@ -6086,13 +6446,278 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.2.2/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.0/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "unknown"
+                                  ],
+                                  [
+                                    "boundary",
+                                    true
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "fragments",
+                        "parameters"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "data",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "DatabaseStatementData"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseStatementData"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "render",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "enum"
+                                        ],
+                                        [
+                                          "name",
+                                          "DatabaseParameterStyle"
+                                        ],
+                                        [
+                                          "identity",
+                                          "package:@velarscript-labs/database@0.3.0/src/index.vel#enum:DatabaseParameterStyle"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "style"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                1
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "PreparedDatabaseStatement"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:PreparedDatabaseStatement"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#DatabaseAffectedRowsError",
               {
                 "tag": "object",
                 "value": [
@@ -6285,13 +6910,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError"
+                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#DatabaseAffectedRowsError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#DatabaseRowNotFoundError",
               {
                 "tag": "object",
                 "value": [
@@ -6391,7 +7016,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError"
+                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#DatabaseRowNotFoundError"
                   ]
                 ]
               }
@@ -6433,13 +7058,13 @@
           "tag": "map",
           "value": [
             [
-              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery",
+              "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseQuery",
               {
                 "tag": "object",
                 "value": [
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                    "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#type:DatabaseQuery"
                   ],
                   [
                     "name",
@@ -6469,13 +7094,21 @@
                       "tag": "map",
                       "value": [
                         [
-                          "text",
+                          "statement",
                           {
                             "tag": "object",
                             "value": [
                               [
                                 "kind",
-                                "string"
+                                "class"
+                              ],
+                              [
+                                "name",
+                                "ComposedDatabaseStatement"
+                              ],
+                              [
+                                "identity",
+                                "velar:package:@velarscript-labs/database@0.3.0/src/index.vel#ComposedDatabaseStatement"
                               ]
                             ]
                           }
@@ -6557,7 +7190,6 @@
                     {
                       "tag": "set",
                       "value": [
-                        "text",
                         "maximumRows",
                         "parse"
                       ]

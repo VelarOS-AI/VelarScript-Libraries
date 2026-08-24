@@ -15,6 +15,14 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
+      "name": "@velarscript-labs/sql",
+      "path": "packages/sql",
+      "kind": "source-library",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.13.0 <0.15.0",
+      "targets": ["core", "node", "web", "desktop"]
+    },
+    {
       "name": "@velarscript-labs/text-buffer",
       "path": "packages/text-buffer",
       "kind": "source-library",

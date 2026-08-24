@@ -1,23 +1,71 @@
-import {DatabaseAffectedRowsError, DatabaseExecutor, all, command, execute, one, query, requireOne} from "../src/index.vel"
+import {DatabaseAffectedRowsError, DatabaseExecutor, DatabaseParameterStyle, DatabaseStatement, all, command, execute, one, query, requireOne, sqlConcat, sqlParameter, sqlRows, sqlTuple, trustedSql, trustedSqlTemplate} from "../src/index.vel"
 
 type User:
     id: number
     name: string
 
 def fakeExecutor(rows: List<unknown>, affected: number = 1) -> DatabaseExecutor:
-    async def executeStatement(text: string, parameters: List<unknown>) -> number:
+    async def executeStatement(statement: DatabaseStatement) -> number:
         return affected
 
-    async def oneRow(text: string, parameters: List<unknown>) -> unknown:
+    async def oneRow(statement: DatabaseStatement) -> unknown:
         return rows.get(0)
 
-    async def allRows(text: string, parameters: List<unknown>) -> List<unknown>:
+    async def allRows(statement: DatabaseStatement) -> List<unknown>:
         return rows.copy()
 
     return {execute: executeStatement, one: oneRow, all: allRows}
 
+test "runtime values stay outside SQL text under every supported placeholder style":
+    const attack = "Ada'); DROP TABLE users; --"
+    const statement = sqlConcat([
+        trustedSql("SELECT id, name FROM users WHERE name = "),
+        sqlParameter(attack),
+    ])
+    const questionMark = statement.render(DatabaseParameterStyle.questionMark)
+    const dollarNumber = statement.render(DatabaseParameterStyle.dollarNumber)
+    const colonNumber = statement.render(DatabaseParameterStyle.colonNumber)
+    assert questionMark.text == "SELECT id, name FROM users WHERE name = ?" else "Question-mark rendering changed"
+    assert dollarNumber.text == "SELECT id, name FROM users WHERE name = $1" else "Dollar rendering changed"
+    assert colonNumber.text == "SELECT id, name FROM users WHERE name = :1" else "Colon rendering changed"
+    assert questionMark.parameters.size == 1 else "Bound value count changed"
+    assert (questionMark.parameters[0] is string) and questionMark.parameters[0] == attack else "Bound value changed"
+    assert not questionMark.text.has("DROP TABLE") else "Runtime value entered SQL text"
+
+test "trusted SQL templates keep authored grammar and runtime values separate":
+    const fragments = [
+        "SELECT id FROM users WHERE name = ",
+        " AND active = ",
+        "",
+    ]
+    const parameters: List<unknown> = ["Ada", true]
+    const statement = trustedSqlTemplate(fragments, parameters)
+    fragments[0] = "DROP TABLE users; SELECT id FROM users WHERE name = "
+    parameters[0] = "changed"
+    const prepared = statement.render(DatabaseParameterStyle.questionMark)
+    assert prepared.text == "SELECT id FROM users WHERE name = ? AND active = ?" else "SQL template grammar changed"
+    assert prepared.parameters.size == 2 else "SQL template value count changed"
+    assert (prepared.parameters[0] is string) and prepared.parameters[0] == "Ada" else "SQL template text value changed"
+    const boolValue = prepared.parameters[1]
+    assert boolValue is bool else "SQL template bool value type changed"
+    assert boolValue else "SQL template bool value changed"
+
+test "tuple and row helpers bind dynamic lists without raw placeholder construction":
+    const tuple = sqlTuple([1, "Ada"]).render(DatabaseParameterStyle.questionMark)
+    assert tuple.text == "(?, ?)" else "SQL tuple shape changed"
+    assert tuple.parameters.size == 2 else "SQL tuple value count changed"
+    assert (tuple.parameters[0] is number) and tuple.parameters[0] == 1 else "SQL tuple number changed"
+    assert (tuple.parameters[1] is string) and tuple.parameters[1] == "Ada" else "SQL tuple text changed"
+    const rows = sqlRows([[1, "Ada"], [2, "Lin"]]).render(DatabaseParameterStyle.dollarNumber)
+    assert rows.text == "($1, $2), ($3, $4)" else "SQL row list shape changed"
+    assert rows.parameters.size == 4 else "SQL row value count changed"
+    assert (rows.parameters[0] is number) and rows.parameters[0] == 1 else "First SQL row id changed"
+    assert (rows.parameters[1] is string) and rows.parameters[1] == "Ada" else "First SQL row name changed"
+    assert (rows.parameters[2] is number) and rows.parameters[2] == 2 else "Second SQL row id changed"
+    assert (rows.parameters[3] is string) and rows.parameters[3] == "Lin" else "Second SQL row name changed"
+
 test "query operations validate untrusted rows at one reusable boundary":
-    const users = query("SELECT id, name FROM users", User, maximumRows=2)
+    const users = query(trustedSql("SELECT id, name FROM users"), User, maximumRows=2)
     const executor = fakeExecutor([{id: 1, name: "Ada"}])
     const user = await one(executor, users)
     assert user != null and user.name == "Ada" else "Optional row changed"
@@ -25,20 +73,38 @@ test "query operations validate untrusted rows at one reusable boundary":
     assert (await all(executor, users)).size == 1 else "Row list changed"
 
 test "commands enforce affected-row contracts without modeling tables":
-    const insert = command("INSERT INTO users (id, name) VALUES (?, ?)", minimumAffected=1, maximumAffected=1)
-    assert await execute(fakeExecutor([], affected=1), insert, [1, "Ada"]) == 1 else "Affected row count changed"
+    const insert = command(sqlConcat([
+        trustedSql("INSERT INTO users (id, name) VALUES "),
+        sqlTuple([1, "Ada"]),
+    ]), minimumAffected = 1, maximumAffected = 1)
+    assert await execute(fakeExecutor([], affected=1), insert) == 1 else "Affected row count changed"
     let rejected = false
     try:
-        await execute(fakeExecutor([], affected=2), insert, [1, "Ada"])
+        await execute(fakeExecutor([], affected=2), insert)
     catch error:
         rejected = error is DatabaseAffectedRowsError
     assert rejected else "Command affected-row drift was accepted"
 
 test "query-specific row limits narrow the driver boundary":
-    const users = query("SELECT id, name FROM users", User, maximumRows=1)
+    const users = query(trustedSql("SELECT id, name FROM users"), User, maximumRows=1)
     let rejected = false
     try:
         await all(fakeExecutor([{id: 1, name: "Ada"}, {id: 2, name: "Lin"}]), users)
     catch error:
         rejected = error.name == "AssertionError"
     assert rejected else "Query row limit was not enforced"
+
+test "empty and ragged dynamic row lists fail before reaching a driver":
+    let emptyRejected = false
+    try:
+        sqlRows([])
+    catch error:
+        emptyRejected = error.name == "AssertionError"
+    assert emptyRejected else "Empty SQL row list was accepted"
+
+    let raggedRejected = false
+    try:
+        sqlRows([[1], [2, 3]])
+    catch error:
+        raggedRejected = error.name == "AssertionError"
+    assert raggedRejected else "Ragged SQL row list was accepted"

@@ -1,0 +1,137 @@
+import {DatabaseParameterStyle} from "@velarscript-labs/database"
+import {deleteCommand, insertCommand, selectQuery, selectStatement, sqlAllFields, sqlAllRows, sqlAnd, sqlAscending, sqlColumn, sqlColumnEqual, sqlColumnNotEqual, sqlEqual, sqlField, sqlInValues, sqlLeftJoin, sqlNamedField, sqlNoRows, sqlSet, sqlTable, sqlTupleIn, sqlValue, updateCommand} from "../src/index.vel"
+
+type UserRow:
+    id: string
+    displayName: string
+
+test "select builders quote identifiers and bind every runtime value":
+    const attack = "Ada'); DROP TABLE users; --"
+    const statement = selectStatement(
+        sqlTable("users", schema="main", alias="user"),
+        [
+            sqlNamedField("id", qualifier="user"),
+            sqlNamedField("display_name", alias="displayName", qualifier="user"),
+        ],
+        where = sqlAnd([
+            sqlColumnEqual("display_name", attack, qualifier="user"),
+            sqlInValues(sqlColumn("id", qualifier="user"), ["u-1", "u-2"]),
+        ]),
+        orderBy = [sqlAscending(sqlColumn("id", qualifier="user"))],
+        limit = 10,
+        offset = 2,
+    ).render(DatabaseParameterStyle.questionMark)
+    assert statement.text == `SELECT "user"."id", "user"."display_name" AS "displayName" FROM "main"."users" AS "user" WHERE (("user"."display_name" = ?) AND ("user"."id" IN (?, ?))) ORDER BY "user"."id" ASC LIMIT ? OFFSET ?` else "SELECT rendering changed"
+    assert statement.parameters.size == 5 else "SELECT parameter count changed"
+    assert (statement.parameters[0] is string) and statement.parameters[0] == attack else "SELECT attack value changed"
+    assert not statement.text.has("DROP TABLE") else "SELECT runtime value entered SQL text"
+
+test "identifier injection stays inside quoted identifier grammar":
+    const statement = selectStatement(
+        sqlTable(`users"; DROP TABLE worlds; --`),
+        [sqlAllFields()],
+    ).render(DatabaseParameterStyle.questionMark)
+    assert statement.text == `SELECT * FROM "users""; DROP TABLE worlds; --"` else "Identifier quoting changed"
+    assert statement.parameters.size == 0 else "Identifier quoting added a parameter"
+
+test "empty collection predicates have explicit set semantics":
+    const emptyIn = selectStatement(
+        sqlTable("users"),
+        [sqlAllFields()],
+        where = sqlInValues(sqlColumn("id"), []),
+    ).render(DatabaseParameterStyle.questionMark)
+    assert emptyIn.text == `SELECT * FROM "users" WHERE (1 = 0)` else "Empty IN must match no rows"
+    const emptyAnd = selectStatement(
+        sqlTable("users"),
+        [sqlAllFields()],
+        where = sqlAnd([]),
+    ).render(DatabaseParameterStyle.questionMark)
+    assert emptyAnd.text == `SELECT * FROM "users" WHERE (1 = 1)` else "Empty AND must match all rows"
+
+test "named-column shorthands still bind values structurally":
+    const statement = selectStatement(
+        sqlTable("users"),
+        [sqlNamedField("id")],
+        where = sqlColumnNotEqual("name", "Ada"),
+    ).render(DatabaseParameterStyle.questionMark)
+    assert statement.text == `SELECT "id" FROM "users" WHERE ("name" <> ?)` else "Named-column shorthand changed"
+    assert statement.parameters.size == 1 else "Named-column shorthand parameter count changed"
+
+test "joins and tuple membership compose without placeholder text":
+    const state = sqlTable("chunk_states", alias="state")
+    const overrideTable = sqlTable("block_overrides", alias="override")
+    const statement = selectStatement(
+        state,
+        [sqlField(sqlColumn("revision", qualifier="state"))],
+        joins = [sqlLeftJoin(overrideTable, sqlEqual(
+            sqlColumn("world_id", qualifier="override"),
+            sqlColumn("world_id", qualifier="state"),
+        ))],
+        where = sqlTupleIn([
+            sqlColumn("chunk_x", qualifier="state"),
+            sqlColumn("chunk_y", qualifier="state"),
+            sqlColumn("chunk_z", qualifier="state"),
+        ], [[1, 2, 3], [4, 5, 6]]),
+    ).render(DatabaseParameterStyle.dollarNumber)
+    assert statement.text == `SELECT "state"."revision" FROM "chunk_states" AS "state" LEFT JOIN "block_overrides" AS "override" ON ("override"."world_id" = "state"."world_id") WHERE ("state"."chunk_x", "state"."chunk_y", "state"."chunk_z") IN (($1, $2, $3), ($4, $5, $6))` else "Join or tuple rendering changed"
+    assert statement.parameters.size == 6 else "Tuple parameter count changed"
+
+test "insert update and delete builders keep writes bounded and structured":
+    const users = sqlTable("users")
+    const insert = insertCommand(
+        users,
+        ["id", "display_name"],
+        [["u-1", "Ada"], ["u-2", "Lin"]],
+        minimumAffected = 2,
+        maximumAffected = 2,
+    )
+    const inserted = insert.statement.render(DatabaseParameterStyle.questionMark)
+    assert inserted.text == `INSERT INTO "users" ("id", "display_name") VALUES (?, ?), (?, ?)` else "INSERT rendering changed"
+    assert inserted.parameters.size == 4 else "INSERT parameter count changed"
+
+    const update = updateCommand(
+        users,
+        [sqlSet("display_name", "Grace")],
+        sqlEqual(sqlColumn("id"), sqlValue("u-1")),
+        maximumAffected = 1,
+    ).statement.render(DatabaseParameterStyle.questionMark)
+    assert update.text == `UPDATE "users" SET "display_name" = ? WHERE ("id" = ?)` else "UPDATE rendering changed"
+    assert update.parameters.size == 2 else "UPDATE parameter count changed"
+
+    const deletion = deleteCommand(users, sqlAllRows()).statement.render(DatabaseParameterStyle.questionMark)
+    assert deletion.text == `DELETE FROM "users" WHERE (1 = 1)` else "Explicit all-row DELETE rendering changed"
+
+test "write builders reject malformed shapes before reaching a driver":
+    let duplicateRejected = false
+    try:
+        insertCommand(sqlTable("users"), ["id", "id"], [["u-1", "u-1"]])
+    catch error:
+        duplicateRejected = error.name == "AssertionError"
+    assert duplicateRejected else "Duplicate INSERT columns were accepted"
+
+    let widthRejected = false
+    try:
+        insertCommand(sqlTable("users"), ["id", "name"], [["u-1"]])
+    catch error:
+        widthRejected = error.name == "AssertionError"
+    assert widthRejected else "Ragged INSERT rows were accepted"
+
+    let aliasRejected = false
+    try:
+        deleteCommand(sqlTable("users", alias="user"), sqlNoRows())
+    catch error:
+        aliasRejected = error.name == "AssertionError"
+    assert aliasRejected else "Aliased write target was accepted"
+
+test "typed select queries preserve row validation metadata":
+    const operation = selectQuery(
+        sqlTable("users"),
+        [
+            sqlField(sqlColumn("id")),
+            sqlField(sqlColumn("display_name"), alias="displayName"),
+        ],
+        UserRow,
+        limit = 1,
+        maximumRows = 1,
+    )
+    assert operation.maximumRows == 1 else "Typed SELECT maximumRows changed"
