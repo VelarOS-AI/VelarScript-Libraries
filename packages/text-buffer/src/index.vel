@@ -248,7 +248,7 @@ def lineStartIn(node: RopeNode, line: number) -> number:
 def copySelection(selection: TextSelection?) -> TextSelection?:
     if selection == null:
         return null
-    return {anchor: selection.anchor, head: selection.head}
+    return TextSelection.from(selection)
 
 def copyEdits(changes: List<TextChange>) -> HistoryStep:
     let forward: List<TextEdit> = []
@@ -329,7 +329,7 @@ export class TextBuffer:
             const removed = self.slice(edit.start, edit.end)
             removedBytes += Text.utf8Size(removed)
             insertedBytes += Text.utf8Size(inserted)
-            normalized.append({start: edit.start, end: edit.end, inserted})
+            normalized.append(TextEdit.from(edit, {inserted}))
             changes.append({start: edit.start, removed, inserted, beforeRevision, afterRevision: beforeRevision + 1})
             previousEnd = edit.end
             first = false

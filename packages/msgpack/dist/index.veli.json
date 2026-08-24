@@ -518,6 +518,60 @@
                         ]
                       ]
                     }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
                   ]
                 ]
               }
@@ -724,6 +778,60 @@
                               [
                                 "identity",
                                 "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
                               ]
                             ]
                           }
@@ -942,6 +1050,60 @@
                         ]
                       ]
                     }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
                   ]
                 ]
               }
@@ -1148,6 +1310,60 @@
                               [
                                 "identity",
                                 "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
                               ]
                             ]
                           }
@@ -1464,7 +1680,8 @@
                   "size",
                   "copy",
                   "slice",
-                  "toBytes"
+                  "toBytes",
+                  "values"
                 ]
               }
             ],
@@ -1476,7 +1693,8 @@
                   "size",
                   "copy",
                   "slice",
-                  "toBytes"
+                  "toBytes",
+                  "values"
                 ]
               }
             ],
@@ -1488,7 +1706,8 @@
                   "size",
                   "copy",
                   "slice",
-                  "toBytes"
+                  "toBytes",
+                  "values"
                 ]
               }
             ],
@@ -1500,7 +1719,8 @@
                   "size",
                   "copy",
                   "slice",
-                  "toBytes"
+                  "toBytes",
+                  "values"
                 ]
               }
             ],

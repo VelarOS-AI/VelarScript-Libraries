@@ -358,6 +358,24 @@ function replaceMatches(value, expression, replacement, options = {}) {
   return __velarTextJoin(output, "");
 }
 
+// velar-standard:velar/compiler-runtime-reactive-v1
+var __velarReactiveIterateKey = null;
+var __velarReactiveStructureKey = null;
+function __velarReactiveRaw(value) {
+  return value;
+}
+function __velarReactiveCollectionRead(value, key, child) {
+  return child === void 0 ? null : child;
+}
+function __velarReactiveCollectionTrack() {
+}
+function __velarReactiveCollectionLink() {
+}
+function __velarReactiveCollectionTrigger() {
+}
+function __velarReactiveCollectionUnlink() {
+}
+
 // velar-standard:velar/compiler-runtime-primitives-v1
 var __velarMaxTextCodeUnits2 = 16 * 1024 * 1024;
 var __velarTextNativeArray2 = globalThis.Array;
@@ -600,7 +618,7 @@ var __VelarAddressInUseError = class extends __velarHostErrorNativeError {
 };
 __velarHostErrorDefineProperty(__VelarAddressInUseError, "name", { value: "AddressInUseError", writable: false, enumerable: false, configurable: true });
 
-// velar-standard:velar/compiler-runtime-types-v1
+// velar-standard:velar/compiler-runtime-collections-v1
 var __velarCollectionNativeArray = globalThis.Array;
 var __velarCollectionNativeMap = globalThis.Map;
 var __velarCollectionNativeSet = globalThis.Set;
@@ -625,23 +643,118 @@ var __velarCollectionWeakMapPrototype = __velarCollectionGetOwnPropertyDescripto
 var __velarCollectionWeakMapGetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionWeakMapPrototype, "get")?.value;
 var __velarCollectionWeakMapSetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionWeakMapPrototype, "set")?.value;
 var __velarCollectionBrands = new __velarCollectionNativeWeakMap();
+var __velarCollectionListNativeNumber = globalThis.Number;
+var __velarCollectionListNativeMath = globalThis.Math;
+var __velarCollectionListNativeRangeError = globalThis.RangeError;
+var __velarCollectionListArrayPrototype = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeArray, "prototype")?.value;
+var __velarCollectionListOwnNamesOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertyNames")?.value;
+var __velarCollectionListOwnSymbolsOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertySymbols")?.value;
+var __velarCollectionListDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "defineProperty")?.value;
+var __velarCollectionListObjectIsOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "is")?.value;
+var __velarCollectionListIntegerOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListNativeNumber, "isInteger")?.value;
+var __velarCollectionListNaNOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListNativeNumber, "isNaN")?.value;
+var __velarCollectionListFiniteOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListNativeNumber, "isFinite")?.value;
+var __velarCollectionListMaximumOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListNativeMath, "max")?.value;
+var __velarCollectionListMinimumOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListNativeMath, "min")?.value;
+var __velarCollectionListJoinOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListArrayPrototype, "join")?.value;
+var __velarCollectionListSortOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListArrayPrototype, "sort")?.value;
+var __velarCollectionListReverseOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionListArrayPrototype, "reverse")?.value;
+function __velarCollectionListIsArray(value) {
+  return __velarCollectionHostCall(__velarCollectionArrayIsArray, __velarCollectionNativeArray, [value]);
+}
+function __velarCollectionListGetOwnPropertyDescriptor(value, key) {
+  return __velarCollectionHostCall(__velarCollectionGetOwnPropertyDescriptor, __velarCollectionNativeObject, [value, key]);
+}
+function __velarCollectionListOwnNames(value) {
+  return __velarCollectionHostCall(__velarCollectionListOwnNamesOperation, __velarCollectionNativeObject, [value]);
+}
+function __velarCollectionListOwnSymbols(value) {
+  return __velarCollectionHostCall(__velarCollectionListOwnSymbolsOperation, __velarCollectionNativeObject, [value]);
+}
+function __velarCollectionListDefineProperty(value, key, descriptor) {
+  return __velarCollectionHostCall(__velarCollectionListDefinePropertyOperation, __velarCollectionNativeObject, [value, key, descriptor]);
+}
+function __velarCollectionListIsInteger(value) {
+  return __velarCollectionHostCall(__velarCollectionListIntegerOperation, __velarCollectionListNativeNumber, [value]);
+}
+function __velarCollectionListHostJoin(value, separator) {
+  return __velarCollectionHostCall(__velarCollectionListJoinOperation, value, [separator]);
+}
+var __velarCollectionSetMapNativeRangeError = globalThis.RangeError;
+var __velarCollectionSetMapFreezeOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "freeze")?.value;
+var __velarCollectionSetAddOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "add")?.value;
+var __velarCollectionSetHasOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "has")?.value;
+var __velarCollectionSetDeleteOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "delete")?.value;
+var __velarCollectionSetClearOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "clear")?.value;
+var __velarCollectionSetValuesOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "values")?.value;
+var __velarCollectionMapGetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "get")?.value;
+var __velarCollectionMapSetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "set")?.value;
+var __velarCollectionMapHasOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "has")?.value;
+var __velarCollectionMapDeleteOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "delete")?.value;
+var __velarCollectionMapClearOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "clear")?.value;
+var __velarCollectionMapKeysOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "keys")?.value;
+var __velarCollectionMapValuesOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "values")?.value;
+var __velarCollectionMapEntriesOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "entries")?.value;
+var __velarCollectionSetMapMapIteratorPrototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [__velarCollectionHostCall(__velarCollectionMapEntriesOperation, new __velarCollectionNativeMap(), [])]);
+var __velarCollectionSetMapSetIteratorPrototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [__velarCollectionHostCall(__velarCollectionSetValuesOperation, new __velarCollectionNativeSet(), [])]);
+var __velarCollectionSetMapMapIteratorNext = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetMapMapIteratorPrototype, "next")?.value;
+var __velarCollectionSetMapSetIteratorNext = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetMapSetIteratorPrototype, "next")?.value;
+var __velarCollectionRecordNativeRangeError = globalThis.RangeError;
+var __velarCollectionRecordOwnNamesOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertyNames")?.value;
+var __velarCollectionRecordOwnSymbolsOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertySymbols")?.value;
+var __velarCollectionRecordDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "defineProperty")?.value;
+var __velarCollectionRecordObjectIsOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "is")?.value;
+var __velarCollectionRecordDeletePropertyOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeReflect, "deleteProperty")?.value;
+var __velarCollectionRecordFreezeOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "freeze")?.value;
+function __velarCollectionRecordGetOwnPropertyDescriptor(value, key) {
+  return __velarCollectionHostCall(__velarCollectionGetOwnPropertyDescriptor, __velarCollectionNativeObject, [value, key]);
+}
+function __velarCollectionRecordDefineProperty(value, key, descriptor) {
+  return __velarCollectionHostCall(__velarCollectionRecordDefinePropertyOperation, __velarCollectionNativeObject, [value, key, descriptor]);
+}
+
+// velar-standard:velar/compiler-runtime-types-v1
+var __velarCollectionNativeArray2 = globalThis.Array;
+var __velarCollectionNativeMap2 = globalThis.Map;
+var __velarCollectionNativeSet2 = globalThis.Set;
+var __velarCollectionNativeObject2 = globalThis.Object;
+var __velarCollectionNativeReflect2 = globalThis.Reflect;
+var __velarCollectionNativeWeakMap2 = globalThis.WeakMap;
+var __velarCollectionNativeTypeError2 = globalThis.TypeError;
+var __velarCollectionGetOwnPropertyDescriptor2 = __velarCollectionNativeObject2.getOwnPropertyDescriptor;
+var __velarCollectionReflectApply2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeReflect2, "apply")?.value;
+var __velarCollectionArrayIsArray2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeArray2, "isArray")?.value;
+var __velarCollectionGetPrototypeOf2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getPrototypeOf")?.value;
+var __velarCollectionObjectPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "prototype")?.value;
+var __velarCollectionMapPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeMap2, "prototype")?.value;
+var __velarCollectionSetPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeSet2, "prototype")?.value;
+var __velarCollectionMapSize2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "size")?.get;
+var __velarCollectionSetSize2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "size")?.get;
+function __velarCollectionHostCall2(operation, receiver, arguments_) {
+  if (typeof operation !== "function" || typeof __velarCollectionReflectApply2 !== "function") throw new __velarCollectionNativeTypeError2("The JavaScript collection runtime is unavailable");
+  return __velarCollectionReflectApply2(operation, receiver, arguments_);
+}
+var __velarCollectionWeakMapPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeWeakMap2, "prototype")?.value;
+var __velarCollectionWeakMapGetOperation2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionWeakMapPrototype2, "get")?.value;
+var __velarCollectionWeakMapSetOperation2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionWeakMapPrototype2, "set")?.value;
+var __velarCollectionBrands2 = new __velarCollectionNativeWeakMap2();
 function __velarCollectionBrand(value) {
   if (value === null || typeof value !== "object" && typeof value !== "function") return 0;
-  const known = __velarCollectionHostCall(__velarCollectionWeakMapGetOperation, __velarCollectionBrands, [value]);
+  const known = __velarCollectionHostCall2(__velarCollectionWeakMapGetOperation2, __velarCollectionBrands2, [value]);
   if (known !== void 0) return known;
   let brand = 0;
   try {
-    __velarCollectionHostCall(__velarCollectionMapSize, value, []);
+    __velarCollectionHostCall2(__velarCollectionMapSize2, value, []);
     brand = 1;
   } catch {
     try {
-      __velarCollectionHostCall(__velarCollectionSetSize, value, []);
+      __velarCollectionHostCall2(__velarCollectionSetSize2, value, []);
       brand = 2;
     } catch {
       brand = 0;
     }
   }
-  __velarCollectionHostCall(__velarCollectionWeakMapSetOperation, __velarCollectionBrands, [value, brand]);
+  __velarCollectionHostCall2(__velarCollectionWeakMapSetOperation2, __velarCollectionBrands2, [value, brand]);
   return brand;
 }
 function __velarIsMap(value) {
@@ -650,26 +763,26 @@ function __velarIsMap(value) {
 function __velarIsSet(value) {
   return __velarCollectionBrand(value) === 2;
 }
-var __velarCollectionOwnNames = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertyNames")?.value;
-var __velarCollectionOwnSymbols = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "getOwnPropertySymbols")?.value;
-var __velarCollectionOwnKeys = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeReflect, "ownKeys")?.value;
-var __velarCollectionMapEntries = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "entries")?.value;
-var __velarCollectionSetValues = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetPrototype, "values")?.value;
-var __velarCollectionMapIteratorPrototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [__velarCollectionHostCall(__velarCollectionMapEntries, new __velarCollectionNativeMap(), [])]);
-var __velarCollectionSetIteratorPrototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [__velarCollectionHostCall(__velarCollectionSetValues, new __velarCollectionNativeSet(), [])]);
-var __velarCollectionMapIteratorNext = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapIteratorPrototype, "next")?.value;
-var __velarCollectionSetIteratorNext = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionSetIteratorPrototype, "next")?.value;
+var __velarCollectionOwnNames = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertyNames")?.value;
+var __velarCollectionOwnSymbols = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertySymbols")?.value;
+var __velarCollectionOwnKeys = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeReflect2, "ownKeys")?.value;
+var __velarCollectionMapEntries = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "entries")?.value;
+var __velarCollectionSetValues = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "values")?.value;
+var __velarCollectionMapIteratorPrototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [__velarCollectionHostCall2(__velarCollectionMapEntries, new __velarCollectionNativeMap2(), [])]);
+var __velarCollectionSetIteratorPrototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [__velarCollectionHostCall2(__velarCollectionSetValues, new __velarCollectionNativeSet2(), [])]);
+var __velarCollectionMapIteratorNext = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapIteratorPrototype, "next")?.value;
+var __velarCollectionSetIteratorNext = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetIteratorPrototype, "next")?.value;
 function __velarCollectionMapTypeIterator(value) {
-  return __velarCollectionHostCall(__velarCollectionMapEntries, value, []);
+  return __velarCollectionHostCall2(__velarCollectionMapEntries, value, []);
 }
 function __velarCollectionSetTypeIterator(value) {
-  return __velarCollectionHostCall(__velarCollectionSetValues, value, []);
+  return __velarCollectionHostCall2(__velarCollectionSetValues, value, []);
 }
 function __velarCollectionMapTypeNext(iterator) {
-  return __velarCollectionHostCall(__velarCollectionMapIteratorNext, iterator, []);
+  return __velarCollectionHostCall2(__velarCollectionMapIteratorNext, iterator, []);
 }
 function __velarCollectionSetTypeNext(iterator) {
-  return __velarCollectionHostCall(__velarCollectionSetIteratorNext, iterator, []);
+  return __velarCollectionHostCall2(__velarCollectionSetIteratorNext, iterator, []);
 }
 var __velarTypeNativeWeakSet = globalThis.WeakSet;
 var __velarTypeNativeObject = globalThis.Object;
@@ -717,22 +830,22 @@ var __velarValidationNativeSet = globalThis.Set;
 var __velarValidationNativePromise = globalThis.Promise;
 var __velarValidationNativeFunction = globalThis.Function;
 var __velarValidationNativeSymbol = globalThis.Symbol;
-var __velarValidationWeakMapPrototype = __velarCollectionGetOwnPropertyDescriptor(__velarValidationNativeWeakMap, "prototype")?.value;
-var __velarValidationSetPrototype = __velarCollectionGetOwnPropertyDescriptor(__velarValidationNativeSet, "prototype")?.value;
-var __velarValidationFunctionPrototype = __velarCollectionGetOwnPropertyDescriptor(__velarValidationNativeFunction, "prototype")?.value;
-var __velarValidationHasInstanceSymbol = __velarCollectionGetOwnPropertyDescriptor(__velarValidationNativeSymbol, "hasInstance")?.value;
-var __velarValidationWeakMapGetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationWeakMapPrototype, "get")?.value;
-var __velarValidationWeakMapSetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationWeakMapPrototype, "set")?.value;
-var __velarValidationWeakMapDeleteOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationWeakMapPrototype, "delete")?.value;
-var __velarValidationSetHasOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationSetPrototype, "has")?.value;
-var __velarValidationSetAddOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationSetPrototype, "add")?.value;
-var __velarValidationSetDeleteOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationSetPrototype, "delete")?.value;
-var __velarValidationSetSizeOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationSetPrototype, "size")?.get;
-var __velarValidationFunctionHasInstanceOperation = __velarCollectionGetOwnPropertyDescriptor(__velarValidationFunctionPrototype, __velarValidationHasInstanceSymbol)?.value;
-var __velarValidationFreezeOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "freeze")?.value;
-var __velarValidationDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionNativeObject, "defineProperty")?.value;
-var __velarValidationMapSetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "set")?.value;
-var __velarValidationMapGetOperation = __velarCollectionGetOwnPropertyDescriptor(__velarCollectionMapPrototype, "get")?.value;
+var __velarValidationWeakMapPrototype = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationNativeWeakMap, "prototype")?.value;
+var __velarValidationSetPrototype = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationNativeSet, "prototype")?.value;
+var __velarValidationFunctionPrototype = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationNativeFunction, "prototype")?.value;
+var __velarValidationHasInstanceSymbol = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationNativeSymbol, "hasInstance")?.value;
+var __velarValidationWeakMapGetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationWeakMapPrototype, "get")?.value;
+var __velarValidationWeakMapSetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationWeakMapPrototype, "set")?.value;
+var __velarValidationWeakMapDeleteOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationWeakMapPrototype, "delete")?.value;
+var __velarValidationSetHasOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationSetPrototype, "has")?.value;
+var __velarValidationSetAddOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationSetPrototype, "add")?.value;
+var __velarValidationSetDeleteOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationSetPrototype, "delete")?.value;
+var __velarValidationSetSizeOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationSetPrototype, "size")?.get;
+var __velarValidationFunctionHasInstanceOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarValidationFunctionPrototype, __velarValidationHasInstanceSymbol)?.value;
+var __velarValidationFreezeOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "freeze")?.value;
+var __velarValidationDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "defineProperty")?.value;
+var __velarValidationMapSetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "set")?.value;
+var __velarValidationMapGetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "get")?.value;
 function __velarValidationState() {
   return { active: new __velarValidationNativeWeakMap(), depth: 0, copies: null, copy: __velarValidationCopy };
 }
@@ -740,36 +853,36 @@ function __velarValidationSet() {
   return new __velarValidationNativeSet();
 }
 function __velarValidationWeakMapGet(value, key) {
-  return __velarCollectionHostCall(__velarValidationWeakMapGetOperation, value, [key]);
+  return __velarCollectionHostCall2(__velarValidationWeakMapGetOperation, value, [key]);
 }
 function __velarValidationWeakMapSet(value, key, item) {
-  return __velarCollectionHostCall(__velarValidationWeakMapSetOperation, value, [key, item]);
+  return __velarCollectionHostCall2(__velarValidationWeakMapSetOperation, value, [key, item]);
 }
 function __velarValidationMapGet(value, key) {
-  return __velarCollectionHostCall(__velarValidationMapGetOperation, value, [key]);
+  return __velarCollectionHostCall2(__velarValidationMapGetOperation, value, [key]);
 }
 function __velarValidationMapSet(value, key, item) {
-  return __velarCollectionHostCall(__velarValidationMapSetOperation, value, [key, item]);
+  return __velarCollectionHostCall2(__velarValidationMapSetOperation, value, [key, item]);
 }
 function __velarValidationSetAdd(value, item) {
-  return __velarCollectionHostCall(__velarValidationSetAddOperation, value, [item]);
+  return __velarCollectionHostCall2(__velarValidationSetAddOperation, value, [item]);
 }
 function __velarValidationIsArray(value) {
-  return __velarCollectionHostCall(__velarCollectionArrayIsArray, __velarCollectionNativeArray, [value]);
+  return __velarCollectionHostCall2(__velarCollectionArrayIsArray2, __velarCollectionNativeArray2, [value]);
 }
 function __velarValidationOwnDescriptor(value, key) {
-  return __velarCollectionHostCall(__velarCollectionGetOwnPropertyDescriptor, __velarCollectionNativeObject, [value, key]);
+  return __velarCollectionHostCall2(__velarCollectionGetOwnPropertyDescriptor2, __velarCollectionNativeObject2, [value, key]);
 }
 function __velarValidationIsInstance(value, constructor) {
-  return __velarCollectionHostCall(__velarValidationFunctionHasInstanceOperation, constructor, [value]);
+  return __velarCollectionHostCall2(__velarValidationFunctionHasInstanceOperation, constructor, [value]);
 }
 function __velarValidationFreeze(value) {
-  return __velarCollectionHostCall(__velarValidationFreezeOperation, __velarCollectionNativeObject, [value]);
+  return __velarCollectionHostCall2(__velarValidationFreezeOperation, __velarCollectionNativeObject2, [value]);
 }
 function __velarValidationIsPlainObject(value) {
-  const prototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [value]);
+  const prototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [value]);
   if (prototype === null) return true;
-  return __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [prototype]) === null;
+  return __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [prototype]) === null;
 }
 var __velarValidationCopy = {
   seen(state, value, plan) {
@@ -781,7 +894,7 @@ var __velarValidationCopy = {
     if (state.copies === null) state.copies = new __velarValidationNativeWeakMap();
     let plans = __velarValidationWeakMapGet(state.copies, value);
     if (plans === void 0) {
-      plans = new __velarCollectionNativeMap();
+      plans = new __velarCollectionNativeMap2();
       __velarValidationWeakMapSet(state.copies, value, plans);
     }
     __velarValidationMapSet(plans, plan, copy);
@@ -795,7 +908,7 @@ var __velarValidationCopy = {
   // copy's prototype, and so every copied field is an ordinary mutable
   // enumerable data property whatever the source's descriptor said.
   field(target, name, value) {
-    __velarCollectionHostCall(__velarValidationDefinePropertyOperation, __velarCollectionNativeObject, [target, name, { value, writable: true, enumerable: true, configurable: true }]);
+    __velarCollectionHostCall2(__velarValidationDefinePropertyOperation, __velarCollectionNativeObject2, [target, name, { value, writable: true, enumerable: true, configurable: true }]);
   },
   // A null element callback means the element position has nothing to copy —
   // a primitive, an enum member, a class instance, or an opaque 'unknown'.
@@ -828,7 +941,7 @@ var __velarValidationCopy = {
   mapOf(value, state, key, item, plan) {
     const found = __velarValidationCopy.seen(state, value, plan);
     if (found !== void 0) return found;
-    const result = __velarValidationCopy.remember(state, value, new __velarCollectionNativeMap(), plan);
+    const result = __velarValidationCopy.remember(state, value, new __velarCollectionNativeMap2(), plan);
     const iterator = __velarCollectionMapTypeIterator(value);
     while (true) {
       const step = __velarCollectionMapTypeNext(iterator);
@@ -842,7 +955,7 @@ var __velarValidationCopy = {
     const found = __velarValidationCopy.seen(state, value, plan);
     if (found !== void 0) return found;
     const result = __velarValidationCopy.remember(state, value, {}, plan);
-    const keys = __velarCollectionHostCall(__velarCollectionOwnKeys, __velarCollectionNativeReflect, [value]);
+    const keys = __velarCollectionHostCall2(__velarCollectionOwnKeys, __velarCollectionNativeReflect2, [value]);
     for (let index = 0; index < keys.length; index += 1) {
       const name = keys[index];
       if (typeof name !== "string") continue;
@@ -876,7 +989,7 @@ var __velarValidationCopy = {
   through(type, value, state) {
     const operation = type === null || type === void 0 ? void 0 : type.copy;
     if (typeof operation !== "function") return __velarValidationCopy.plain(value, state);
-    return __velarCollectionHostCall(operation, type, [value, state]);
+    return __velarCollectionHostCall2(operation, type, [value, state]);
   }
 };
 function __velarValidationRejectionHint(value) {
@@ -884,17 +997,17 @@ function __velarValidationRejectionHint(value) {
   return "; a record accepts only plain data objects \u2014 project the fields into a record first, for example {x: instance.x}";
 }
 function __velarListTypeIs(value, check) {
-  if (!__velarCollectionHostCall(__velarCollectionArrayIsArray, __velarCollectionNativeArray, [value]) || value.length > 1e6 || __velarCollectionHostCall(__velarCollectionOwnSymbols, __velarCollectionNativeObject, [value]).length > 0 || __velarCollectionHostCall(__velarCollectionOwnNames, __velarCollectionNativeObject, [value]).length !== value.length + 1) return false;
-  const lengthDescriptor = __velarCollectionHostCall(__velarCollectionGetOwnPropertyDescriptor, __velarCollectionNativeObject, [value, "length"]);
+  if (!__velarCollectionHostCall2(__velarCollectionArrayIsArray2, __velarCollectionNativeArray2, [value]) || value.length > 1e6 || __velarCollectionHostCall2(__velarCollectionOwnSymbols, __velarCollectionNativeObject2, [value]).length > 0 || __velarCollectionHostCall2(__velarCollectionOwnNames, __velarCollectionNativeObject2, [value]).length !== value.length + 1) return false;
+  const lengthDescriptor = __velarCollectionHostCall2(__velarCollectionGetOwnPropertyDescriptor2, __velarCollectionNativeObject2, [value, "length"]);
   if (!lengthDescriptor || !lengthDescriptor.writable || lengthDescriptor.enumerable || lengthDescriptor.configurable || !("value" in lengthDescriptor)) return false;
   for (let index = 0; index < value.length; index += 1) {
-    const descriptor = __velarCollectionHostCall(__velarCollectionGetOwnPropertyDescriptor, __velarCollectionNativeObject, [value, index]);
+    const descriptor = __velarCollectionHostCall2(__velarCollectionGetOwnPropertyDescriptor2, __velarCollectionNativeObject2, [value, index]);
     if (!descriptor?.enumerable || !descriptor.configurable || !descriptor.writable || !("value" in descriptor) || !check(descriptor.value)) return false;
   }
   return true;
 }
 var __velarValidationErrorDefineProperty = globalThis.Object.defineProperty;
-var __VelarValidationError = class extends __velarCollectionNativeTypeError {
+var __VelarValidationError = class extends __velarCollectionNativeTypeError2 {
   constructor(message, detail) {
     super(message);
     this.name = "ValidationError";
@@ -904,113 +1017,6 @@ var __VelarValidationError = class extends __velarCollectionNativeTypeError {
   }
 };
 __velarValidationErrorDefineProperty(__VelarValidationError, "name", { value: "ValidationError", writable: false, enumerable: false, configurable: true });
-
-// velar-standard:velar/compiler-runtime-collections-v1
-var __velarCollectionNativeArray2 = globalThis.Array;
-var __velarCollectionNativeMap2 = globalThis.Map;
-var __velarCollectionNativeSet2 = globalThis.Set;
-var __velarCollectionNativeObject2 = globalThis.Object;
-var __velarCollectionNativeReflect2 = globalThis.Reflect;
-var __velarCollectionNativeWeakMap2 = globalThis.WeakMap;
-var __velarCollectionNativeTypeError2 = globalThis.TypeError;
-var __velarCollectionGetOwnPropertyDescriptor2 = __velarCollectionNativeObject2.getOwnPropertyDescriptor;
-var __velarCollectionReflectApply2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeReflect2, "apply")?.value;
-var __velarCollectionArrayIsArray2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeArray2, "isArray")?.value;
-var __velarCollectionGetPrototypeOf2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getPrototypeOf")?.value;
-var __velarCollectionObjectPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "prototype")?.value;
-var __velarCollectionMapPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeMap2, "prototype")?.value;
-var __velarCollectionSetPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeSet2, "prototype")?.value;
-var __velarCollectionMapSize2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "size")?.get;
-var __velarCollectionSetSize2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "size")?.get;
-function __velarCollectionHostCall2(operation, receiver, arguments_) {
-  if (typeof operation !== "function" || typeof __velarCollectionReflectApply2 !== "function") throw new __velarCollectionNativeTypeError2("The JavaScript collection runtime is unavailable");
-  return __velarCollectionReflectApply2(operation, receiver, arguments_);
-}
-var __velarCollectionWeakMapPrototype2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeWeakMap2, "prototype")?.value;
-var __velarCollectionWeakMapGetOperation2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionWeakMapPrototype2, "get")?.value;
-var __velarCollectionWeakMapSetOperation2 = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionWeakMapPrototype2, "set")?.value;
-var __velarCollectionBrands2 = new __velarCollectionNativeWeakMap2();
-var __velarCollectionListNativeNumber = globalThis.Number;
-var __velarCollectionListNativeMath = globalThis.Math;
-var __velarCollectionListNativeRangeError = globalThis.RangeError;
-var __velarCollectionListArrayPrototype = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeArray2, "prototype")?.value;
-var __velarCollectionListOwnNamesOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertyNames")?.value;
-var __velarCollectionListOwnSymbolsOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertySymbols")?.value;
-var __velarCollectionListDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "defineProperty")?.value;
-var __velarCollectionListObjectIsOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "is")?.value;
-var __velarCollectionListIntegerOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListNativeNumber, "isInteger")?.value;
-var __velarCollectionListNaNOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListNativeNumber, "isNaN")?.value;
-var __velarCollectionListFiniteOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListNativeNumber, "isFinite")?.value;
-var __velarCollectionListMaximumOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListNativeMath, "max")?.value;
-var __velarCollectionListMinimumOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListNativeMath, "min")?.value;
-var __velarCollectionListJoinOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListArrayPrototype, "join")?.value;
-var __velarCollectionListSortOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListArrayPrototype, "sort")?.value;
-var __velarCollectionListReverseOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionListArrayPrototype, "reverse")?.value;
-function __velarCollectionListIsArray(value) {
-  return __velarCollectionHostCall2(__velarCollectionArrayIsArray2, __velarCollectionNativeArray2, [value]);
-}
-function __velarCollectionListGetOwnPropertyDescriptor(value, key) {
-  return __velarCollectionHostCall2(__velarCollectionGetOwnPropertyDescriptor2, __velarCollectionNativeObject2, [value, key]);
-}
-function __velarCollectionListOwnNames(value) {
-  return __velarCollectionHostCall2(__velarCollectionListOwnNamesOperation, __velarCollectionNativeObject2, [value]);
-}
-function __velarCollectionListOwnSymbols(value) {
-  return __velarCollectionHostCall2(__velarCollectionListOwnSymbolsOperation, __velarCollectionNativeObject2, [value]);
-}
-function __velarCollectionListDefineProperty(value, key, descriptor) {
-  return __velarCollectionHostCall2(__velarCollectionListDefinePropertyOperation, __velarCollectionNativeObject2, [value, key, descriptor]);
-}
-function __velarCollectionListIsInteger(value) {
-  return __velarCollectionHostCall2(__velarCollectionListIntegerOperation, __velarCollectionListNativeNumber, [value]);
-}
-function __velarCollectionListHostJoin(value, separator) {
-  return __velarCollectionHostCall2(__velarCollectionListJoinOperation, value, [separator]);
-}
-var __velarCollectionSetMapNativeRangeError = globalThis.RangeError;
-var __velarCollectionSetMapFreezeOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "freeze")?.value;
-var __velarCollectionSetAddOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "add")?.value;
-var __velarCollectionSetHasOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "has")?.value;
-var __velarCollectionSetDeleteOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "delete")?.value;
-var __velarCollectionSetClearOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "clear")?.value;
-var __velarCollectionSetValuesOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetPrototype2, "values")?.value;
-var __velarCollectionMapGetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "get")?.value;
-var __velarCollectionMapSetOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "set")?.value;
-var __velarCollectionMapHasOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "has")?.value;
-var __velarCollectionMapDeleteOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "delete")?.value;
-var __velarCollectionMapClearOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "clear")?.value;
-var __velarCollectionMapKeysOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "keys")?.value;
-var __velarCollectionMapValuesOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "values")?.value;
-var __velarCollectionMapEntriesOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionMapPrototype2, "entries")?.value;
-var __velarCollectionSetMapMapIteratorPrototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [__velarCollectionHostCall2(__velarCollectionMapEntriesOperation, new __velarCollectionNativeMap2(), [])]);
-var __velarCollectionSetMapSetIteratorPrototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [__velarCollectionHostCall2(__velarCollectionSetValuesOperation, new __velarCollectionNativeSet2(), [])]);
-var __velarCollectionSetMapMapIteratorNext = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetMapMapIteratorPrototype, "next")?.value;
-var __velarCollectionSetMapSetIteratorNext = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionSetMapSetIteratorPrototype, "next")?.value;
-var __velarCollectionRecordNativeRangeError = globalThis.RangeError;
-var __velarCollectionRecordOwnNamesOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertyNames")?.value;
-var __velarCollectionRecordOwnSymbolsOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "getOwnPropertySymbols")?.value;
-var __velarCollectionRecordDefinePropertyOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "defineProperty")?.value;
-var __velarCollectionRecordObjectIsOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "is")?.value;
-var __velarCollectionRecordDeletePropertyOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeReflect2, "deleteProperty")?.value;
-var __velarCollectionRecordFreezeOperation = __velarCollectionGetOwnPropertyDescriptor2(__velarCollectionNativeObject2, "freeze")?.value;
-
-// velar-standard:velar/compiler-runtime-reactive-v1
-var __velarReactiveIterateKey = null;
-var __velarReactiveStructureKey = null;
-function __velarReactiveRaw(value) {
-  return value;
-}
-function __velarReactiveCollectionRead(value, key, child) {
-  return child === void 0 ? null : child;
-}
-function __velarReactiveCollectionTrack() {
-}
-function __velarReactiveCollectionLink() {
-}
-function __velarReactiveCollectionTrigger() {
-}
-function __velarReactiveCollectionUnlink() {
-}
 
 // velar-standard:velar/compiler-runtime-collection-lowering-v1
 var __velarMaxCollectionItems = 1e6;
@@ -1025,25 +1031,25 @@ var __velarListWeakMapPrototype = __velarCollectionListGetOwnPropertyDescriptor(
 var __velarListWeakMapGetOperation = __velarCollectionListGetOwnPropertyDescriptor(__velarListWeakMapPrototype, "get")?.value;
 var __velarListWeakMapSetOperation = __velarCollectionListGetOwnPropertyDescriptor(__velarListWeakMapPrototype, "set")?.value;
 var __velarListMemos = new __velarListNativeWeakMap();
-var __velarListIsFrozenOperation = __velarCollectionListGetOwnPropertyDescriptor(__velarCollectionNativeObject2, "isFrozen")?.value;
+var __velarListIsFrozenOperation = __velarCollectionListGetOwnPropertyDescriptor(__velarCollectionNativeObject, "isFrozen")?.value;
 function __velarListRejectFrozen(value, name) {
-  if (__velarCollectionHostCall2(__velarListIsFrozenOperation, __velarCollectionNativeObject2, [value])) {
-    throw new __velarCollectionNativeTypeError2(name + " received a frozen JavaScript array; copy it on the JavaScript side \u2014 [...values] \u2014 before passing it to VelarScript");
+  if (__velarCollectionHostCall(__velarListIsFrozenOperation, __velarCollectionNativeObject, [value])) {
+    throw new __velarCollectionNativeTypeError(name + " received a frozen JavaScript array; copy it on the JavaScript side \u2014 [...values] \u2014 before passing it to VelarScript");
   }
 }
 function __velarListMemo(value) {
-  return __velarCollectionHostCall2(__velarListWeakMapGetOperation, __velarListMemos, [value]);
+  return __velarCollectionHostCall(__velarListWeakMapGetOperation, __velarListMemos, [value]);
 }
 function __velarListIsOwned(value) {
   const memo = __velarListMemo(value);
   return memo !== void 0 && memo === value.length;
 }
 function __velarAdoptList(value) {
-  __velarCollectionHostCall2(__velarListWeakMapSetOperation, __velarListMemos, [value, value.length]);
+  __velarCollectionHostCall(__velarListWeakMapSetOperation, __velarListMemos, [value, value.length]);
   return value;
 }
 function __velarMarkCheckedList(value) {
-  __velarCollectionHostCall2(__velarListWeakMapSetOperation, __velarListMemos, [value, ~value.length]);
+  __velarCollectionHostCall(__velarListWeakMapSetOperation, __velarListMemos, [value, ~value.length]);
   return value;
 }
 function __velarMarkOwnedList(value) {
@@ -1052,18 +1058,18 @@ function __velarMarkOwnedList(value) {
 }
 function __velarListRequireMutableLength(value, name) {
   const lengthDescriptor = __velarCollectionListGetOwnPropertyDescriptor(value, "length");
-  if (!lengthDescriptor || !lengthDescriptor.writable || lengthDescriptor.enumerable || lengthDescriptor.configurable || !("value" in lengthDescriptor)) throw new __velarCollectionNativeTypeError2(name + " requires an ordinary mutable List length");
+  if (!lengthDescriptor || !lengthDescriptor.writable || lengthDescriptor.enumerable || lengthDescriptor.configurable || !("value" in lengthDescriptor)) throw new __velarCollectionNativeTypeError(name + " requires an ordinary mutable List length");
 }
 function __velarValidateDenseList(value, name) {
   value = __velarReactiveRaw(value);
   if (!__velarCollectionListIsArray(value) || value.length > __velarMaxCollectionItems || __velarCollectionListOwnSymbols(value).length > 0 || __velarCollectionListOwnNames(value).length !== value.length + 1) {
-    throw new __velarCollectionNativeTypeError2(name + " requires a dense VelarScript List");
+    throw new __velarCollectionNativeTypeError(name + " requires a dense VelarScript List");
   }
   __velarListRejectFrozen(value, name);
   __velarListRequireMutableLength(value, name);
   for (let index = 0; index < value.length; index += 1) {
     const descriptor = __velarCollectionListGetOwnPropertyDescriptor(value, index);
-    if (!descriptor?.enumerable || !descriptor.configurable || !descriptor.writable || !("value" in descriptor)) throw new __velarCollectionNativeTypeError2(name + " requires ordinary mutable List data elements");
+    if (!descriptor?.enumerable || !descriptor.configurable || !descriptor.writable || !("value" in descriptor)) throw new __velarCollectionNativeTypeError(name + " requires ordinary mutable List data elements");
   }
   return __velarMarkCheckedList(value);
 }
@@ -1092,7 +1098,7 @@ function __velarValidateMutableList(value, name) {
 }
 function __velarCheckedListElement(value, index, name) {
   const descriptor = __velarCollectionListGetOwnPropertyDescriptor(value, index);
-  if (!descriptor?.enumerable || !descriptor.configurable || !descriptor.writable || !("value" in descriptor)) throw new __velarCollectionNativeTypeError2(name + " requires ordinary mutable List data elements");
+  if (!descriptor?.enumerable || !descriptor.configurable || !descriptor.writable || !("value" in descriptor)) throw new __velarCollectionNativeTypeError(name + " requires ordinary mutable List data elements");
   return descriptor.value;
 }
 function __velarOwnedListElement(value, index, name) {
@@ -1119,7 +1125,7 @@ var __velarListNativeString = globalThis.String;
 var __velarListStringPrototype = __velarCollectionListGetOwnPropertyDescriptor(__velarListNativeString, "prototype")?.value;
 var __velarListStringCharCodeAt = __velarCollectionListGetOwnPropertyDescriptor(__velarListStringPrototype, "charCodeAt")?.value;
 var __velarListSurrogatePattern = /[\uD800-\uDFFF]/;
-var __velarListRegExpPrototype = __velarCollectionHostCall2(__velarCollectionGetPrototypeOf2, __velarCollectionNativeObject2, [__velarListSurrogatePattern]);
+var __velarListRegExpPrototype = __velarCollectionHostCall(__velarCollectionGetPrototypeOf, __velarCollectionNativeObject, [__velarListSurrogatePattern]);
 var __velarListSurrogateExecOperation = __velarCollectionListGetOwnPropertyDescriptor(__velarListRegExpPrototype, "exec")?.value;
 function __velarListSize(value) {
   value = __velarValidateOwnedList(value, "List size");
@@ -1183,13 +1189,43 @@ function __velarListCopy(value) {
 function __velarListJoin(value, separator = "") {
   value = __velarValidateOwnedList(value, "List.join");
   __velarReactiveCollectionTrack(value);
-  if (typeof separator !== "string") throw new __velarCollectionNativeTypeError2("List.join separator must be string");
+  if (typeof separator !== "string") throw new __velarCollectionNativeTypeError("List.join separator must be string");
   const owned = __velarListIsOwned(value);
-  for (let index = 0; index < value.length; index += 1) if (typeof __velarListElement(value, index, "List.join", owned) !== "string") throw new __velarCollectionNativeTypeError2("List.join requires string values");
+  for (let index = 0; index < value.length; index += 1) if (typeof __velarListElement(value, index, "List.join", owned) !== "string") throw new __velarCollectionNativeTypeError("List.join requires string values");
   return __velarCollectionListHostJoin(value, separator);
 }
 
 // src/src/index.vel
+var __velarMaxRecordFields = 1e6;
+function __velarSetRecordField(output, field, value, count) {
+  const present = __velarCollectionRecordGetOwnPropertyDescriptor(output, field) !== void 0;
+  if (!present && count >= __velarMaxRecordFields) throw new __velarCollectionRecordNativeRangeError("A record cannot exceed 1000000 fields");
+  __velarCollectionRecordDefineProperty(output, field, { value: value ?? null, writable: true, enumerable: true, configurable: true });
+  return present ? count : count + 1;
+}
+function __velarRecordFrom(source, overrides, fields, target) {
+  if (source === null || typeof source !== "object" || __velarCollectionListIsArray(source)) throw new __velarCollectionNativeTypeError(target + ".from requires a record source");
+  if (overrides !== null && (typeof overrides !== "object" || __velarCollectionListIsArray(overrides))) throw new __velarCollectionNativeTypeError(target + ".from overrides must be a record");
+  const output = {};
+  let count = 0;
+  for (let index = 0; index < fields.length; index += 1) {
+    const field = fields[index][0];
+    const optional = fields[index][1];
+    let owner = overrides;
+    let descriptor = overrides === null ? void 0 : __velarCollectionRecordGetOwnPropertyDescriptor(overrides, field);
+    if (descriptor === void 0) {
+      owner = source;
+      descriptor = __velarCollectionRecordGetOwnPropertyDescriptor(source, field);
+    }
+    if (descriptor === void 0) {
+      if (optional) continue;
+      throw new __velarCollectionNativeTypeError(target + ".from source is missing required field '" + field + "'");
+    }
+    if (!descriptor.enumerable || !("value" in descriptor)) throw new __velarCollectionNativeTypeError(target + ".from cannot read non-data field '" + field + "'");
+    count = __velarSetRecordField(output, field, __velarReactiveCollectionRead(owner, field, descriptor.value), count);
+  }
+  return output;
+}
 function __velarCopyPlan0(__velarCopyItem, __velarCopyState) {
   return TextChange.copy(__velarCopyItem, __velarCopyState);
 }
@@ -1958,7 +1994,7 @@ function copySelection(selection) {
   if ((selection ?? null) === null) {
     return null;
   }
-  return { anchor: ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 8906))(selection).anchor, head: ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 8930))(selection).head };
+  return __velarRecordFrom(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 8916))(selection), null, [["anchor", false], ["head", false]], "TextSelection");
 }
 function copyEdits(changes) {
   let forward = __velarAdoptList([]);
@@ -2011,11 +2047,11 @@ var TextBuffer = class _TextBuffer {
     if ((root ?? null) === null) {
       return "";
     }
-    const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10867))(root), "text");
+    const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10848))(root), "text");
     if ((text ?? null) !== null) {
-      return ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 10921))(text);
+      return ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 10902))(text);
     }
-    return self.slice(0, __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10955))(root), "length"));
+    return self.slice(0, __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10936))(root), "length"));
   }
   slice(start, end) {
     const self = this;
@@ -2051,7 +2087,7 @@ var TextBuffer = class _TextBuffer {
       const removed = self.slice(edit.start, edit.end);
       removedBytes += utf8Size(removed);
       insertedBytes += utf8Size(inserted);
-      __velarListAppend(normalized, { start: edit.start, end: edit.end, inserted });
+      __velarListAppend(normalized, __velarRecordFrom(edit, { inserted }, [["start", false], ["end", false], ["inserted", false]], "TextEdit"));
       __velarListAppend(changes, { start: edit.start, removed, inserted, beforeRevision, afterRevision: beforeRevision + 1 });
       previousEnd = edit.end;
       first = false;
@@ -2071,8 +2107,8 @@ var TextBuffer = class _TextBuffer {
     }
     self.#root = nextRoot ?? null;
     {
-      const __velarMemberObject13124 = self;
-      __velarMemberObject13124.#version = __velarReadPrivateField(__velarMemberObject13124.#version, "version") + 1;
+      const __velarMemberObject13092 = self;
+      __velarMemberObject13092.#version = __velarReadPrivateField(__velarMemberObject13092.#version, "version") + 1;
     }
     return { changes, beforeRevision, afterRevision: __velarReadPrivateField(self.#version, "version") };
   }
@@ -2097,10 +2133,10 @@ var TextBuffer = class _TextBuffer {
     }
     const insideCrLf = offset > 0 && offset < self.size && self.slice(offset - 1, offset) === "\r" && self.slice(offset, offset + 1) === "\n";
     if (insideCrLf) {
-      const beforeCarriageReturn = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14223))(root), offset - 1);
+      const beforeCarriageReturn = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14191))(root), offset - 1);
       return { line: beforeCarriageReturn.newlines, column: beforeCarriageReturn.tail };
     }
-    const metrics = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14371))(root), offset);
+    const metrics = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14339))(root), offset);
     return { line: metrics.newlines, column: metrics.tail };
   }
   offsetAt(line, column) {
@@ -2141,7 +2177,7 @@ var TextBuffer = class _TextBuffer {
     if (!((root ?? null) !== null)) {
       throw new __VelarAssertionError("TextBuffer line is outside the document");
     }
-    return lineStartIn(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 15953))(root), line);
+    return lineStartIn(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 15921))(root), line);
   }
   #lineEnd(line, start) {
     const self = this;
@@ -2248,10 +2284,10 @@ var TextHistory = class _TextHistory {
     self.#expectedRevision = transaction.afterRevision;
     const group = __velarReadPrivateField(self.#groupSteps, "groupSteps");
     if ((group ?? null) !== null) {
-      __velarListAppend(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "group", 19627))(group), step);
+      __velarListAppend(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "group", 19595))(group), step);
       {
-        const __velarMemberObject19658 = self;
-        __velarMemberObject19658.#groupBytes = __velarReadPrivateField(__velarMemberObject19658.#groupBytes, "groupBytes") + step.bytes;
+        const __velarMemberObject19626 = self;
+        __velarMemberObject19626.#groupBytes = __velarReadPrivateField(__velarMemberObject19626.#groupBytes, "groupBytes") + step.bytes;
       }
       self.#groupAfterSelection = copySelection(afterSelection ?? null) ?? null;
       self.#trimUndo();
@@ -2287,7 +2323,7 @@ var TextHistory = class _TextHistory {
     self.#requireSelection(committedSelection ?? null, __velarReadPrivateField(self.#buffer, "buffer").size);
     const beforeSelection = __velarReadPrivateField(self.#groupBeforeSelection, "groupBeforeSelection");
     let bytes = 0;
-    for (const step of __velarReactiveListIterator(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21139))(steps))) {
+    for (const step of __velarReactiveListIterator(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21107))(steps))) {
       bytes += step.bytes;
     }
     self.#groupSteps = null;
@@ -2296,9 +2332,9 @@ var TextHistory = class _TextHistory {
     self.#groupAfterSelection = null;
     self.#groupUndoEntries = __velarAdoptList([]);
     self.#groupUndoBytes = 0;
-    if (__velarListSize(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21396))(steps)) > 0) {
+    if (__velarListSize(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21364))(steps)) > 0) {
       self.#redoEntries = __velarAdoptList([]);
-      self.#pushUndo({ steps: ((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21473))(steps), beforeSelection: beforeSelection ?? null, afterSelection: copySelection(committedSelection ?? null) ?? null, bytes });
+      self.#pushUndo({ steps: ((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21441))(steps), beforeSelection: beforeSelection ?? null, afterSelection: copySelection(committedSelection ?? null) ?? null, bytes });
     }
     return null;
   }
@@ -2310,7 +2346,7 @@ var TextHistory = class _TextHistory {
       throw new __VelarAssertionError("TextHistory has no active group");
     }
     const selection = copySelection(__velarReadPrivateField(self.#groupBeforeSelection, "groupBeforeSelection")) ?? null;
-    self.#revertSteps(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21910))(steps));
+    self.#revertSteps(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21878))(steps));
     self.#undoEntries = __velarReadPrivateField(self.#groupUndoEntries, "groupUndoEntries");
     self.#undoBytes = __velarReadPrivateField(self.#groupUndoBytes, "groupUndoBytes");
     self.#groupSteps = null;
@@ -2329,8 +2365,8 @@ var TextHistory = class _TextHistory {
     }
     const entry = __velarListPop(__velarReadPrivateField(self.#undoEntries, "undoEntries"));
     {
-      const __velarMemberObject22494 = self;
-      __velarMemberObject22494.#undoBytes = __velarReadPrivateField(__velarMemberObject22494.#undoBytes, "undoBytes") - entry.bytes;
+      const __velarMemberObject22462 = self;
+      __velarMemberObject22462.#undoBytes = __velarReadPrivateField(__velarMemberObject22462.#undoBytes, "undoBytes") - entry.bytes;
     }
     self.#revertSteps(entry.steps);
     __velarListAppend(__velarReadPrivateField(self.#redoEntries, "redoEntries"), entry);
@@ -2378,8 +2414,8 @@ var TextHistory = class _TextHistory {
     const self = this;
     __velarListAppend(__velarReadPrivateField(self.#undoEntries, "undoEntries"), entry);
     {
-      const __velarMemberObject23985 = self;
-      __velarMemberObject23985.#undoBytes = __velarReadPrivateField(__velarMemberObject23985.#undoBytes, "undoBytes") + entry.bytes;
+      const __velarMemberObject23953 = self;
+      __velarMemberObject23953.#undoBytes = __velarReadPrivateField(__velarMemberObject23953.#undoBytes, "undoBytes") + entry.bytes;
     }
     self.#trimUndo();
     return null;
@@ -2389,8 +2425,8 @@ var TextHistory = class _TextHistory {
     while (__velarListSize(__velarReadPrivateField(self.#undoEntries, "undoEntries")) > 1 && (__velarListSize(__velarReadPrivateField(self.#undoEntries, "undoEntries")) > __velarReadPrivateField(self.#entryLimit, "entryLimit") || __velarReadPrivateField(self.#undoBytes, "undoBytes") + __velarReadPrivateField(self.#groupBytes, "groupBytes") > __velarReadPrivateField(self.#byteLimit, "byteLimit"))) {
       const removed = __velarListPop(__velarReadPrivateField(self.#undoEntries, "undoEntries"), 0);
       {
-        const __velarMemberObject24352 = self;
-        __velarMemberObject24352.#undoBytes = __velarReadPrivateField(__velarMemberObject24352.#undoBytes, "undoBytes") - removed.bytes;
+        const __velarMemberObject24320 = self;
+        __velarMemberObject24320.#undoBytes = __velarReadPrivateField(__velarMemberObject24320.#undoBytes, "undoBytes") - removed.bytes;
       }
     }
     return null;
@@ -2415,10 +2451,10 @@ var TextHistory = class _TextHistory {
     if ((selection ?? null) === null) {
       return null;
     }
-    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24818))(selection).anchor), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24846))(selection).anchor) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24867))(selection).anchor >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24893))(selection).anchor <= size)) {
+    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24786))(selection).anchor), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24814))(selection).anchor) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24835))(selection).anchor >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24861))(selection).anchor <= size)) {
       throw new __VelarAssertionError("TextHistory selection anchor is outside the document");
     }
-    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24993))(selection).head), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25019))(selection).head) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25038))(selection).head >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25062))(selection).head <= size)) {
+    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24961))(selection).head), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24987))(selection).head) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25006))(selection).head >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25030))(selection).head <= size)) {
       throw new __VelarAssertionError("TextHistory selection head is outside the document");
     }
     return null;

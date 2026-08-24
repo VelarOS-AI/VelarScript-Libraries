@@ -101,7 +101,7 @@ try {
   const consumer = join(temporary, "consumer");
   await mkdir(packs, { recursive: true });
   await mkdir(consumer, { recursive: true });
-  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.14.1";
+  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.14.2";
   const velarPackage = process.env.VELAR_CLI_PACKAGE;
   const dependencies = { "@velarscript/cli": velarPackage ? `file:${resolve(velarPackage)}` : velarVersion };
   const artifacts = [];

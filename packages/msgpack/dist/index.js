@@ -141,6 +141,7 @@ function __velarRegisterRuntimeType(value) {
   return value;
 }
 var __velarBinaryNativeObject = globalThis.Object;
+var __velarBinaryNativeArray = globalThis.Array;
 var __velarBinaryNativeNumber = globalThis.Number;
 var __velarBinaryNativeUint8Array = globalThis.Uint8Array;
 var __velarBinaryNativeUint16Array = globalThis.Uint16Array;
@@ -161,7 +162,7 @@ var __velarBinaryTypedArrayPrototype = __velarBinaryGetPrototypeOf(__velarBinary
 var __velarBinaryTypedArrayTag = __velarBinaryGetOwnPropertyDescriptor(__velarBinaryTypedArrayPrototype, globalThis.Symbol.toStringTag)?.get;
 var __velarBinaryTypedArrayLength = __velarBinaryGetOwnPropertyDescriptor(__velarBinaryTypedArrayPrototype, "length")?.get;
 var __velarBinaryTypedArraySet = __velarBinaryGetOwnPropertyDescriptor(__velarBinaryTypedArrayPrototype, "set")?.value;
-if (typeof __velarBinaryApply !== "function" || typeof __velarBinaryNumberIsInteger !== "function" || typeof __velarBinaryNumberIsSafeInteger !== "function" || typeof __velarBinaryTypedArrayTag !== "function" || typeof __velarBinaryNumberIsFinite !== "function" || typeof __velarBinaryTypedArrayLength !== "function" || typeof __velarBinaryTypedArraySet !== "function" || typeof __velarBinaryNativeDataView !== "function" || typeof __velarBinaryNativeWeakMap !== "function") {
+if (typeof __velarBinaryApply !== "function" || typeof __velarBinaryNumberIsInteger !== "function" || typeof __velarBinaryNumberIsSafeInteger !== "function" || typeof __velarBinaryTypedArrayTag !== "function" || typeof __velarBinaryNumberIsFinite !== "function" || typeof __velarBinaryTypedArrayLength !== "function" || typeof __velarBinaryTypedArraySet !== "function" || typeof __velarBinaryNativeArray !== "function" || typeof __velarBinaryNativeDataView !== "function" || typeof __velarBinaryNativeWeakMap !== "function") {
   throw new __velarBinaryNativeTypeError("The JavaScript typed-array runtime is unavailable");
 }
 function __velarBinaryCall(operation, receiver, arguments_) {
@@ -287,6 +288,9 @@ var Bytes = __velarRegisterRuntimeType(__velarBinaryFreeze({
   },
   __velarBufferToBytes(value, order) {
     return __velarBufferToBytes(value, order);
+  },
+  __velarBufferValues(value) {
+    return __velarBufferValues(value);
   }
 }));
 var UInt8Buffer = __velarRegisterRuntimeType(__velarBinaryFreeze({
@@ -391,6 +395,14 @@ function __velarFloat32SetIndex(value, index, next) {
 }
 function __velarBufferCopy(value) {
   return __velarBufferSlice(value, 0, __velarBinarySize(value));
+}
+function __velarBufferValues(value) {
+  const spec = __velarBinarySpec(value);
+  const length = __velarBinarySize(value);
+  if (length > 1e6) throw new __velarBinaryNativeRangeError(spec.name + ".values cannot produce more than 1000000 List items");
+  const output = new __velarBinaryNativeArray(length);
+  for (let index = 0; index < length; index += 1) output[index] = value[index];
+  return output;
 }
 function __velarBufferSlice(value, start = 0, end = __velarBinarySize(value)) {
   const spec = __velarBinarySpec(value);
