@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 — 2026-08-24
+
+- Verify the adapter with VelarScript 0.14, extend the declared compatible
+  language range through the 0.14 generation, and pin the matching Database
+  compatibility release.
+
 ## 0.2.0 — 2026-08-23
 
 - Publish the companion package as `@velarscript-labs/sqlite`, outside the

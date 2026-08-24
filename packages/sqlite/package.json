@@ -1,6 +1,6 @@
 {
   "name": "@velarscript-labs/sqlite",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Bounded asynchronous SQLite capability for VelarScript Node applications.",
   "license": "Apache-2.0",
   "type": "module",
@@ -28,9 +28,9 @@
   "velar": {
     "entry": "src/index.vel",
     "targets": ["node"],
-    "requires": {"capabilities": ["node"], "language": ">=0.13 <0.14"}
+    "requires": {"capabilities": ["node"], "language": ">=0.13 <0.15"}
   },
   "dependencies": {
-    "@velarscript-labs/database": "0.2.0"
+    "@velarscript-labs/database": "0.2.1"
   }
 }

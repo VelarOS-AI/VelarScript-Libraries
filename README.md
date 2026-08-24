@@ -27,7 +27,7 @@ language toolchain, Standard owners, and official target frameworks. Install
 only what the application uses:
 
 ```sh
-velar add @velarscript-labs/msgpack@0.1.1
+velar add @velarscript-labs/msgpack@0.1.2
 ```
 
 ```velar

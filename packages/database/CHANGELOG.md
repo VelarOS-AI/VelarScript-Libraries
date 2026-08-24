@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 — 2026-08-24
+
+- Verify the unchanged source contract with VelarScript 0.14 and extend the
+  declared compatible language range through the 0.14 generation.
+
 ## 0.2.0 — 2026-08-23
 
 - Publish the companion package as `@velarscript-labs/database`, outside the
