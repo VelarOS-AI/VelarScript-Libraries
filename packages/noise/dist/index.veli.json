@@ -1,0 +1,964 @@
+{
+  "formatVersion": 1,
+  "abiVersion": 1,
+  "interface": {
+    "tag": "object",
+    "value": [
+      [
+        "exports",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "simplex2",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "union"
+                            ],
+                            [
+                              "members",
+                              {
+                                "tag": "array",
+                                "value": [
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "string"
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "number"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "seed"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "simplex3",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "union"
+                            ],
+                            [
+                              "members",
+                              {
+                                "tag": "array",
+                                "value": [
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "string"
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "number"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "seed"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          3
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "simplex4",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "union"
+                            ],
+                            [
+                              "members",
+                              {
+                                "tag": "array",
+                                "value": [
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "string"
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "number"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "seed"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          4
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "hoistedExports",
+        {
+          "tag": "set",
+          "value": [
+            "simplex2",
+            "simplex3",
+            "simplex4"
+          ]
+        }
+      ],
+      [
+        "mutableExports",
+        {
+          "tag": "set",
+          "value": []
+        }
+      ],
+      [
+        "reactiveExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "reExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/random#type:Random",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "number",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "int",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "bool",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "probability"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "bool"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "pick",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "typeParameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "T"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "parameter"
+                                        ],
+                                        [
+                                          "name",
+                                          "T"
+                                        ],
+                                        [
+                                          "index",
+                                          0
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "values"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "parameter"
+                              ],
+                              [
+                                "name",
+                                "T"
+                              ],
+                              [
+                                "index",
+                                0
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "shuffle",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "typeParameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "T"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "parameter"
+                                        ],
+                                        [
+                                          "name",
+                                          "T"
+                                        ],
+                                        [
+                                          "index",
+                                          0
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "values"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "parameter"
+                                    ],
+                                    [
+                                      "name",
+                                      "T"
+                                    ],
+                                    [
+                                      "index",
+                                      0
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "fork",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "label"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Random"
+                              ],
+                              [
+                                "identity",
+                                "velar/random#type:Random"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeReadonlyFields",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/random#type:Random",
+              {
+                "tag": "set",
+                "value": [
+                  "number",
+                  "int",
+                  "bool",
+                  "pick",
+                  "shuffle",
+                  "fork"
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeIdentities",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/random#type:Random",
+              "velar/random#type:Random"
+            ]
+          ]
+        }
+      ],
+      [
+        "typeAliases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "enums",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "classes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "tests",
+        {
+          "tag": "array",
+          "value": []
+        }
+      ],
+      [
+        "extensionExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "extensionData",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeBases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "genericTypes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ]
+    ]
+  }
+}

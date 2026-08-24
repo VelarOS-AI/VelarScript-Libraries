@@ -19,7 +19,7 @@
       "path": "packages/text-buffer",
       "kind": "source-library",
       "status": "stable",
-      "supportedVelarScript": ">=0.13.0 <0.14.0",
+      "supportedVelarScript": ">=0.13.0 <0.15.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -43,7 +43,7 @@
       "path": "packages/compression",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.13.0 <0.14.0",
+      "supportedVelarScript": ">=0.13.0 <0.15.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {

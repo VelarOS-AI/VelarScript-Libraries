@@ -1,0 +1,2784 @@
+{
+  "formatVersion": 1,
+  "abiVersion": 1,
+  "interface": {
+    "tag": "object",
+    "value": [
+      [
+        "exports",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseExecutor",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "DatabaseExecutor"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "DatabaseExecutor"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseCommand",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "DatabaseCommand"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "DatabaseCommand"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseQuery",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "DatabaseQuery"
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseAffectedRowsError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "classConstructor"
+                  ],
+                  [
+                    "name",
+                    "DatabaseAffectedRowsError"
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseRowNotFoundError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "classConstructor"
+                  ],
+                  [
+                    "name",
+                    "DatabaseRowNotFoundError"
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "command",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "text",
+                        "minimumAffected",
+                        "maximumAffected"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "DatabaseCommand"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "query",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "typeParameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "runtimeType"
+                            ],
+                            [
+                              "value",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "parameter"
+                                  ],
+                                  [
+                                    "name",
+                                    "T"
+                                  ],
+                                  [
+                                    "index",
+                                    0
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "text",
+                        "RowType",
+                        "maximumRows"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "DatabaseQuery<T>"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery<9:parameter1:0>"
+                        ],
+                        [
+                          "application",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "declaration",
+                                "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                              ],
+                              [
+                                "name",
+                                "DatabaseQuery"
+                              ],
+                              [
+                                "arguments",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "parameter"
+                                        ],
+                                        [
+                                          "name",
+                                          "T"
+                                        ],
+                                        [
+                                          "index",
+                                          0
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "execute",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseExecutor"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseCommand"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "unknown"
+                                  ],
+                                  [
+                                    "boundary",
+                                    true
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "executor",
+                        "operation",
+                        "parameters"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "promise"
+                        ],
+                        [
+                          "value",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "one",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "typeParameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseExecutor"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseQuery<T>"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery<9:parameter1:0>"
+                            ],
+                            [
+                              "application",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "declaration",
+                                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                                  ],
+                                  [
+                                    "name",
+                                    "DatabaseQuery"
+                                  ],
+                                  [
+                                    "arguments",
+                                    {
+                                      "tag": "array",
+                                      "value": [
+                                        {
+                                          "tag": "object",
+                                          "value": [
+                                            [
+                                              "kind",
+                                              "parameter"
+                                            ],
+                                            [
+                                              "name",
+                                              "T"
+                                            ],
+                                            [
+                                              "index",
+                                              0
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "unknown"
+                                  ],
+                                  [
+                                    "boundary",
+                                    true
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "executor",
+                        "operation",
+                        "parameters"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "promise"
+                        ],
+                        [
+                          "value",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "optional"
+                              ],
+                              [
+                                "inner",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "parameter"
+                                    ],
+                                    [
+                                      "name",
+                                      "T"
+                                    ],
+                                    [
+                                      "index",
+                                      0
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "requireOne",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "typeParameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseExecutor"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseQuery<T>"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery<9:parameter1:0>"
+                            ],
+                            [
+                              "application",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "declaration",
+                                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                                  ],
+                                  [
+                                    "name",
+                                    "DatabaseQuery"
+                                  ],
+                                  [
+                                    "arguments",
+                                    {
+                                      "tag": "array",
+                                      "value": [
+                                        {
+                                          "tag": "object",
+                                          "value": [
+                                            [
+                                              "kind",
+                                              "parameter"
+                                            ],
+                                            [
+                                              "name",
+                                              "T"
+                                            ],
+                                            [
+                                              "index",
+                                              0
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "unknown"
+                                  ],
+                                  [
+                                    "boundary",
+                                    true
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "executor",
+                        "operation",
+                        "parameters",
+                        "message"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "promise"
+                        ],
+                        [
+                          "value",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "parameter"
+                              ],
+                              [
+                                "name",
+                                "T"
+                              ],
+                              [
+                                "index",
+                                0
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "all",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "typeParameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseExecutor"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "DatabaseQuery<T>"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery<9:parameter1:0>"
+                            ],
+                            [
+                              "application",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "declaration",
+                                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                                  ],
+                                  [
+                                    "name",
+                                    "DatabaseQuery"
+                                  ],
+                                  [
+                                    "arguments",
+                                    {
+                                      "tag": "array",
+                                      "value": [
+                                        {
+                                          "tag": "object",
+                                          "value": [
+                                            [
+                                              "kind",
+                                              "parameter"
+                                            ],
+                                            [
+                                              "name",
+                                              "T"
+                                            ],
+                                            [
+                                              "index",
+                                              0
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "list"
+                            ],
+                            [
+                              "element",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "unknown"
+                                  ],
+                                  [
+                                    "boundary",
+                                    true
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "executor",
+                        "operation",
+                        "parameters"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    2
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "promise"
+                        ],
+                        [
+                          "value",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "parameter"
+                                    ],
+                                    [
+                                      "name",
+                                      "T"
+                                    ],
+                                    [
+                                      "index",
+                                      0
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "hoistedExports",
+        {
+          "tag": "set",
+          "value": [
+            "command",
+            "query",
+            "execute",
+            "one",
+            "requireOne",
+            "all"
+          ]
+        }
+      ],
+      [
+        "mutableExports",
+        {
+          "tag": "set",
+          "value": []
+        }
+      ],
+      [
+        "reactiveExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "reExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseExecutor",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "execute",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "one",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "unknown"
+                                    ],
+                                    [
+                                      "boundary",
+                                      true
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "all",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "list"
+                                    ],
+                                    [
+                                      "element",
+                                      {
+                                        "tag": "object",
+                                        "value": [
+                                          [
+                                            "kind",
+                                            "unknown"
+                                          ],
+                                          [
+                                            "boundary",
+                                            true
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseCommand",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "text",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "string"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "minimumAffected",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maximumAffected",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "execute",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "one",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "unknown"
+                                    ],
+                                    [
+                                      "boundary",
+                                      true
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "all",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "string"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "list"
+                                  ],
+                                  [
+                                    "element",
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "text",
+                              "parameters"
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          2
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "promise"
+                              ],
+                              [
+                                "value",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "list"
+                                    ],
+                                    [
+                                      "element",
+                                      {
+                                        "tag": "object",
+                                        "value": [
+                                          [
+                                            "kind",
+                                            "unknown"
+                                          ],
+                                          [
+                                            "boundary",
+                                            true
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "text",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "string"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "minimumAffected",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maximumAffected",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeReadonlyFields",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseCommand",
+              {
+                "tag": "set",
+                "value": [
+                  "text",
+                  "minimumAffected",
+                  "maximumAffected"
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand",
+              {
+                "tag": "set",
+                "value": [
+                  "text",
+                  "minimumAffected",
+                  "maximumAffected"
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeIdentities",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseExecutor",
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseExecutor"
+            ],
+            [
+              "DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseCommand"
+            ],
+            [
+              "DatabaseQuery",
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+            ]
+          ]
+        }
+      ],
+      [
+        "genericTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseQuery",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                  ],
+                  [
+                    "name",
+                    "DatabaseQuery"
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterBounds",
+                    {
+                      "tag": "array",
+                      "value": [
+                        null
+                      ]
+                    }
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "text",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "string"
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "maximumRows",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "parse",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                1
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "parameter"
+                                    ],
+                                    [
+                                      "name",
+                                      "T"
+                                    ],
+                                    [
+                                      "index",
+                                      0
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "readonlyFields",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "text",
+                        "maximumRows",
+                        "parse"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#type:DatabaseQuery"
+                  ],
+                  [
+                    "name",
+                    "DatabaseQuery"
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "T"
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterBounds",
+                    {
+                      "tag": "array",
+                      "value": [
+                        null
+                      ]
+                    }
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "text",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "string"
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "maximumRows",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "parse",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "unknown"
+                                        ],
+                                        [
+                                          "boundary",
+                                          true
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                1
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "parameter"
+                                    ],
+                                    [
+                                      "name",
+                                      "T"
+                                    ],
+                                    [
+                                      "index",
+                                      0
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "readonlyFields",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "text",
+                        "maximumRows",
+                        "parse"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "typeAliases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "enums",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "classes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "DatabaseAffectedRowsError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "affected",
+                        "minimum",
+                        "maximum"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    3
+                  ],
+                  [
+                    "base",
+                    "Error"
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "affected",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "minimum",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "maximum",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "DatabaseRowNotFoundError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "message"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    0
+                  ],
+                  [
+                    "base",
+                    "Error"
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "affected",
+                        "minimum",
+                        "maximum"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    3
+                  ],
+                  [
+                    "base",
+                    "Error"
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "affected",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "minimum",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "maximum",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "mutable",
+                                false
+                              ],
+                              [
+                                "type",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseAffectedRowsError"
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "message"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    0
+                  ],
+                  [
+                    "base",
+                    "Error"
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/database@0.2.2/src/index.vel#DatabaseRowNotFoundError"
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "tests",
+        {
+          "tag": "array",
+          "value": []
+        }
+      ],
+      [
+        "extensionExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "extensionData",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeBases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ]
+    ]
+  }
+}

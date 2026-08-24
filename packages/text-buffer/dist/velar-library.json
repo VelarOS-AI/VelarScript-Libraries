@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/text-buffer",
+    "version": "0.10.7"
+  },
+  "target": "core",
+  "compilerVersion": "0.14.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "12040ae14ffb93938cee421c1704fc4b98554b1259b8d3f7d7a3f303f3c2fe44"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "91f21f56517dd33718328755e087ea189ad9c898554f3b53d0d0978f742c712e",
+      "sourceMap": "829b92e36e19e28e7b06f9e8040a6e6eb327417c26b8c9ad18b5df951e391243",
+      "interface": "77ef14b3f19c2f9b34967c577bf16f430758db300f6373c2c15304061af27799"
+    }
+  }
+}

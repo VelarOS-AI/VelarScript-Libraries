@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/msgpack",
+    "version": "0.1.3"
+  },
+  "target": "core",
+  "compilerVersion": "0.14.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "c27f1a166041b6d71e6781afcdc4e5a15a1581e103d7541cc5c7d1a6b9dc207e"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "38338f724420a36ecf91f1202e9500503c7c73be6f0ac2160de219c5d5b8519e",
+      "sourceMap": "ce02946f8c7eea7ec2c4735ac75dcc2862cddf1ea40805e855587c7b7d4d8b0e",
+      "interface": "2c96fd7cc9f8a92b59fdebce1f498d4c315b461386b4ff1bf0d00edb28affaad"
+    }
+  }
+}

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.7 — 2026-08-24
+
+- Publish the readable `.vel` source together with frozen Velar library ABI 1
+  JavaScript, source map, portable type interface, and integrity receipt.
+  Consumers execute the artifact without reparsing the source on later language
+  generations.
+- Verify the source fallback with VelarScript 0.14 and extend its declared
+  compatible language range through the 0.14 generation.
+
 ## 0.10.6 — 2026-08-23
 
 - Publish the companion package as `@velarscript-labs/text-buffer`, outside the

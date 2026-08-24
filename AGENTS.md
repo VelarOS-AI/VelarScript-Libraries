@@ -10,9 +10,13 @@ frameworks, or `velar lsp` server.
   for the language toolchain and official Standard/target owners.
 - Never introduce a `velar/*` alias, compiler privilege, hidden CLI asset,
   repository-relative Core import, or synchronized toolchain release version.
-- A source package declares `velar.entry`, `velar.targets`, and
-  `velar.requires.capabilities`. A JavaScript/TypeScript tooling package uses
-  ordinary npm exports and must not duplicate compiler semantics.
+- A Vel-authored package declares `velar.entry`, `velar.artifacts`,
+  `velar.targets`, and `velar.requires.capabilities`; it publishes readable
+  source plus the generated ABI-1 JavaScript, source map, portable interface,
+  and receipt, and its root npm export points at that JavaScript. Regenerate the
+  artifact with `velar build-library` after every source or version change. A
+  JavaScript/TypeScript tooling package uses ordinary npm exports and must not
+  duplicate compiler semantics.
 - Keep external bridges narrow and checked. Validate untrusted results before
   they leave the adapter and document applicable memory, result, queue,
   concurrency, cancellation, and cleanup bounds.

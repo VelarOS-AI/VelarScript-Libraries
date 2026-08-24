@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/compression",
+    "version": "0.1.2"
+  },
+  "target": "core",
+  "compilerVersion": "0.14.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "9108cad1ddbfceff416232d8ee8e5ecc1b214968c65c59d1de3f48b02fa39c14"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "221663601ff0cb977f23ad1dbaba1bc4fb653263975939afc7384b0f6f87c841",
+      "sourceMap": "964115fe4f51149146ba96694742abba6f0093019c8b68b659943a61a1a9fc8e",
+      "interface": "df56d1c35a6cb54ee59065d7ae64c829129623b028a835f126c431204a1780ce"
+    }
+  }
+}

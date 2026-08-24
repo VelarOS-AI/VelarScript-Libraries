@@ -1,0 +1,2220 @@
+{
+  "formatVersion": 1,
+  "abiVersion": 1,
+  "interface": {
+    "tag": "object",
+    "value": [
+      [
+        "exports",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "deflate",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "Bytes"
+                            ],
+                            [
+                              "identity",
+                              "velar/binary#type:Bytes"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value",
+                        "level"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "Bytes"
+                        ],
+                        [
+                          "identity",
+                          "velar/binary#type:Bytes"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "inflate",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "Bytes"
+                            ],
+                            [
+                              "identity",
+                              "velar/binary#type:Bytes"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value",
+                        "maxBytes"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "Bytes"
+                        ],
+                        [
+                          "identity",
+                          "velar/binary#type:Bytes"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "gzip",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "Bytes"
+                            ],
+                            [
+                              "identity",
+                              "velar/binary#type:Bytes"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value",
+                        "level"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "Bytes"
+                        ],
+                        [
+                          "identity",
+                          "velar/binary#type:Bytes"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "gunzip",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "Bytes"
+                            ],
+                            [
+                              "identity",
+                              "velar/binary#type:Bytes"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "value",
+                        "maxBytes"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "Bytes"
+                        ],
+                        [
+                          "identity",
+                          "velar/binary#type:Bytes"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "hoistedExports",
+        {
+          "tag": "set",
+          "value": [
+            "deflate",
+            "inflate",
+            "gzip",
+            "gunzip"
+          ]
+        }
+      ],
+      [
+        "mutableExports",
+        {
+          "tag": "set",
+          "value": []
+        }
+      ],
+      [
+        "reactiveExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "reExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "CompressionOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "level",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/compression@0.1.2/src/index.vel#type:CompressionOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "level",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Bytes",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "Bytes",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt8Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt8Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt8Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt8Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt16Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt16Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt16Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt16Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxElements",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "push",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "value"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "null"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "finish",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxElements",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "push",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "value"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "null"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "finish",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeReadonlyFields",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/binary#type:Bytes",
+              {
+                "tag": "set",
+                "value": [
+                  "size"
+                ]
+              }
+            ],
+            [
+              "Bytes",
+              {
+                "tag": "set",
+                "value": [
+                  "size"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "maxElements",
+                  "push",
+                  "finish"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "maxElements",
+                  "push",
+                  "finish"
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeIdentities",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "CompressionOptions",
+              "velar:package:@velarscript-labs/compression@0.1.2/src/index.vel#type:CompressionOptions"
+            ],
+            [
+              "velar/binary#type:Bytes",
+              "velar/binary#type:Bytes"
+            ],
+            [
+              "Bytes",
+              "velar/binary#type:Bytes"
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              "velar/binary#type:UInt8Buffer"
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              "velar/binary#type:UInt16Buffer"
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              "velar/binary#type:UInt32Buffer"
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              "velar/binary#type:Float32Buffer"
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              "velar/binary#type:UInt32Builder"
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              "velar/binary#type:Float32Builder"
+            ]
+          ]
+        }
+      ],
+      [
+        "typeAliases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "enums",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/binary#enum:ByteOrder",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "velar/binary#enum:ByteOrder"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "little",
+                        "big"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "classes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "js:fflate#Unzlib",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "js:fflate#Unzlib"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "function"
+                            ],
+                            [
+                              "parameters",
+                              {
+                                "tag": "array",
+                                "value": [
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "named"
+                                      ],
+                                      [
+                                        "name",
+                                        "Bytes"
+                                      ],
+                                      [
+                                        "identity",
+                                        "velar/binary#type:Bytes"
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "bool"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            [
+                              "requiredParameters",
+                              2
+                            ],
+                            [
+                              "result",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "null"
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "push",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "Bytes"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar/binary#type:Bytes"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "bool"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "value",
+                                    "final"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                2
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "js:fflate#Gunzip",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "js:fflate#Gunzip"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "function"
+                            ],
+                            [
+                              "parameters",
+                              {
+                                "tag": "array",
+                                "value": [
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "named"
+                                      ],
+                                      [
+                                        "name",
+                                        "Bytes"
+                                      ],
+                                      [
+                                        "identity",
+                                        "velar/binary#type:Bytes"
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "tag": "object",
+                                    "value": [
+                                      [
+                                        "kind",
+                                        "bool"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            [
+                              "requiredParameters",
+                              2
+                            ],
+                            [
+                              "result",
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "null"
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "push",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "Bytes"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar/binary#type:Bytes"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "bool"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "value",
+                                    "final"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                2
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "tests",
+        {
+          "tag": "array",
+          "value": []
+        }
+      ],
+      [
+        "extensionExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "extensionData",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeBases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "genericTypes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ]
+    ]
+  }
+}

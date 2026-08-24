@@ -1,4 +1,6 @@
 node_modules/
-packages/*/dist/
+# Frozen Velar library artifacts are release inputs and stay beside their
+# readable .vel source. Editor Kit is TypeScript and rebuilds its dist output.
+packages/editor-kit/dist/
 release/
 .DS_Store

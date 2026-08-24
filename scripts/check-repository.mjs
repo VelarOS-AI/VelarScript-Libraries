@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { access, readFile, readdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -39,6 +40,17 @@ async function exists(path, message) {
 function dependencyEntries(manifest) {
   return ["dependencies", "optionalDependencies", "peerDependencies"]
     .flatMap((field) => Object.entries(manifest[field] ?? {}).map(([name, version]) => ({ field, name, version })));
+}
+
+function sha256(body) {
+  return createHash("sha256").update(body).digest("hex");
+}
+
+function stringLeaves(value) {
+  if (typeof value === "string") return [value];
+  if (Array.isArray(value)) return value.flatMap(stringLeaves);
+  if (value !== null && typeof value === "object") return Object.values(value).flatMap(stringLeaves);
+  return [];
 }
 
 const catalog = await json(join(root, "catalog.json"));
@@ -130,6 +142,50 @@ for (const entry of catalog.packages) {
   if (!velar.requires || !Array.isArray(velar.requires.capabilities)) fail(`${entry.name} must declare velar.requires.capabilities`);
   await exists(join(packageRoot, velar.entry), `${entry.name} velar.entry does not exist`);
   await exists(join(packageRoot, "velar.json"), `${entry.name} is missing its check/test project manifest`);
+  if (!manifest.files.includes(velar.entry) || !manifest.files.includes("dist")) {
+    fail(`${entry.name} must publish its exact velar.entry and frozen dist directory`);
+  }
+  if (manifest.scripts?.build !== "velar build-library") fail(`${entry.name} build script must run velar build-library`);
+  const artifactEntries = velar.artifacts !== null && typeof velar.artifacts === "object" && !Array.isArray(velar.artifacts)
+    ? Object.entries(velar.artifacts)
+    : [];
+  if (artifactEntries.length !== 1 || !["core", "node"].includes(artifactEntries[0]?.[0]) || typeof artifactEntries[0]?.[1] !== "string") {
+    fail(`${entry.name} must declare exactly one core or node Velar ABI artifact`);
+  }
+  const [artifactTarget, artifactRelativePath] = artifactEntries[0];
+  if (artifactTarget === "node" && velar.targets.some((target) => target !== "node")) {
+    fail(`${entry.name} cannot expose a Node artifact to a non-Node target`);
+  }
+  const rootExportTargets = stringLeaves(
+    manifest.exports !== null && typeof manifest.exports === "object" && !Array.isArray(manifest.exports)
+      ? manifest.exports["."]
+      : manifest.exports,
+  );
+  const expectedExport = `./${dirname(artifactRelativePath)}/index.js`;
+  if (rootExportTargets.length === 0 || rootExportTargets.some((target) => target !== expectedExport)) {
+    fail(`${entry.name} root npm export must point at '${expectedExport}'`);
+  }
+  const receiptPath = join(packageRoot, artifactRelativePath);
+  const receipt = await json(receiptPath);
+  if (receipt.kind !== "velar-library-artifact" || receipt.formatVersion !== 1 || receipt.abiVersion !== 1) {
+    fail(`${entry.name} artifact receipt must use Velar library ABI 1`);
+  }
+  if (receipt.package?.name !== entry.name || receipt.package?.version !== manifest.version
+    || receipt.target !== artifactTarget || receipt.sourceEntry !== velar.entry) {
+    fail(`${entry.name} artifact receipt identity does not match package.json`);
+  }
+  const receiptRoot = dirname(receiptPath);
+  for (const field of ["javascript", "sourceMap", "interface"]) {
+    const relativePath = receipt.entry?.[field];
+    const expectedHash = receipt.entry?.sha256?.[field];
+    if (typeof relativePath !== "string" || typeof expectedHash !== "string") fail(`${entry.name} artifact receipt is missing entry.${field}`);
+    const body = await readFile(join(receiptRoot, relativePath));
+    if (sha256(body) !== expectedHash) fail(`${entry.name} artifact ${field} hash does not match its receipt`);
+  }
+  const sourceReceipt = receipt.sources?.find((source) => source.path === velar.entry);
+  if (!sourceReceipt || sha256(await readFile(join(packageRoot, velar.entry))) !== sourceReceipt.sha256) {
+    fail(`${entry.name} artifact receipt is stale for ${velar.entry}`);
+  }
 }
 
 process.stdout.write(`Validated ${catalog.packages.length} companion package contracts.\n`);

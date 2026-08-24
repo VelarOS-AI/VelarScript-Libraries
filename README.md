@@ -27,12 +27,19 @@ language toolchain, Standard owners, and official target frameworks. Install
 only what the application uses:
 
 ```sh
-velar add @velarscript-labs/msgpack@0.1.2
+velar add @velarscript-labs/msgpack@0.1.3
 ```
 
 ```velar
 import {encode, parse} from "@velarscript-labs/msgpack"
 ```
+
+Every Vel-authored package publishes two representations of the same release:
+the readable `.vel` source and a frozen Velar library ABI 1 artifact containing
+JavaScript, a source map, a portable type interface, and a hash receipt. Current
+toolchains load the checked artifact first, so a later Vel language generation
+does not need to reparse or rewrite an older library release. The source remains
+in the tarball for inspection, debugging, and an explicit source fallback.
 
 The exact machine-readable roster and compatibility status live in
 [`catalog.json`](catalog.json).
@@ -58,9 +65,10 @@ npm install
 npm run validate
 ```
 
-Validation checks every package, runs its real dependency tests, packs all
-public artifacts, installs those tarballs into a clean consumer, compiles and
-runs a consumer program, and imports the packed editor tooling.
+Validation checks every package, regenerates and verifies every frozen artifact,
+runs its real dependency tests, packs all public artifacts, installs those
+tarballs into a clean consumer, compiles and runs a consumer program without
+compiling package source, and imports the packed editor tooling.
 
 Package publication is intentionally not part of `validate`. Commit, push,
 tag, npm publication, removal of the legacy `@velarscript/*` packages, and

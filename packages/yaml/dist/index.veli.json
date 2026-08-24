@@ -1,0 +1,296 @@
+{
+  "formatVersion": 1,
+  "abiVersion": 1,
+  "interface": {
+    "tag": "object",
+    "value": [
+      [
+        "exports",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "parseYaml",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "string"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "number"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "source",
+                        "maxBytes",
+                        "maxAliases"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "unknown"
+                        ],
+                        [
+                          "boundary",
+                          true
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "hoistedExports",
+        {
+          "tag": "set",
+          "value": [
+            "parseYaml"
+          ]
+        }
+      ],
+      [
+        "mutableExports",
+        {
+          "tag": "set",
+          "value": []
+        }
+      ],
+      [
+        "reactiveExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "reExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "NativeYamlOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "strict",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "bool"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "uniqueKeys",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "bool"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxAliasCount",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/yaml@0.1.2/src/index.vel#type:NativeYamlOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "strict",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "bool"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "uniqueKeys",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "bool"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxAliasCount",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeReadonlyFields",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeIdentities",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "NativeYamlOptions",
+              "velar:package:@velarscript-labs/yaml@0.1.2/src/index.vel#type:NativeYamlOptions"
+            ]
+          ]
+        }
+      ],
+      [
+        "typeAliases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "enums",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "classes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "tests",
+        {
+          "tag": "array",
+          "value": []
+        }
+      ],
+      [
+        "extensionExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "extensionData",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeBases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "genericTypes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ]
+    ]
+  }
+}

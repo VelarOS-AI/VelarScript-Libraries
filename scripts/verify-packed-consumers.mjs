@@ -101,8 +101,9 @@ try {
   const consumer = join(temporary, "consumer");
   await mkdir(packs, { recursive: true });
   await mkdir(consumer, { recursive: true });
-  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.13.0";
-  const dependencies = { "@velarscript/cli": velarVersion };
+  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.14.1";
+  const velarPackage = process.env.VELAR_CLI_PACKAGE;
+  const dependencies = { "@velarscript/cli": velarPackage ? `file:${resolve(velarPackage)}` : velarVersion };
   const artifacts = [];
 
   for (const entry of catalog.packages) {
@@ -121,6 +122,9 @@ try {
     } else {
       const manifest = JSON.parse(await readFile(join(root, entry.path, "package.json"), "utf8"));
       assert.ok(files.has(manifest.velar.entry), `${entry.name} omitted velar.entry`);
+      for (const required of ["dist/index.js", "dist/index.js.map", "dist/index.veli.json", "dist/velar-library.json"]) {
+        assert.ok(files.has(required), `${entry.name} omitted frozen artifact file ${required}`);
+      }
     }
     dependencies[entry.name] = `file:${path}`;
     artifacts.push(`${entry.name}@${artifact.version}`);
@@ -133,6 +137,19 @@ try {
     dependencies,
   }, null, 2)}\n`, "utf8");
   await run(npmCommand, ["install", "--ignore-scripts", "--no-audit", "--no-fund"], consumer);
+
+  // The installed source remains readable, but consumer compilation must be
+  // independent from its grammar. Make every source package look like a
+  // previous-generation release before the first check/run; the frozen JS and
+  // portable interface must still carry the whole contract.
+  for (const entry of catalog.packages.filter((item) => item.kind !== "tooling")) {
+    const installedRoot = join(consumer, "node_modules", ...entry.name.split("/"));
+    const manifestPath = join(installedRoot, "package.json");
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    manifest.velar.requires.language = "0.1";
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+    await writeFile(join(installedRoot, manifest.velar.entry), "export def obsolete():\n    with previous_runtime() as value:\n        return value\n", "utf8");
+  }
   await writeFile(join(consumer, "velar.json"), `${JSON.stringify({
     formatVersion: 2,
     entry: "main.vel",
@@ -198,7 +215,7 @@ test "packed SQLite and database packages execute together":
   assert.equal(editorKit.VelarLanguageService.command, "velar");
   await verifyInstalledLsp(consumer, cli, editorKit.assertVelarProtocolCompatible);
 
-  process.stdout.write(`Verified packed consumers with @velarscript/cli@${velarVersion}: ${artifacts.join(", ")}.\n`);
+  process.stdout.write(`Verified packed consumers with ${velarPackage ? `local @velarscript/cli (${resolve(velarPackage)})` : `@velarscript/cli@${velarVersion}`}: ${artifacts.join(", ")}.\n`);
 } finally {
   await rm(temporary, { recursive: true, force: true });
 }

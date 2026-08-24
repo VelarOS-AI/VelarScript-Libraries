@@ -1,16 +1,18 @@
 {
   "name": "@velarscript-labs/compression",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bounded DEFLATE and gzip adapter for VelarScript.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
     "src/index.vel",
+    "dist",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
+    "build": "velar build-library",
     "check": "velar format --check && velar check",
     "test": "velar test"
   },
@@ -25,10 +27,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "velar": {
     "entry": "src/index.vel",
+    "artifacts": { "core": "dist/velar-library.json" },
     "targets": ["core", "node", "web", "desktop"],
-    "requires": { "capabilities": [], "language": ">=0.13 <0.14" }
+    "requires": { "capabilities": [], "language": ">=0.13 <0.15" }
   },
   "dependencies": {
     "fflate": "^0.8.3"

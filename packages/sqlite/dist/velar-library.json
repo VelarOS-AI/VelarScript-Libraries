@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/sqlite",
+    "version": "0.2.2"
+  },
+  "target": "node",
+  "compilerVersion": "0.14.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "e6272cf2f7d0ca88034fcf3deb7db7c9e63158165017167933b79a1887cad390"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "271affd5cabaf9b34c49a706e7965d9c3942f2ddffe9e921d7bdc092102ebffb",
+      "sourceMap": "62cb96e139d5bbe00c042081a0f2c713efe54b54a0ebd030be92db182ea0f59e",
+      "interface": "31f47fb9c50ce51bcdb1ab035aa2d279687ff4adba06eeab9c463f1f7e683869"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/yaml",
+    "version": "0.1.2"
+  },
+  "target": "core",
+  "compilerVersion": "0.14.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "c9b108941cdd328c201d248356b9a436f73ac8aa832cd02b8b9962619dd5c9cb"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "5e7f6effb5f1dcbe8d8adf0a54a484294d79cf6d6daf75a39be7d3a5cd710e44",
+      "sourceMap": "a67f17d4e3508517d80b9ace01b48044b822b2132e76d8f22eec6efdc8c1b701",
+      "interface": "db437f44a1974aedcbbde2fba58fefba969025ec236e5bc625520c76db868eae"
+    }
+  }
+}
