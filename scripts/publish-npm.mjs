@@ -34,9 +34,13 @@ for (const entry of catalog.packages) {
   const manifest = JSON.parse(await readFile(join(root, entry.path, "package.json"), "utf8"));
   if (manifest.private === true) continue;
   if (manifest.name !== entry.name) throw new Error(`Catalog mismatch for ${entry.path}`);
-  releases.push({ name: manifest.name, version: manifest.version });
+  const dependencies = Object.entries(manifest.dependencies ?? {})
+    .filter(([name]) => name.startsWith("@velarscript-labs/"))
+    .map(([name, version]) => ({ name, version }));
+  releases.push({ name: manifest.name, version: manifest.version, dependencies });
 }
 
+const failures = [];
 for (const release of releases) {
   const identity = `${release.name}@${release.version}`;
   if (await registryHasVersion(release.name, release.version)) {
@@ -45,6 +49,19 @@ for (const release of releases) {
   }
   if (dryRun) {
     console.log(`publish ${identity}`);
+    continue;
+  }
+
+  const missingDependencies = [];
+  for (const dependency of release.dependencies) {
+    if (!await registryHasVersion(dependency.name, dependency.version)) {
+      missingDependencies.push(`${dependency.name}@${dependency.version}`);
+    }
+  }
+  if (missingDependencies.length > 0) {
+    const message = `dependencies are not published: ${missingDependencies.join(", ")}`;
+    console.error(`blocked ${identity}: ${message}`);
+    failures.push(`${identity} (${message})`);
     continue;
   }
 
@@ -66,8 +83,15 @@ for (const release of releases) {
       console.log(`skip ${identity}`);
       continue;
     }
-    throw error;
+    process.stdout.write(error.stdout ?? "");
+    process.stderr.write(error.stderr ?? "");
+    failures.push(identity);
+    continue;
   }
   process.stdout.write(result.stdout);
   process.stderr.write(result.stderr);
+}
+
+if (failures.length > 0) {
+  throw new Error(`npm publication did not complete for: ${failures.join(", ")}`);
 }
