@@ -1,6 +1,6 @@
 {
   "name": "@velarscript-labs/noise",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Deterministic simplex-noise adapter for VelarScript.",
   "license": "Apache-2.0",
   "type": "module",
@@ -28,7 +28,7 @@
   "velar": {
     "entry": "src/index.vel",
     "targets": ["core", "node", "web", "desktop"],
-    "requires": { "capabilities": [], "language": ">=0.13 <0.14" }
+    "requires": { "capabilities": [], "language": ">=0.13 <0.15" }
   },
   "dependencies": {
     "simplex-noise": "^4.0.3"

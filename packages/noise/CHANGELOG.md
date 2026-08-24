@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 — 2026-08-24
+
+- Support VelarScript language generation 0.14 while retaining 0.13
+  compatibility.
+
 ## 0.1.1 — 2026-08-23
 
 - Publish the companion package as `@velarscript-labs/noise`, outside the
