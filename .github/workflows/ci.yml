@@ -28,7 +28,11 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        velar: ["0.13.0", "latest"]
+        include:
+          - velar: "0.14.2"
+            frozenArtifacts: "true"
+          - velar: "latest"
+            frozenArtifacts: "true"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -39,4 +43,5 @@ jobs:
       - name: Verify packed consumers
         env:
           VELAR_CLI_VERSION: ${{ matrix.velar }}
+          VELAR_VERIFY_FROZEN_ARTIFACTS: ${{ matrix.frozenArtifacts }}
         run: npm run pack:check

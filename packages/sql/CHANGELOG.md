@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-08-24
+
+- Require VelarScript language generation 0.14, verify distribution with CLI
+  0.14.2, and depend on the matching Database 0.3.1 compatibility release.
+
 ## 0.1.0 — 2026-08-24
 
 - Add Velar-style SELECT, join, insert, update, and delete builders over opaque

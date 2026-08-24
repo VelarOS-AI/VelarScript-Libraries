@@ -4,7 +4,7 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/text-buffer",
-    "version": "0.10.7"
+    "version": "0.10.8"
   },
   "target": "core",
   "compilerVersion": "0.14.2",
@@ -22,7 +22,7 @@
     "sha256": {
       "javascript": "d65f70c1105a803d6ef6174ed9537d5e426ce8155de0b21cd56cc090a4d805c8",
       "sourceMap": "3f02a3c3826e519dbb8889ff938f9da28123e64347673f4669515162e3f7530d",
-      "interface": "77ef14b3f19c2f9b34967c577bf16f430758db300f6373c2c15304061af27799"
+      "interface": "ede3dbd6c58fdab84c19f43a5b6a7e72ea5e542527083b459b73d2b592ef168f"
     }
   }
 }

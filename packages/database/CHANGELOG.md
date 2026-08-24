@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 — 2026-08-24
+
+- Correct the supported VelarScript language generation to 0.14 and verify the
+  published source and frozen artifact with CLI 0.14.2.
+
 ## 0.3.0 — 2026-08-24
 
 - Replace raw `(text, parameters)` execution with opaque composable statements

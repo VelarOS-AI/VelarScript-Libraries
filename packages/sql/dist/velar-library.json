@@ -4,7 +4,7 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/sql",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "target": "core",
   "compilerVersion": "0.14.2",
@@ -22,7 +22,7 @@
     "sha256": {
       "javascript": "c2766432594e220bb809efa33cdbf03809175b3513277cd1946dc18f4398eb69",
       "sourceMap": "8cd7ddb7ad1db2dbddbebdf5a400f3b7659b7bb672a92dadf99b04304222426b",
-      "interface": "17c749b55bcb6d17d320c8fd2c119bfc8b9ac257b6b5d8beb2f9f7d11e4d9748"
+      "interface": "dc514eab895cfe256e1ac7a6b4009bea8714e68380f7e7081d3b466b3d3bbffc"
     }
   }
 }

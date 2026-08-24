@@ -4,7 +4,7 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/sqlite",
-    "version": "0.3.0"
+    "version": "0.3.1"
   },
   "target": "node",
   "compilerVersion": "0.14.2",
@@ -22,7 +22,7 @@
     "sha256": {
       "javascript": "bf5a8456e0778533840efb831a60b93ee23b3f0963735fccd29a89978a61358d",
       "sourceMap": "6b8fe8ab61326511de62813d3e33a16aacf9f53ec46b16e20eb1cf68e05e2391",
-      "interface": "1af72e34a35eb600d07c98dcd6a877d119708d1a79709d3d1b4fe51d7dfffc03"
+      "interface": "c340ec9d62adc30409be6de430791696e15cddb9e2b89da8b5d55cf444fc87b2"
     }
   }
 }

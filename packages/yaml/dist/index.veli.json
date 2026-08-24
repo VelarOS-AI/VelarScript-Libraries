@@ -170,7 +170,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/yaml@0.1.2/src/index.vel#type:NativeYamlOptions",
+              "velar:package:@velarscript-labs/yaml@0.1.3/src/index.vel#type:NativeYamlOptions",
               {
                 "tag": "map",
                 "value": [
@@ -230,7 +230,7 @@
           "value": [
             [
               "NativeYamlOptions",
-              "velar:package:@velarscript-labs/yaml@0.1.2/src/index.vel#type:NativeYamlOptions"
+              "velar:package:@velarscript-labs/yaml@0.1.3/src/index.vel#type:NativeYamlOptions"
             ]
           ]
         }

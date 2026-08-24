@@ -1,6 +1,6 @@
 {
   "name": "@velarscript-labs/yaml",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Bounded strict YAML parsing for VelarScript data boundaries.",
   "license": "Apache-2.0",
   "type": "module",
@@ -34,7 +34,7 @@
     "entry": "src/index.vel",
     "artifacts": { "core": "dist/velar-library.json" },
     "targets": ["core", "node", "web", "desktop"],
-    "requires": {"capabilities": [], "language": ">=0.13 <0.15"}
+    "requires": {"capabilities": [], "language": ">=0.14 <0.15"}
   },
   "dependencies": {
     "yaml": "^2.9.0"

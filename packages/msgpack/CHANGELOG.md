@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 — 2026-08-24
+
+- Correct the supported VelarScript language generation to 0.14 and verify the
+  published source and frozen artifact with CLI 0.14.2.
+
 ## 0.1.3 — 2026-08-24
 
 - Publish the readable `.vel` source together with frozen Velar library ABI 1

@@ -103,6 +103,7 @@ try {
   await mkdir(consumer, { recursive: true });
   const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.14.2";
   const velarPackage = process.env.VELAR_CLI_PACKAGE;
+  const verifyFrozenArtifacts = process.env.VELAR_VERIFY_FROZEN_ARTIFACTS !== "false";
   const dependencies = { "@velarscript/cli": velarPackage ? `file:${resolve(velarPackage)}` : velarVersion };
   const artifacts = [];
 
@@ -138,17 +139,18 @@ try {
   }, null, 2)}\n`, "utf8");
   await run(npmCommand, ["install", "--ignore-scripts", "--no-audit", "--no-fund"], consumer);
 
-  // The installed source remains readable, but consumer compilation must be
-  // independent from its grammar. Make every source package look like a
-  // previous-generation release before the first check/run; the frozen JS and
-  // portable interface must still carry the whole contract.
-  for (const entry of catalog.packages.filter((item) => item.kind !== "tooling")) {
-    const installedRoot = join(consumer, "node_modules", ...entry.name.split("/"));
-    const manifestPath = join(installedRoot, "package.json");
-    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-    manifest.velar.requires.language = "0.1";
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
-    await writeFile(join(installedRoot, manifest.velar.entry), "export def obsolete():\n    with previous_runtime() as value:\n        return value\n", "utf8");
+  if (verifyFrozenArtifacts) {
+    // The installed source remains readable, but a frozen-ABI consumer must
+    // compile independently from its grammar. Older compatible toolchains
+    // intentionally exercise the source fallback instead.
+    for (const entry of catalog.packages.filter((item) => item.kind !== "tooling")) {
+      const installedRoot = join(consumer, "node_modules", ...entry.name.split("/"));
+      const manifestPath = join(installedRoot, "package.json");
+      const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+      manifest.velar.requires.language = "0.1";
+      await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+      await writeFile(join(installedRoot, manifest.velar.entry), "export def obsolete():\n    with previous_runtime() as value:\n        return value\n", "utf8");
+    }
   }
   await writeFile(join(consumer, "velar.json"), `${JSON.stringify({
     formatVersion: 2,

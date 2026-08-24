@@ -4,7 +4,7 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/yaml",
-    "version": "0.1.2"
+    "version": "0.1.3"
   },
   "target": "core",
   "compilerVersion": "0.14.2",
@@ -22,7 +22,7 @@
     "sha256": {
       "javascript": "5e7f6effb5f1dcbe8d8adf0a54a484294d79cf6d6daf75a39be7d3a5cd710e44",
       "sourceMap": "a67f17d4e3508517d80b9ace01b48044b822b2132e76d8f22eec6efdc8c1b701",
-      "interface": "db437f44a1974aedcbbde2fba58fefba969025ec236e5bc625520c76db868eae"
+      "interface": "4ae9b50414c9bb5a712d0bda635641aeb1809a2f915a2791c30d808ec06bc41c"
     }
   }
 }
