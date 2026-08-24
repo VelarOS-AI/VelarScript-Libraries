@@ -16,14 +16,17 @@ async function npm(args) {
   return run(npmCommand, args, { cwd: root, maxBuffer: 10 * 1024 * 1024 });
 }
 
-async function registryVersion(identity) {
-  try {
-    const { stdout } = await npm(["view", identity, "version", "--json", "--prefer-online"]);
-    return JSON.parse(stdout);
-  } catch (error) {
-    if (String(error.stderr).includes("E404")) return null;
-    throw error;
-  }
+async function registryHasVersion(name, version) {
+  const packagePath = encodeURIComponent(name);
+  const versionPath = encodeURIComponent(version);
+  const response = await fetch(
+    `https://registry.npmjs.org/${packagePath}/${versionPath}?fresh=${String(Date.now())}`,
+    { headers: { accept: "application/json", "cache-control": "no-cache" } },
+  );
+  if (response.status === 404) return false;
+  if (!response.ok) throw new Error(`Registry lookup failed for ${name}@${version}: ${response.status}`);
+  const manifest = await response.json();
+  return manifest.name === name && manifest.version === version;
 }
 
 const releases = [];
@@ -36,7 +39,7 @@ for (const entry of catalog.packages) {
 
 for (const release of releases) {
   const identity = `${release.name}@${release.version}`;
-  if ((await registryVersion(identity)) === release.version) {
+  if (await registryHasVersion(release.name, release.version)) {
     console.log(`skip ${identity}`);
     continue;
   }
