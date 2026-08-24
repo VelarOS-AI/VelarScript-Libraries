@@ -1,11 +1,11 @@
-# @velarscript/yaml
+# @velarscript-labs/yaml
 
 Strict, bounded YAML parsing for VelarScript applications. The package returns
 `unknown` deliberately: a reusable parser cannot know an application's data
 shape, so callers validate the result with their own runtime type.
 
 ```velar
-import {parseYaml} from "@velarscript/yaml"
+import {parseYaml} from "@velarscript-labs/yaml"
 
 type Settings:
     port: number

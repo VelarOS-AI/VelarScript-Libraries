@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/editor-kit",
+  "name": "@velarscript-labs/editor-kit",
   "version": "0.1.0",
   "description": "Editor-neutral VelarScript language contribution and LSP launch metadata.",
   "license": "Apache-2.0",

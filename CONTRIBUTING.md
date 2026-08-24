@@ -8,7 +8,7 @@ Every package must:
 
 - have one public package identity and an independent semantic version;
 - declare its status and compatibility in `catalog.json`;
-- declare `velar.entry`, targets, and capabilities when it publishes `.vel`
+- declare `velar.entry`, targets, and capabilities when it distributes `.vel`
   source;
 - keep native or npm interop inside one checked adapter boundary;
 - document applicable limits and failure behavior;
@@ -16,5 +16,6 @@ Every package must:
   isolated packed-consumer gate.
 
 Use `experimental` until the public API and limits have been exercised by a
-real consumer. Moving to `stable`, publishing, or deprecating a version is a
-maintainer decision and a separately authorized operation.
+real consumer. Moving to `stable`, publishing under `@velarscript-labs`,
+removing a legacy npm package, or deprecating a version is a maintainer decision
+and a separately auditable operation.

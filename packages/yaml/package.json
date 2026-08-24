@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/yaml",
+  "name": "@velarscript-labs/yaml",
   "version": "0.1.0",
   "description": "Bounded strict YAML parsing for VelarScript data boundaries.",
   "license": "Apache-2.0",

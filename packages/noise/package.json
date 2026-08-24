@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/noise",
+  "name": "@velarscript-labs/noise",
   "version": "0.1.1",
   "description": "Deterministic simplex-noise adapter for VelarScript.",
   "license": "Apache-2.0",

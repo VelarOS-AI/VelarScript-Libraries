@@ -1,11 +1,11 @@
-# @velarscript/compression
+# @velarscript-labs/compression
 
 An independently versioned, bounded DEFLATE and gzip adapter backed by
 `fflate`. Decompression requires or applies a hard output limit and never
 allocates an unbounded result.
 
 ```velar
-import {gzip, gunzip} from "@velarscript/compression"
+import {gzip, gunzip} from "@velarscript-labs/compression"
 
 const archived = gzip(payload)
 const payload = gunzip(archived, 8 * 1024 * 1024)

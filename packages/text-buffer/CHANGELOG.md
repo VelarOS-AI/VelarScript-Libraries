@@ -2,6 +2,8 @@
 
 ## 0.10.6 — 2026-08-23
 
+- Publish the companion package as `@velarscript-labs/text-buffer`, outside the
+  Standard/toolchain scope.
 - Move ownership to the independent VelarScript Libraries repository.
 - Add package-local format, check, execution, and packed-consumer gates.
 - Replace every unpaired surrogate with U+FFFD in the `TextBuffer` constructor

@@ -1,7 +1,7 @@
-# @velarscript/database
+# @velarscript-labs/database
 
 A small functional data-operation layer for VelarScript database drivers.
-It sits between a driver such as `@velarscript/sqlite` and application stores.
+It sits between a driver such as `@velarscript-labs/sqlite` and application stores.
 
 This package is not an ORM. It has no models, repositories, entity tracking,
 relations, schema inference, query builder, or migration language. Applications
@@ -10,7 +10,7 @@ author parameterized statements and name their contracts with `query(...)` and
 row bounds.
 
 ```velar
-import {command, execute, query, requireOne} from "@velarscript/database"
+import {command, execute, query, requireOne} from "@velarscript-labs/database"
 
 type User:
     id: number

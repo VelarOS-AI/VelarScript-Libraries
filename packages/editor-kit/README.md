@@ -1,4 +1,4 @@
-# @velarscript/editor-kit
+# @velarscript-labs/editor-kit
 
 Editor-neutral metadata for connecting an editor to the project-local
 `velar lsp` server.
@@ -17,8 +17,8 @@ the same optional feature set.
 import {
   VelarLanguageService,
   assertVelarProtocolCompatible,
-} from "@velarscript/editor-kit"
-import {resolveVelarExecutable} from "@velarscript/editor-kit/node"
+} from "@velarscript-labs/editor-kit"
+import {resolveVelarExecutable} from "@velarscript-labs/editor-kit/node"
 
 const executable = resolveVelarExecutable(projectRoot)
 // Launch: executable + VelarLanguageService.args

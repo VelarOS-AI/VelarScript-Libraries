@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/text-buffer",
+  "name": "@velarscript-labs/text-buffer",
   "version": "0.10.6",
   "description": "A bounded incremental text buffer authored in pure VelarScript.",
   "license": "Apache-2.0",

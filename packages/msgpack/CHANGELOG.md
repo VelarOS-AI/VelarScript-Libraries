@@ -2,6 +2,8 @@
 
 ## 0.1.1 — 2026-08-23
 
+- Publish the companion package as `@velarscript-labs/msgpack`, outside the
+  Standard/toolchain scope.
 - Move ownership to the independent VelarScript Libraries repository.
 - Add package-local typed round-trip and packed-consumer gates.
 - Bound structural nesting at 512 levels. `decode` now walks the document's

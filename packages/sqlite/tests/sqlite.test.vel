@@ -1,5 +1,5 @@
 import {SqliteConcurrencyError, SqliteError, SqliteTransaction, openSqlite} from "../src/index.vel"
-import {command, execute, query, requireOne} from "@velarscript/database"
+import {command, execute, query, requireOne} from "@velarscript-labs/database"
 
 type UserRow:
     id: number

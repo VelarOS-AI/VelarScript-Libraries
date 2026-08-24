@@ -1,22 +1,21 @@
 # Restoration findings
 
-`ROADMAP.md` holds three packages back until they are redesigned rather than
-restored as they were: `@velarscript/sqlite`, `@velarscript/database`, and
-`@velarscript/script-analysis`. This file is the evidence behind those
-conditions.
+`ROADMAP.md` uses these findings to constrain redesign rather than authorize a
+restoration. `@velarscript-labs/sqlite` 0.2 and `@velarscript-labs/database` 0.2 now exist
+with intentionally smaller APIs that remove the old design faults;
+`@velarscript/script-analysis` remains absent. This file is historical evidence
+for reviewing any future surface expansion.
 
 Before decision D88 moved this code out of the VelarScript monorepo, a full
 audit of that repository found and **adversarially verified** 11 defects in
-these three implementations — 7 in sqlite, 3 in database, 1 in
-script-analysis. The audit filed 269 defects across the whole tree, refuted 60
-under verification, and confirmed 205; these are the confirmed ones that lived
-in code with no home today.
+these three implementations — 7 in sqlite, 3 in database, 1 in script-analysis.
+The audit filed 269 defects across the whole tree, refuted 60 under verification,
+and confirmed 205; these are the relevant confirmed findings from the retired
+APIs.
 
-They are not a backlog. Nothing here is scheduled, because none of these
-packages exists in this repository. They are a **starting test suite**: when one
-of these implementations is rebuilt, every entry below is a case it must handle,
-already reduced to a concrete input and a concrete wrong outcome by someone who
-reproduced it.
+They are not a backlog. Every entry below is a regression case or a reason an
+old capability stays omitted, already reduced to a concrete input and wrong
+outcome by someone who reproduced it.
 
 Two of them are worth reading even if you never restore the package, because
 they are design faults rather than coding mistakes — the SQLite connection
@@ -208,7 +207,7 @@ Two processes open the same database file. Process A holds a write transaction; 
 
 **当时如何验证的** CONFIRMED, and stronger than claimed. Two-process test against a shared file with `busyTimeout: 0`: the second writer's `transaction()` threw `NativeSqliteError sqliteCode= ERR_SQLITE_ERROR retryable= false | database is locked` — the canonical retryable condition reported as non-retryable and indistinguishable from any other failure. Separately confirmed node:sqlite carries the real code the adapter discards: a UNIQUE violation gives `{code: 'ERR_SQLITE_ERROR', errcode: 2067, errstr: 'constraint failed', retryable: undefined}`. `errorData` (:605-611) reads only `error.code` and `error.retryable`, never `errcode`/`errstr`. Strengthening the finding: I grepped every `fail(...)` call site in the worker and NOT ONE passes `retryable=true` (the parameter defaults to false at :59), so every worker-originated error is `retryable: false` — only the two main-thread classes NativeBackpressureError and NativeConcurrencyError ever set it true. docs/database-model.md assigns "consistency and retry policy" to the application and D87 requires adapters to "公开真实能力", so exposing a `retryable` flag that is structurally always false for driver errors is a real contract gap. No test pins these semantics.
 
-**建议方向** In `errorData`, prefer `error.errstr`/`error.errcode` over `error.code`, map the primary result code to a stable `sqliteCode` (`SQLITE_BUSY`, `SQLITE_LOCKED`, `SQLITE_CONSTRAINT_UNIQUE`, `SQLITE_FULL`, …), and set `retryable: true` for BUSY/LOCKED/PROTOCOL/INTERRUPT. Consider adding a portable `DatabaseErrorKind` (conflict / contention / capacity / integrity / unavailable) to `@velarscript/database` so applications can classify without engine knowledge.
+**建议方向** In `errorData`, prefer `error.errstr`/`error.errcode` over `error.code`, map the primary result code to a stable `sqliteCode` (`SQLITE_BUSY`, `SQLITE_LOCKED`, `SQLITE_CONSTRAINT_UNIQUE`, `SQLITE_FULL`, …), and set `retryable: true` for BUSY/LOCKED/PROTOCOL/INTERRUPT. Consider adding a portable `DatabaseErrorKind` (conflict / contention / capacity / integrity / unavailable) to `@velarscript-labs/database` so applications can classify without engine knowledge.
 
 ---
 

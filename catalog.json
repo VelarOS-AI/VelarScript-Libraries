@@ -1,8 +1,13 @@
 {
-  "formatVersion": 1,
+  "formatVersion": 2,
+  "distribution": {
+    "kind": "npm-registry",
+    "scope": "@velarscript-labs",
+    "access": "public"
+  },
   "packages": [
     {
-      "name": "@velarscript/database",
+      "name": "@velarscript-labs/database",
       "path": "packages/database",
       "kind": "source-library",
       "status": "experimental",
@@ -10,7 +15,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/text-buffer",
+      "name": "@velarscript-labs/text-buffer",
       "path": "packages/text-buffer",
       "kind": "source-library",
       "status": "stable",
@@ -18,7 +23,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/noise",
+      "name": "@velarscript-labs/noise",
       "path": "packages/noise",
       "kind": "adapter",
       "status": "experimental",
@@ -26,7 +31,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/msgpack",
+      "name": "@velarscript-labs/msgpack",
       "path": "packages/msgpack",
       "kind": "adapter",
       "status": "experimental",
@@ -34,7 +39,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/compression",
+      "name": "@velarscript-labs/compression",
       "path": "packages/compression",
       "kind": "adapter",
       "status": "experimental",
@@ -42,7 +47,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/editor-kit",
+      "name": "@velarscript-labs/editor-kit",
       "path": "packages/editor-kit",
       "kind": "tooling",
       "status": "experimental",
@@ -50,7 +55,7 @@
       "targets": []
     },
     {
-      "name": "@velarscript/yaml",
+      "name": "@velarscript-labs/yaml",
       "path": "packages/yaml",
       "kind": "adapter",
       "status": "experimental",
@@ -58,7 +63,7 @@
       "targets": ["core", "node", "web", "desktop"]
     },
     {
-      "name": "@velarscript/sqlite",
+      "name": "@velarscript-labs/sqlite",
       "path": "packages/sqlite",
       "kind": "adapter",
       "status": "experimental",

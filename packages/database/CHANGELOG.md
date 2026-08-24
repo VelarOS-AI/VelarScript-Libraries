@@ -2,6 +2,8 @@
 
 ## 0.2.0 — 2026-08-23
 
+- Publish the companion package as `@velarscript-labs/database`, outside the
+  Standard/toolchain scope.
 - Replace the historical model/ORM proposal with functional query and command
   descriptors over a three-function execution record.
 - Add immediate Runtime Type row validation and per-operation row/affected-row

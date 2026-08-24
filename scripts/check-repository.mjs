@@ -6,11 +6,13 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const repositoryURL = "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git";
+const companionScope = "@velarscript-labs";
 const packageKinds = new Set(["source-library", "adapter", "tooling", "integration"]);
 const packageStatuses = new Set(["experimental", "stable", "deprecated"]);
 const targets = new Set(["core", "node", "web", "desktop"]);
 const toolchainPackages = new Set([
   "@velarscript/compiler",
+  "@velarscript/core",
   "@velarscript/node",
   "@velarscript/web",
   "@velarscript/desktop",
@@ -40,7 +42,12 @@ function dependencyEntries(manifest) {
 }
 
 const catalog = await json(join(root, "catalog.json"));
-if (catalog?.formatVersion !== 1 || !Array.isArray(catalog.packages)) fail("catalog.json must use formatVersion 1 with a package list");
+if (catalog?.formatVersion !== 2 || !Array.isArray(catalog.packages)) fail("catalog.json must use formatVersion 2 with a package list");
+if (catalog.distribution?.kind !== "npm-registry"
+  || catalog.distribution.scope !== companionScope
+  || catalog.distribution.access !== "public") {
+  fail(`catalog.json must declare public npm registry distribution under ${companionScope}`);
+}
 
 const directoryEntries = await readdir(join(root, "packages"), { withFileTypes: true });
 const directories = directoryEntries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
@@ -51,9 +58,15 @@ if (JSON.stringify(catalogPaths) !== JSON.stringify(expectedPaths)) {
 }
 
 const names = new Set();
+const manifests = new Map();
+for (const entry of catalog.packages) {
+  if (typeof entry?.name === "string" && typeof entry?.path === "string") {
+    manifests.set(entry.name, await json(join(root, entry.path, "package.json")));
+  }
+}
 for (const entry of catalog.packages) {
   if (!entry || typeof entry !== "object") fail("catalog package entries must be objects");
-  if (typeof entry.name !== "string" || !entry.name.startsWith("@velarscript/") || entry.name === "@velarscript/library") {
+  if (typeof entry.name !== "string" || !entry.name.startsWith(`${companionScope}/`)) {
     fail(`invalid companion package name '${String(entry.name)}'`);
   }
   if (names.has(entry.name)) fail(`duplicate catalog package '${entry.name}'`);
@@ -71,9 +84,9 @@ for (const entry of catalog.packages) {
   if (relative(root, packageRoot).startsWith("..") || dirname(packageRoot) !== join(root, "packages")) {
     fail(`${entry.name} must live directly under packages/*`);
   }
-  const manifest = await json(join(packageRoot, "package.json"));
+  const manifest = manifests.get(entry.name);
   if (manifest.name !== entry.name) fail(`${entry.path} manifest name does not match the catalog`);
-  if (manifest.private === true) fail(`${entry.name} is unexpectedly private`);
+  if (manifest.private === true) fail(`${entry.name} cannot be private because it is a public registry package`);
   if (typeof manifest.version !== "string" || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u.test(manifest.version)) {
     fail(`${entry.name} has an invalid semantic version`);
   }
@@ -91,17 +104,23 @@ for (const entry of catalog.packages) {
   await exists(join(packageRoot, "LICENSE"), `${entry.name} is missing LICENSE`);
 
   for (const dependency of dependencyEntries(manifest)) {
-    if (typeof dependency.version !== "string" || /^(?:file|link|workspace):/u.test(dependency.version) || dependency.version.includes("../")) {
-      fail(`${entry.name} ${dependency.field} '${dependency.name}' must use a registry version`);
+    if (typeof dependency.version !== "string"
+      || /^(?:file|link|workspace|git|https?):/u.test(dependency.version)
+      || dependency.version.includes("../")) {
+      fail(`${entry.name} ${dependency.field} '${dependency.name}' must use an npm registry version`);
     }
     if (dependency.field !== "peerDependencies" && toolchainPackages.has(dependency.name)) {
       fail(`${entry.name} cannot take a production dependency on toolchain package '${dependency.name}'`);
     }
+    const companion = manifests.get(dependency.name);
+    if (companion !== undefined && dependency.version !== companion.version) {
+      fail(`${entry.name} ${dependency.field} '${dependency.name}' must pin ${companion.version}`);
+    }
   }
 
   if (entry.kind === "tooling" || entry.kind === "integration") {
-    if (manifest.velar !== undefined) fail(`${entry.name} tooling/integration packages must use ordinary npm exports`);
-    if (!manifest.exports) fail(`${entry.name} must declare npm exports`);
+    if (manifest.velar !== undefined) fail(`${entry.name} tooling/integration packages must use ordinary JavaScript exports`);
+    if (!manifest.exports) fail(`${entry.name} must declare package exports`);
     continue;
   }
 

@@ -139,12 +139,12 @@ try {
     extensions: [],
   }, null, 2)}\n`, "utf8");
   await writeFile(join(consumer, "main.vel"), `
-import {deflate, inflate} from "@velarscript/compression"
-import {query} from "@velarscript/database"
-import {encode, parse} from "@velarscript/msgpack"
-import {simplex2} from "@velarscript/noise"
-import {TextBuffer} from "@velarscript/text-buffer"
-import {parseYaml} from "@velarscript/yaml"
+import {deflate, inflate} from "@velarscript-labs/compression"
+import {query} from "@velarscript-labs/database"
+import {encode, parse} from "@velarscript-labs/msgpack"
+import {simplex2} from "@velarscript-labs/noise"
+import {TextBuffer} from "@velarscript-labs/text-buffer"
+import {parseYaml} from "@velarscript-labs/yaml"
 
 type PackedUser:
     id: string
@@ -176,8 +176,8 @@ print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configurat
     extensions: ["@velarscript/node"],
   }, null, 2)}\n`, "utf8");
   await writeFile(join(nodeConsumer, "tests", "sqlite.test.vel"), `
-import {command, execute, query, requireOne} from "@velarscript/database"
-import {openSqlite} from "@velarscript/sqlite"
+import {command, execute, query, requireOne} from "@velarscript-labs/database"
+import {openSqlite} from "@velarscript-labs/sqlite"
 
 type PackedUser:
     id: string
@@ -194,7 +194,7 @@ test "packed SQLite and database packages execute together":
 `.trimStart(), "utf8");
   await run(cli, ["test"], nodeConsumer);
 
-  const editorKit = await import(pathToFileURL(join(consumer, "node_modules", "@velarscript", "editor-kit", "dist", "index.js")).href);
+  const editorKit = await import(pathToFileURL(join(consumer, "node_modules", "@velarscript-labs", "editor-kit", "dist", "index.js")).href);
   assert.equal(editorKit.VelarLanguageService.command, "velar");
   await verifyInstalledLsp(consumer, cli, editorKit.assertVelarProtocolCompatible);
 

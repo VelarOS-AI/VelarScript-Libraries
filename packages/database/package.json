@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/database",
+  "name": "@velarscript-labs/database",
   "version": "0.2.0",
   "description": "Functional typed query and command operations for VelarScript database drivers.",
   "license": "Apache-2.0",

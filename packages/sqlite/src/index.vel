@@ -1,6 +1,6 @@
 /// Per-connection bounds. Every operation is serialized through one Worker;
 /// queueCapacity bounds admitted operations waiting for that connection.
-import {DatabaseExecutor} from "@velarscript/database"
+import {DatabaseExecutor} from "@velarscript-labs/database"
 
 export type SqliteOptions:
     busyTimeoutMilliseconds: number?

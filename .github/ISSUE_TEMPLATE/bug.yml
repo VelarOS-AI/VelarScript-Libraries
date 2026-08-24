@@ -10,7 +10,7 @@ body:
     id: package
     attributes:
       label: Package and version
-      placeholder: "@velarscript/msgpack@0.1.1"
+      placeholder: "@velarscript-labs/msgpack@0.1.1"
     validations:
       required: true
   - type: input

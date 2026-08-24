@@ -1,4 +1,4 @@
-# @velarscript/sqlite
+# @velarscript-labs/sqlite
 
 A bounded asynchronous SQLite capability for VelarScript Node applications,
 backed by Node's built-in SQLite driver on one owned Worker thread.
@@ -8,7 +8,7 @@ repositories, schema inference, an ORM, or application migrations. Those are
 application data and policy, not a reusable driver concern.
 
 ```velar
-import {SqliteTransaction, openSqlite} from "@velarscript/sqlite"
+import {SqliteTransaction, openSqlite} from "@velarscript-labs/sqlite"
 
 type User:
     id: number

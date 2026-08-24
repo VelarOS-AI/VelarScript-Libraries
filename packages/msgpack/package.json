@@ -1,5 +1,5 @@
 {
-  "name": "@velarscript/msgpack",
+  "name": "@velarscript-labs/msgpack",
   "version": "0.1.1",
   "description": "Bounded MessagePack adapter for VelarScript.",
   "license": "Apache-2.0",

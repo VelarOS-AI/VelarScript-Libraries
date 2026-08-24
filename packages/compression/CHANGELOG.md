@@ -2,6 +2,8 @@
 
 ## 0.1.1 — 2026-08-23
 
+- Publish the companion package as `@velarscript-labs/compression`, outside the
+  Standard/toolchain scope.
 - Move ownership to the independent VelarScript Libraries repository.
 - Add package-local binary round-trip, output-bound, and packed-consumer gates.
 - Size the decompression input chunk from `maxBytes` once instead of from the
