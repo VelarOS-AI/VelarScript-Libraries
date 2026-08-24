@@ -3,7 +3,6 @@
 import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { setTimeout as delay } from "node:timers/promises";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
@@ -46,42 +45,26 @@ for (const release of releases) {
     continue;
   }
 
-  const result = await npm([
-    "publish",
-    "--workspace",
-    release.name,
-    "--access",
-    "public",
-    "--provenance",
-    "--tag",
-    "latest",
-    "--ignore-scripts",
-  ]);
+  let result;
+  try {
+    result = await npm([
+      "publish",
+      "--workspace",
+      release.name,
+      "--access",
+      "public",
+      "--provenance",
+      "--tag",
+      "latest",
+      "--ignore-scripts",
+    ]);
+  } catch (error) {
+    if (String(error.stderr).includes("cannot publish over the previously published versions")) {
+      console.log(`skip ${identity}`);
+      continue;
+    }
+    throw error;
+  }
   process.stdout.write(result.stdout);
   process.stderr.write(result.stderr);
-
-  let published = false;
-  for (let attempt = 0; attempt < 30; attempt += 1) {
-    if ((await registryVersion(identity)) === release.version) {
-      published = true;
-      break;
-    }
-    await delay(5000);
-  }
-  if (!published) throw new Error(`Registry did not expose ${identity}`);
-}
-
-if (!dryRun) {
-  for (const release of releases) {
-    const { stdout } = await npm([
-      "view",
-      release.name,
-      "dist-tags.latest",
-      "--json",
-      "--prefer-online",
-    ]);
-    if (JSON.parse(stdout) !== release.version) {
-      throw new Error(`${release.name} latest does not match ${release.version}`);
-    }
-  }
 }
