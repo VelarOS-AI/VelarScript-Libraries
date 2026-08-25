@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 — 2026-08-25
+
+- Rebuild the frozen Node library artifact with VelarScript 0.15, require the
+  0.15 language generation, and depend on Database 0.3.2.
+
 ## 0.3.1 — 2026-08-24
 
 - Require VelarScript language generation 0.14, verify distribution with CLI

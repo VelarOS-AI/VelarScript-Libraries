@@ -1671,13 +1671,13 @@ var SqliteConcurrencyError = class extends SqliteError {
 };
 function sqliteFailure(error) {
   if (error instanceof NativeSqliteBackpressureError) {
-    return new SqliteBackpressureError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteBackpressureError), "NativeSqliteBackpressureError", "error", 24269))(error).message);
+    return new SqliteBackpressureError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteBackpressureError), "NativeSqliteBackpressureError", "error", 24251))(error).message);
   }
   if (error instanceof NativeSqliteConcurrencyError) {
-    return new SqliteConcurrencyError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteConcurrencyError), "NativeSqliteConcurrencyError", "error", 24368))(error).message);
+    return new SqliteConcurrencyError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteConcurrencyError), "NativeSqliteConcurrencyError", "error", 24342))(error).message);
   }
   if (error instanceof NativeSqliteError) {
-    return new SqliteError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24445))(error).message, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24460))(error).sqliteCode ?? null, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24478))(error).operation, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24495))(error).retryable);
+    return new SqliteError(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24411))(error).message, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24426))(error).sqliteCode ?? null, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24444))(error).operation, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 24461))(error).retryable);
   }
   return new SqliteError(error.message);
 }
@@ -1686,19 +1686,19 @@ function sqliteLiteral(value) {
     return trustedSql("NULL");
   }
   if (typeof (value ?? null) === "boolean") {
-    return trustedSql(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "boolean", "bool", "value", 24937))(value) ? "1" : "0");
+    return trustedSql(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "boolean", "bool", "value", 24887))(value) ? "1" : "0");
   }
   if (typeof (value ?? null) === "string") {
-    return trustedSql("'" + __velarStringReplaceAll(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "value", 25012))(value), "'", "''") + "'");
+    return trustedSql("'" + __velarStringReplaceAll(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "value", 24954))(value), "'", "''") + "'");
   }
   if (typeof (value ?? null) === "number") {
-    if (!__velarNumberIsFinite(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25086))(value))) {
+    if (!__velarNumberIsFinite(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25028))(value))) {
       throw new __VelarAssertionError("SQLite numeric literals must be finite");
     }
-    if (!(!__velarNumberIsInteger(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25168))(value)) || ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25190))(value) >= -9007199254740991 && ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25221))(value) <= 9007199254740991)) {
+    if (!(!__velarNumberIsInteger(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25110))(value)) || ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25132))(value) >= -9007199254740991 && ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25163))(value) <= 9007199254740991)) {
       throw new __VelarAssertionError("SQLite integer literals must be safe integers");
     }
-    return trustedSql(String(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25331))(value)));
+    return trustedSql(String(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "value", 25273))(value)));
   }
   throw new Error("SQLite literals support only null, bool, string, and finite number");
 }
@@ -1722,7 +1722,7 @@ var SqliteTransaction = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 26288))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 26194))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1739,7 +1739,7 @@ var SqliteTransaction = class {
       } catch (error) {
         error = __velarNormalizeError(error);
         if (error instanceof NativeSqliteError) {
-          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 26909))(error));
+          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 26767))(error));
         }
         throw new SqliteError(__velarReadInstanceField(error, "message"));
       }
@@ -1751,7 +1751,7 @@ var SqliteTransaction = class {
       } catch (error) {
         error = __velarNormalizeError(error);
         if (error instanceof NativeSqliteError) {
-          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 27289))(error));
+          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 27111))(error));
         }
         throw new SqliteError(__velarReadInstanceField(error, "message"));
       }
@@ -1770,7 +1770,7 @@ var SqliteTransaction = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 27817))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 27607))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1784,7 +1784,7 @@ var SqliteTransaction = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 28237))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 28011))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1804,7 +1804,7 @@ var SqliteConnection = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 28690))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 28428))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1821,7 +1821,7 @@ var SqliteConnection = class {
       } catch (error) {
         error = __velarNormalizeError(error);
         if (error instanceof NativeSqliteError) {
-          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 29310))(error));
+          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 29e3))(error));
         }
         throw new SqliteError(__velarReadInstanceField(error, "message"));
       }
@@ -1833,7 +1833,7 @@ var SqliteConnection = class {
       } catch (error) {
         error = __velarNormalizeError(error);
         if (error instanceof NativeSqliteError) {
-          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 29690))(error));
+          throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 29344))(error));
         }
         throw new SqliteError(__velarReadInstanceField(error, "message"));
       }
@@ -1852,7 +1852,7 @@ var SqliteConnection = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 30218))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 29840))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1866,7 +1866,7 @@ var SqliteConnection = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 30638))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 30244))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1887,7 +1887,7 @@ var SqliteConnection = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 31225))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 30803))(error));
       }
       throw error;
     }
@@ -1899,7 +1899,7 @@ var SqliteConnection = class {
     } catch (error) {
       error = __velarNormalizeError(error);
       if (error instanceof NativeSqliteError) {
-        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 31431))(error));
+        throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 30981))(error));
       }
       throw new SqliteError(__velarReadInstanceField(error, "message"));
     }
@@ -1917,7 +1917,7 @@ async function openSqlite(path, options = {}) {
   } catch (error) {
     error = __velarNormalizeError(error);
     if (error instanceof NativeSqliteError) {
-      throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 31786))(error));
+      throw sqliteFailure(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, NativeSqliteError), "NativeSqliteError", "error", 31308))(error));
     }
     throw new SqliteError(__velarReadInstanceField(error, "message"));
   }

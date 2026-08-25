@@ -24,7 +24,7 @@
                   ],
                   [
                     "identity",
-                    "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode"
+                    "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode"
                   ],
                   [
                     "members",
@@ -71,7 +71,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#type:SqliteOptions"
+                          "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#type:SqliteOptions"
                         ]
                       ]
                     }
@@ -94,7 +94,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ]
                 ]
               }
@@ -114,7 +114,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
@@ -134,7 +134,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConcurrencyError"
                   ]
                 ]
               }
@@ -197,7 +197,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                         ]
                       ]
                     }
@@ -259,7 +259,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                         ]
                       ]
                     }
@@ -282,7 +282,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
@@ -302,7 +302,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
@@ -343,7 +343,7 @@
                             ],
                             [
                               "identity",
-                              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#type:SqliteOptions"
+                              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#type:SqliteOptions"
                             ]
                           ]
                         }
@@ -388,7 +388,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConnection"
+                                "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConnection"
                               ]
                             ]
                           }
@@ -588,7 +588,7 @@
                               ],
                               [
                                 "identity",
-                                "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode"
+                                "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode"
                               ]
                             ]
                           }
@@ -624,7 +624,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#type:SqliteOptions",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#type:SqliteOptions",
               {
                 "tag": "map",
                 "value": [
@@ -772,7 +772,7 @@
                               ],
                               [
                                 "identity",
-                                "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode"
+                                "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode"
                               ]
                             ]
                           }
@@ -808,7 +808,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:PreparedDatabaseStatement",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:PreparedDatabaseStatement",
               {
                 "tag": "map",
                 "value": [
@@ -856,7 +856,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseStatementData",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseStatementData",
               {
                 "tag": "map",
                 "value": [
@@ -916,7 +916,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor",
               {
                 "tag": "map",
                 "value": [
@@ -947,7 +947,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1021,7 +1021,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1099,7 +1099,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1197,7 +1197,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1271,7 +1271,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1349,7 +1349,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                   ]
                                 ]
                               }
@@ -1416,7 +1416,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseCommand",
               {
                 "tag": "map",
                 "value": [
@@ -1435,7 +1435,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                         ]
                       ]
                     }
@@ -1476,7 +1476,7 @@
           "tag": "map",
           "value": [
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:PreparedDatabaseStatement",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:PreparedDatabaseStatement",
               {
                 "tag": "set",
                 "value": [
@@ -1486,7 +1486,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseStatementData",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseStatementData",
               {
                 "tag": "set",
                 "value": [
@@ -1496,7 +1496,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseCommand",
               {
                 "tag": "set",
                 "value": [
@@ -1515,27 +1515,27 @@
           "value": [
             [
               "SqliteOptions",
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#type:SqliteOptions"
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#type:SqliteOptions"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:PreparedDatabaseStatement",
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:PreparedDatabaseStatement"
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:PreparedDatabaseStatement",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:PreparedDatabaseStatement"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseStatementData",
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseStatementData"
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseStatementData",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseStatementData"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor",
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
             ],
             [
               "DatabaseExecutor",
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseCommand",
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseCommand"
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseCommand",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseCommand"
             ]
           ]
         }
@@ -1560,7 +1560,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                   ]
                 ]
               }
@@ -1580,7 +1580,7 @@
                 "value": [
                   [
                     "identity",
-                    "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode"
+                    "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode"
                   ],
                   [
                     "members",
@@ -1600,13 +1600,13 @@
               }
             ],
             [
-              "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode",
+              "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode",
               {
                 "tag": "object",
                 "value": [
                   [
                     "identity",
-                    "package:@velarscript-labs/sqlite@0.3.1/src/index.vel#enum:SqliteJournalMode"
+                    "package:@velarscript-labs/sqlite@0.3.2/src/index.vel#enum:SqliteJournalMode"
                   ],
                   [
                     "members",
@@ -1626,13 +1626,13 @@
               }
             ],
             [
-              "package:@velarscript-labs/database@0.3.1/src/index.vel#enum:DatabaseParameterStyle",
+              "package:@velarscript-labs/database@0.3.2/src/index.vel#enum:DatabaseParameterStyle",
               {
                 "tag": "object",
                 "value": [
                   [
                     "identity",
-                    "package:@velarscript-labs/database@0.3.1/src/index.vel#enum:DatabaseParameterStyle"
+                    "package:@velarscript-labs/database@0.3.2/src/index.vel#enum:DatabaseParameterStyle"
                   ],
                   [
                     "members",
@@ -3365,7 +3365,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ]
                 ]
               }
@@ -3407,7 +3407,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -3471,7 +3471,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
@@ -3513,7 +3513,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -3577,7 +3577,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConcurrencyError"
                   ]
                 ]
               }
@@ -3686,7 +3686,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -3775,7 +3775,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -3819,7 +3819,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -3952,7 +3952,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -4082,7 +4082,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
@@ -4195,7 +4195,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -4284,7 +4284,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -4328,7 +4328,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -4461,7 +4461,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -4606,7 +4606,7 @@
                                                   ],
                                                   [
                                                     "identity",
-                                                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction"
+                                                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction"
                                                   ]
                                                 ]
                                               }
@@ -4789,13 +4789,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError",
               {
                 "tag": "object",
                 "value": [
@@ -5022,13 +5022,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteBackpressureError",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteBackpressureError",
               {
                 "tag": "object",
                 "value": [
@@ -5064,7 +5064,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -5128,13 +5128,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteBackpressureError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteBackpressureError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConcurrencyError",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConcurrencyError",
               {
                 "tag": "object",
                 "value": [
@@ -5170,7 +5170,7 @@
                   ],
                   [
                     "base",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteError"
                   ],
                   [
                     "abstract",
@@ -5234,13 +5234,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConcurrencyError"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConcurrencyError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction",
               {
                 "tag": "object",
                 "value": [
@@ -5343,7 +5343,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -5432,7 +5432,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -5476,7 +5476,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5609,7 +5609,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -5739,13 +5739,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConnection",
+              "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConnection",
               {
                 "tag": "object",
                 "value": [
@@ -5852,7 +5852,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     }
@@ -5941,7 +5941,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseExecutor"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseExecutor"
                                     ]
                                   ]
                                 }
@@ -5985,7 +5985,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -6118,7 +6118,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                          "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                                         ]
                                       ]
                                     },
@@ -6263,7 +6263,7 @@
                                                   ],
                                                   [
                                                     "identity",
-                                                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteTransaction"
+                                                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteTransaction"
                                                   ]
                                                 ]
                                               }
@@ -6446,13 +6446,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/sqlite@0.3.1/src/index.vel#SqliteConnection"
+                    "velar:package:@velarscript-labs/sqlite@0.3.2/src/index.vel#SqliteConnection"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement",
               {
                 "tag": "object",
                 "value": [
@@ -6600,7 +6600,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseStatementData"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseStatementData"
                                     ]
                                   ]
                                 }
@@ -6635,7 +6635,7 @@
                                         ],
                                         [
                                           "identity",
-                                          "package:@velarscript-labs/database@0.3.1/src/index.vel#enum:DatabaseParameterStyle"
+                                          "package:@velarscript-labs/database@0.3.2/src/index.vel#enum:DatabaseParameterStyle"
                                         ]
                                       ]
                                     }
@@ -6670,7 +6670,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:PreparedDatabaseStatement"
+                                      "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:PreparedDatabaseStatement"
                                     ]
                                   ]
                                 }
@@ -6711,13 +6711,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#DatabaseAffectedRowsError",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#DatabaseAffectedRowsError",
               {
                 "tag": "object",
                 "value": [
@@ -6910,13 +6910,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#DatabaseAffectedRowsError"
+                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#DatabaseAffectedRowsError"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#DatabaseRowNotFoundError",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#DatabaseRowNotFoundError",
               {
                 "tag": "object",
                 "value": [
@@ -7016,7 +7016,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#DatabaseRowNotFoundError"
+                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#DatabaseRowNotFoundError"
                   ]
                 ]
               }
@@ -7058,13 +7058,13 @@
           "tag": "map",
           "value": [
             [
-              "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseQuery",
+              "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseQuery",
               {
                 "tag": "object",
                 "value": [
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#type:DatabaseQuery"
+                    "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#type:DatabaseQuery"
                   ],
                   [
                     "name",
@@ -7108,7 +7108,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/database@0.3.1/src/index.vel#ComposedDatabaseStatement"
+                                "velar:package:@velarscript-labs/database@0.3.2/src/index.vel#ComposedDatabaseStatement"
                               ]
                             ]
                           }

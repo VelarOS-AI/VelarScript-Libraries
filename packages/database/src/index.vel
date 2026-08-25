@@ -30,24 +30,19 @@ class ComposedDatabaseStatement:
         assert fragments.size == parameters.size + 1 else "Database statements require exactly one more SQL fragment than bound parameters"
         assert parameters.size <= 1000000 else "Database statements support at most 1000000 bound parameters"
         let textSize = 0
-        for fragment in fragments:
-            textSize += checkedFragment(fragment).size
+        for fragment in fragments: textSize += checkedFragment(fragment).size
         assert textSize <= 1024 * 1024 else "Database statement SQL must be no longer than 1 MiB"
 
-    def data() -> DatabaseStatementData:
-        return {fragments: self.fragments.copy(), parameters: self.parameters.copy()}
+    def data() -> DatabaseStatementData: return {fragments: self.fragments.copy(), parameters: self.parameters.copy()}
 
     /// Rendering is intentionally delayed until the driver selects its dialect.
     def render(style: DatabaseParameterStyle) -> PreparedDatabaseStatement:
         let text = self.fragments[0]
         for parameter, index in self.parameters:
             match style:
-                case DatabaseParameterStyle.questionMark:
-                    text += "?"
-                case DatabaseParameterStyle.dollarNumber:
-                    text += "$" + str(index + 1)
-                case DatabaseParameterStyle.colonNumber:
-                    text += ":" + str(index + 1)
+                case DatabaseParameterStyle.questionMark: text += "?"
+                case DatabaseParameterStyle.dollarNumber: text += "$" + str(index + 1)
+                case DatabaseParameterStyle.colonNumber: text += ":" + str(index + 1)
             text += self.fragments[index + 1]
         return {text: checkedStatementText(text), parameters: self.parameters.copy()}
 
@@ -66,8 +61,7 @@ export def trustedSqlTemplate(fragments: List<string>, parameters: List<unknown>
 
 /// Adds one runtime value. Drivers render this position as a bound parameter;
 /// the value is never interpolated into SQL text.
-export def sqlParameter(value: unknown) -> DatabaseStatement:
-    return ComposedDatabaseStatement(["", ""], [value])
+export def sqlParameter(value: unknown) -> DatabaseStatement: return ComposedDatabaseStatement(["", ""], [value])
 
 /// Concatenates already-separated SQL structure without converting values to text.
 export def sqlConcat(statements: List<DatabaseStatement>) -> DatabaseStatement:
@@ -85,8 +79,7 @@ export def sqlConcat(statements: List<DatabaseStatement>) -> DatabaseStatement:
 export def sqlJoin(statements: List<DatabaseStatement>, separator: DatabaseStatement) -> DatabaseStatement:
     const parts: List<DatabaseStatement> = []
     for statement, index in statements:
-        if index > 0:
-            parts.append(separator)
+        if index > 0: parts.append(separator)
         parts.append(statement)
     return sqlConcat(parts)
 
@@ -104,8 +97,7 @@ export def sqlRows(rows: List<List<unknown>>) -> DatabaseStatement:
     assert rows.size > 0 else "SQL row lists must not be empty"
     const width = rows[0].size
     assert width > 0 else "SQL rows must not be empty"
-    for row in rows:
-        assert row.size == width else "SQL rows must all have the same width"
+    for row in rows: assert row.size == width else "SQL rows must all have the same width"
     return sqlJoin(rows.map(row => sqlTuple(row)), trustedSql(", "))
 
 /// The smallest engine-neutral execution surface. A driver owns rendering,
@@ -133,8 +125,7 @@ export class DatabaseAffectedRowsError extends Error:
         super(f"Database command affected {affected} rows; expected {minimum} through {maximum}")
 
 export class DatabaseRowNotFoundError extends Error:
-    constructor(message: string = "Database query returned no row"):
-        super(message)
+    constructor(message: string = "Database query returned no row"): super(message)
 
 def rowLimit(value: number, label: string) -> number:
     assert value.isInteger() and value >= 1 and value <= 1000000 else f"{label} must be an integer from 1 through 1000000"
@@ -164,15 +155,13 @@ export async def execute(executor: DatabaseExecutor, operation: DatabaseCommand)
 /// Reads and validates an optional row.
 export async def one<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>) -> T?:
     const row = await executor.one(operation.statement)
-    if row == null:
-        return null
+    if row == null: return null
     return operation.parse(row)
 
 /// Reads one required row and gives absence an explicit application-facing error.
 export async def requireOne<T>(executor: DatabaseExecutor, operation: DatabaseQuery<T>, message: string = "Database query returned no row") -> T:
     const row = await one(executor, operation)
-    if row == null:
-        throw DatabaseRowNotFoundError(message)
+    if row == null: throw DatabaseRowNotFoundError(message)
     return row
 
 /// Reads a bounded list and validates every row before returning it.

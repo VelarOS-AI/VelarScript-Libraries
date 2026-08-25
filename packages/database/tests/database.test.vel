@@ -5,14 +5,11 @@ type User:
     name: string
 
 def fakeExecutor(rows: List<unknown>, affected: number = 1) -> DatabaseExecutor:
-    async def executeStatement(statement: DatabaseStatement) -> number:
-        return affected
+    async def executeStatement(statement: DatabaseStatement) -> number: return affected
 
-    async def oneRow(statement: DatabaseStatement) -> unknown:
-        return rows.get(0)
+    async def oneRow(statement: DatabaseStatement) -> unknown: return rows.get(0)
 
-    async def allRows(statement: DatabaseStatement) -> List<unknown>:
-        return rows.copy()
+    async def allRows(statement: DatabaseStatement) -> List<unknown>: return rows.copy()
 
     return {execute: executeStatement, one: oneRow, all: allRows}
 
@@ -79,32 +76,24 @@ test "commands enforce affected-row contracts without modeling tables":
     ]), minimumAffected = 1, maximumAffected = 1)
     assert await execute(fakeExecutor([], affected=1), insert) == 1 else "Affected row count changed"
     let rejected = false
-    try:
-        await execute(fakeExecutor([], affected=2), insert)
-    catch error:
-        rejected = error is DatabaseAffectedRowsError
+    try: await execute(fakeExecutor([], affected=2), insert)
+    catch error: rejected = error is DatabaseAffectedRowsError
     assert rejected else "Command affected-row drift was accepted"
 
 test "query-specific row limits narrow the driver boundary":
     const users = query(trustedSql("SELECT id, name FROM users"), User, maximumRows=1)
     let rejected = false
-    try:
-        await all(fakeExecutor([{id: 1, name: "Ada"}, {id: 2, name: "Lin"}]), users)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: await all(fakeExecutor([{id: 1, name: "Ada"}, {id: 2, name: "Lin"}]), users)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "Query row limit was not enforced"
 
 test "empty and ragged dynamic row lists fail before reaching a driver":
     let emptyRejected = false
-    try:
-        sqlRows([])
-    catch error:
-        emptyRejected = error.name == "AssertionError"
+    try: sqlRows([])
+    catch error: emptyRejected = error.name == "AssertionError"
     assert emptyRejected else "Empty SQL row list was accepted"
 
     let raggedRejected = false
-    try:
-        sqlRows([[1], [2, 3]])
-    catch error:
-        raggedRejected = error.name == "AssertionError"
+    try: sqlRows([[1], [2, 3]])
+    catch error: raggedRejected = error.name == "AssertionError"
     assert raggedRejected else "Ragged SQL row list was accepted"

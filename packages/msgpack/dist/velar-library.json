@@ -4,15 +4,15 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/msgpack",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "target": "core",
-  "compilerVersion": "0.14.2",
+  "compilerVersion": "0.15.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
       "path": "src/index.vel",
-      "sha256": "c27f1a166041b6d71e6781afcdc4e5a15a1581e103d7541cc5c7d1a6b9dc207e"
+      "sha256": "a3c7ed085d64b1785fe8fbc6ab596eb6e321ee443cf17d75fc52a9afeb630cf9"
     }
   ],
   "entry": {

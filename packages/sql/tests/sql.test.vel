@@ -103,24 +103,18 @@ test "insert update and delete builders keep writes bounded and structured":
 
 test "write builders reject malformed shapes before reaching a driver":
     let duplicateRejected = false
-    try:
-        insertCommand(sqlTable("users"), ["id", "id"], [["u-1", "u-1"]])
-    catch error:
-        duplicateRejected = error.name == "AssertionError"
+    try: insertCommand(sqlTable("users"), ["id", "id"], [["u-1", "u-1"]])
+    catch error: duplicateRejected = error.name == "AssertionError"
     assert duplicateRejected else "Duplicate INSERT columns were accepted"
 
     let widthRejected = false
-    try:
-        insertCommand(sqlTable("users"), ["id", "name"], [["u-1"]])
-    catch error:
-        widthRejected = error.name == "AssertionError"
+    try: insertCommand(sqlTable("users"), ["id", "name"], [["u-1"]])
+    catch error: widthRejected = error.name == "AssertionError"
     assert widthRejected else "Ragged INSERT rows were accepted"
 
     let aliasRejected = false
-    try:
-        deleteCommand(sqlTable("users", alias="user"), sqlNoRows())
-    catch error:
-        aliasRejected = error.name == "AssertionError"
+    try: deleteCommand(sqlTable("users", alias="user"), sqlNoRows())
+    catch error: aliasRejected = error.name == "AssertionError"
     assert aliasRejected else "Aliased write target was accepted"
 
 test "typed select queries preserve row validation metadata":

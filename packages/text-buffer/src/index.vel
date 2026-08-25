@@ -83,13 +83,11 @@ const surrogatePattern: string = r"[\uD800-\uDFFF]"
 
 /// Replaces every unpaired surrogate with U+FFFD so rope lengths stay additive.
 def normalizedText(text: string) -> string:
-    if not Text.matches(text, surrogatePattern):
-        return text
+    if not Text.matches(text, surrogatePattern): return text
     return Text.replaceMatches(text, surrogatePattern, Text.fromCodePoint(0xFFFD))
 
 def leafNode(text: string) -> RopeNode?:
-    if text == "":
-        return null
+    if text == "": return null
     const starts = Text.lineStarts(text)
     const newlines = starts.size - 1
     const tail = text.size - starts[-1]
@@ -129,13 +127,11 @@ def balanceNode(node: RopeNode) -> RopeNode:
     const right = requiredRight(node)
     if left.height > right.height + 1:
         let next = node
-        if requiredLeft(left).height < requiredRight(left).height:
-            next = branchNode(rotateLeft(left), right)
+        if requiredLeft(left).height < requiredRight(left).height: next = branchNode(rotateLeft(left), right)
         return rotateRight(next)
     if right.height > left.height + 1:
         let next = node
-        if requiredRight(right).height < requiredLeft(right).height:
-            next = branchNode(left, rotateRight(right))
+        if requiredRight(right).height < requiredLeft(right).height: next = branchNode(left, rotateRight(right))
         return rotateLeft(next)
     return node
 
@@ -157,17 +153,13 @@ def joinNonEmpty(left: RopeNode, right: RopeNode) -> RopeNode:
     return branchNode(left, right)
 
 def joinNodes(left: RopeNode?, right: RopeNode?) -> RopeNode?:
-    if left == null:
-        return right
-    if right == null:
-        return left
+    if left == null: return right
+    if right == null: return left
     return joinNonEmpty(left, right)
 
 def buildNodes(parts: List<string>, start: number, end: number) -> RopeNode?:
-    if start >= end:
-        return null
-    if start + 1 == end:
-        return leafNode(parts[start])
+    if start >= end: return null
+    if start + 1 == end: return leafNode(parts[start])
     const middle = ((start + end) / 2).floor()
     return joinNodes(buildNodes(parts, start, middle), buildNodes(parts, middle, end))
 
@@ -176,22 +168,17 @@ def ropeFromText(text: string) -> RopeNode?:
     return buildNodes(parts, 0, parts.size)
 
 def splitNode(node: RopeNode?, offset: number) -> RopeSplit:
-    if node == null:
-        return {left: null, right: null}
-    if offset <= 0:
-        return {left: null, right: node}
-    if offset >= node.length:
-        return {left: node, right: null}
+    if node == null: return {left: null, right: null}
+    if offset <= 0: return {left: null, right: node}
+    if offset >= node.length: return {left: node, right: null}
     const text = node.text
-    if text != null:
-        return {left: leafNode(text.slice(0, offset)), right: leafNode(text.slice(offset))}
+    if text != null: return {left: leafNode(text.slice(0, offset)), right: leafNode(text.slice(offset))}
     const left = requiredLeft(node)
     const right = requiredRight(node)
     if offset < left.length:
         const split = splitNode(left, offset)
         return {left: split.left, right: joinNodes(split.right, right)}
-    if offset == left.length:
-        return {left, right}
+    if offset == left.length: return {left, right}
     const split = splitNode(right, offset - left.length)
     return {left: joinNodes(left, split.left), right: split.right}
 
@@ -201,32 +188,27 @@ def replaceNode(root: RopeNode?, start: number, end: number, inserted: string) -
     return joinNodes(joinNodes(prefix.left, ropeFromText(inserted)), suffix.right)
 
 def appendNodeSlice(node: RopeNode?, start: number, end: number, output: List<string>):
-    if node == null or start >= end:
-        return null
+    if node == null or start >= end: return null
     const text = node.text
     if text != null:
         output.append(text.slice(start, end))
         return null
     const left = requiredLeft(node)
     const right = requiredRight(node)
-    if start < left.length:
-        appendNodeSlice(left, start, end < left.length ? end : left.length, output)
+    if start < left.length: appendNodeSlice(left, start, end < left.length ? end : left.length, output)
     if end > left.length:
         appendNodeSlice(right, start > left.length ? start - left.length : 0, end - left.length, output)
 
 def prefixMetrics(node: RopeNode, offset: number) -> PrefixMetrics:
-    if offset <= 0:
-        return {newlines: 0, tail: 0}
-    if offset >= node.length:
-        return {newlines: node.newlines, tail: node.tail}
+    if offset <= 0: return {newlines: 0, tail: 0}
+    if offset >= node.length: return {newlines: node.newlines, tail: node.tail}
     const text = node.text
     if text != null:
         const starts = Text.lineStarts(text.slice(0, offset))
         return {newlines: starts.size - 1, tail: offset - starts[-1]}
     const left = requiredLeft(node)
     const right = requiredRight(node)
-    if offset <= left.length:
-        return prefixMetrics(left, offset)
+    if offset <= left.length: return prefixMetrics(left, offset)
     const suffix = prefixMetrics(right, offset - left.length)
     return {
         newlines: left.newlines + suffix.newlines,
@@ -234,20 +216,16 @@ def prefixMetrics(node: RopeNode, offset: number) -> PrefixMetrics:
     }
 
 def lineStartIn(node: RopeNode, line: number) -> number:
-    if line == 0:
-        return 0
+    if line == 0: return 0
     const text = node.text
-    if text != null:
-        return node.starts[line]
+    if text != null: return node.starts[line]
     const left = requiredLeft(node)
     const right = requiredRight(node)
-    if line <= left.newlines:
-        return lineStartIn(left, line)
+    if line <= left.newlines: return lineStartIn(left, line)
     return left.length + lineStartIn(right, line - left.newlines)
 
 def copySelection(selection: TextSelection?) -> TextSelection?:
-    if selection == null:
-        return null
+    if selection == null: return null
     return TextSelection.from(selection)
 
 def copyEdits(changes: List<TextChange>) -> HistoryStep:
@@ -277,36 +255,29 @@ export class TextBuffer:
         self.root = ropeFromText(content)
 
     /// Current Unicode code-point length.
-    get size() -> number:
-        return self.root?.length ?? 0
+    get size() -> number: return self.root?.length ?? 0
 
     /// Current UTF-8 byte length.
-    get byteSize() -> number:
-        return self.root?.bytes ?? 0
+    get byteSize() -> number: return self.root?.bytes ?? 0
 
     /// Current number of logical lines, including a final empty line.
-    get lineCount() -> number:
-        return (self.root?.newlines ?? 0) + 1
+    get lineCount() -> number: return (self.root?.newlines ?? 0) + 1
 
     /// Monotonic revision incremented once by every successful transaction.
-    get revision() -> number:
-        return self.version
+    get revision() -> number: return self.version
 
     /// Materializes the current text without exposing rope storage.
     def text() -> string:
         const root = self.root
-        if root == null:
-            return ""
+        if root == null: return ""
         const text = root.text
-        if text != null:
-            return text
+        if text != null: return text
         return self.slice(0, root.length)
 
     /// Reads one Unicode code-point range without materializing unrelated leaves.
     def slice(start: number, end: number) -> string:
         self.requireRange(start, end)
-        if start == end:
-            return ""
+        if start == end: return ""
         let output: List<string> = []
         appendNodeSlice(self.root, start, end, output)
         return output.join("")
@@ -350,19 +321,16 @@ export class TextBuffer:
         return self.apply([{start, end, inserted}]).changes[0]
 
     /// Inserts text at one Unicode code-point offset.
-    def insert(offset: number, text: string) -> TextChange:
-        return self.replace(offset, offset, text)
+    def insert(offset: number, text: string) -> TextChange: return self.replace(offset, offset, text)
 
     /// Deletes one Unicode code-point range.
-    def delete(start: number, end: number) -> TextChange:
-        return self.replace(start, end, "")
+    def delete(start: number, end: number) -> TextChange: return self.replace(start, end, "")
 
     /// Maps one Unicode code-point offset to a zero-based line and column.
     def positionAt(offset: number) -> TextPosition:
         self.requireOffset(offset)
         const root = self.root
-        if root == null:
-            return {line: 0, column: 0}
+        if root == null: return {line: 0, column: 0}
         const insideCrLf = offset > 0 and offset < self.size and self.slice(offset - 1, offset) == "\r" and self.slice(offset, offset + 1) == "\n"
         if insideCrLf:
             const beforeCarriageReturn = prefixMetrics(root, offset - 1)
@@ -394,18 +362,15 @@ export class TextBuffer:
         return {startLine, endLine, start, end, text: self.slice(start, end)}
 
     private def lineStart(line: number) -> number:
-        if line == 0:
-            return 0
+        if line == 0: return 0
         const root = self.root
         assert root != null else "TextBuffer line is outside the document"
         return lineStartIn(root, line)
 
     private def lineEnd(line: number, start: number) -> number:
-        if line + 1 >= self.lineCount:
-            return self.size
+        if line + 1 >= self.lineCount: return self.size
         const end = self.lineStart(line + 1) - 1
-        if end > start and self.slice(end - 1, end) == "\r":
-            return end - 1
+        if end > start and self.slice(end - 1, end) == "\r": return end - 1
         return end
 
     private def requireOffset(offset: number):
@@ -450,22 +415,18 @@ export class TextHistory:
         self.expectedRevision = buffer.revision
 
     /// Whether the buffer still holds the revision this history last recorded.
-    get isAttached() -> bool:
-        return self.buffer.revision == self.expectedRevision
+    get isAttached() -> bool: return self.buffer.revision == self.expectedRevision
 
-    get canUndo() -> bool:
-        return self.isAttached and self.groupSteps == null and self.undoEntries.size > 0
+    get canUndo() -> bool: return self.isAttached and self.groupSteps == null and self.undoEntries.size > 0
 
-    get canRedo() -> bool:
-        return self.isAttached and self.groupSteps == null and self.redoEntries.size > 0
+    get canRedo() -> bool: return self.isAttached and self.groupSteps == null and self.redoEntries.size > 0
 
     /// Applies one edit transaction and records it, or appends it to the active group.
     def apply(edits: List<TextEdit>, beforeSelection: TextSelection? = null, afterSelection: TextSelection? = null) -> TextTransaction:
         self.requireAttached()
         self.requireSelection(beforeSelection, self.buffer.size)
         let nextSize = self.buffer.size
-        for edit in edits:
-            nextSize += edit.inserted.size - (edit.end - edit.start)
+        for edit in edits: nextSize += edit.inserted.size - (edit.end - edit.start)
         self.requireSelection(afterSelection, nextSize)
         const transaction = self.buffer.apply(edits)
         const step = copyEdits(transaction.changes)
@@ -502,8 +463,7 @@ export class TextHistory:
         self.requireSelection(committedSelection, self.buffer.size)
         const beforeSelection = self.groupBeforeSelection
         let bytes = 0
-        for step in steps:
-            bytes += step.bytes
+        for step in steps: bytes += step.bytes
         self.groupSteps = null
         self.groupBytes = 0
         self.groupBeforeSelection = null
@@ -592,7 +552,6 @@ export class TextHistory:
         assert self.groupSteps == null else "TextHistory cannot undo or redo an active group"
 
     private def requireSelection(selection: TextSelection?, size: number):
-        if selection == null:
-            return null
+        if selection == null: return null
         assert selection.anchor.floor() == selection.anchor and selection.anchor >= 0 and selection.anchor <= size else "TextHistory selection anchor is outside the document"
         assert selection.head.floor() == selection.head and selection.head >= 0 and selection.head <= size else "TextHistory selection head is outside the document"

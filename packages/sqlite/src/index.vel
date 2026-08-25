@@ -19,7 +19,7 @@ export type SqliteOptions:
     journalMode: SqliteJournalMode?
     readOnly: bool?
 
-extern js()`
+extern js`
     import { AsyncLocalStorage } from "node:async_hooks";
     import { Worker } from "node:worker_threads";
 
@@ -537,32 +537,25 @@ export class SqliteError extends Error:
         self.retryable = retryable
 
 export class SqliteBackpressureError extends SqliteError:
-    constructor(message: string = "SQLite queue is full"):
-        super(message, "SQLITE_BACKPRESSURE", "queue", true)
+    constructor(message: string = "SQLite queue is full"): super(message, "SQLITE_BACKPRESSURE", "queue", true)
 
 export class SqliteConcurrencyError extends SqliteError:
     constructor(message: string = "SQLite connection cannot be used from its transaction callback"):
         super(message, "SQLITE_CONCURRENCY", "transaction", true)
 
 def sqliteFailure(error: NativeSqliteError) -> SqliteError:
-    if error is NativeSqliteBackpressureError:
-        return SqliteBackpressureError(error.message)
-    if error is NativeSqliteConcurrencyError:
-        return SqliteConcurrencyError(error.message)
-    if error is NativeSqliteError:
-        return SqliteError(error.message, error.sqliteCode, error.operation, error.retryable)
+    if error is NativeSqliteBackpressureError: return SqliteBackpressureError(error.message)
+    if error is NativeSqliteConcurrencyError: return SqliteConcurrencyError(error.message)
+    if error is NativeSqliteError: return SqliteError(error.message, error.sqliteCode, error.operation, error.retryable)
     return SqliteError(error.message)
 
 /// Produces a SQLite literal only for grammar positions where bound parameters
 /// are not legal, such as schema defaults and PRAGMA assignments. Ordinary
 /// query values must still use sqlParameter/sqlTuple/sqlRows.
 export def sqliteLiteral(value: unknown) -> DatabaseStatement:
-    if value == null:
-        return trustedSql("NULL")
-    if value is bool:
-        return trustedSql(value ? "1" : "0")
-    if value is string:
-        return trustedSql("'" + value.replaceAll("'", "''") + "'")
+    if value == null: return trustedSql("NULL")
+    if value is bool: return trustedSql(value ? "1" : "0")
+    if value is string: return trustedSql("'" + value.replaceAll("'", "''") + "'")
     if value is number:
         assert value.isFinite() else "SQLite numeric literals must be finite"
         assert not value.isInteger() or (value >= -9007199254740991 and value <= 9007199254740991) else "SQLite integer literals must be safe integers"
@@ -576,39 +569,31 @@ export def sqliteIdentifier(value: string) -> DatabaseStatement:
     return trustedSql(`"` + value.replaceAll(`"`, `""`) + `"`)
 
 export class SqliteTransaction:
-    constructor(private const native: NativeSqliteTransaction):
-        pass
+    constructor(private const native: NativeSqliteTransaction): pass
 
     async def execute(statement: DatabaseStatement) -> number:
         const data = statement.data()
-        try:
-            return await self.native.execute(data.fragments, data.parameters)
+        try: return await self.native.execute(data.fragments, data.parameters)
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
     /// Projects this transaction into the engine-neutral functional operation layer.
     def executor() -> DatabaseExecutor:
-        async def executeStatement(statement: DatabaseStatement) -> number:
-            return await self.execute(statement)
+        async def executeStatement(statement: DatabaseStatement) -> number: return await self.execute(statement)
 
         async def oneRow(statement: DatabaseStatement) -> unknown:
             const data = statement.data()
-            try:
-                return await self.native.one(data.fragments, data.parameters)
+            try: return await self.native.one(data.fragments, data.parameters)
             catch error:
-                if error is NativeSqliteError:
-                    throw sqliteFailure(error)
+                if error is NativeSqliteError: throw sqliteFailure(error)
                 throw SqliteError(error.message)
 
         async def allRows(statement: DatabaseStatement) -> List<unknown>:
             const data = statement.data()
-            try:
-                return await self.native.all(data.fragments, data.parameters)
+            try: return await self.native.all(data.fragments, data.parameters)
             catch error:
-                if error is NativeSqliteError:
-                    throw sqliteFailure(error)
+                if error is NativeSqliteError: throw sqliteFailure(error)
                 throw SqliteError(error.message)
 
         return {execute: executeStatement, one: oneRow, all: allRows}
@@ -617,12 +602,10 @@ export class SqliteTransaction:
         const data = statement.data()
         try:
             const row = await self.native.one(data.fragments, data.parameters)
-            if row == null:
-                return null
+            if row == null: return null
             return RowType.parse(row)
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
     async def all<T>(statement: DatabaseStatement, RowType: Type<T>) -> List<T>:
@@ -631,44 +614,35 @@ export class SqliteTransaction:
             const rows = await self.native.all(data.fragments, data.parameters)
             return rows.map(row => RowType.parse(row))
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
 export class SqliteConnection:
-    constructor(private const native: NativeSqliteConnection):
-        pass
+    constructor(private const native: NativeSqliteConnection): pass
 
     async def execute(statement: DatabaseStatement) -> number:
         const data = statement.data()
-        try:
-            return await self.native.execute(data.fragments, data.parameters)
+        try: return await self.native.execute(data.fragments, data.parameters)
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
     /// Projects this connection into the engine-neutral functional operation layer.
     def executor() -> DatabaseExecutor:
-        async def executeStatement(statement: DatabaseStatement) -> number:
-            return await self.execute(statement)
+        async def executeStatement(statement: DatabaseStatement) -> number: return await self.execute(statement)
 
         async def oneRow(statement: DatabaseStatement) -> unknown:
             const data = statement.data()
-            try:
-                return await self.native.one(data.fragments, data.parameters)
+            try: return await self.native.one(data.fragments, data.parameters)
             catch error:
-                if error is NativeSqliteError:
-                    throw sqliteFailure(error)
+                if error is NativeSqliteError: throw sqliteFailure(error)
                 throw SqliteError(error.message)
 
         async def allRows(statement: DatabaseStatement) -> List<unknown>:
             const data = statement.data()
-            try:
-                return await self.native.all(data.fragments, data.parameters)
+            try: return await self.native.all(data.fragments, data.parameters)
             catch error:
-                if error is NativeSqliteError:
-                    throw sqliteFailure(error)
+                if error is NativeSqliteError: throw sqliteFailure(error)
                 throw SqliteError(error.message)
 
         return {execute: executeStatement, one: oneRow, all: allRows}
@@ -677,12 +651,10 @@ export class SqliteConnection:
         const data = statement.data()
         try:
             const row = await self.native.one(data.fragments, data.parameters)
-            if row == null:
-                return null
+            if row == null: return null
             return RowType.parse(row)
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
     async def all<T>(statement: DatabaseStatement, RowType: Type<T>) -> List<T>:
@@ -691,38 +663,30 @@ export class SqliteConnection:
             const rows = await self.native.all(data.fragments, data.parameters)
             return rows.map(row => RowType.parse(row))
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
     async def transaction<T>(operation: (SqliteTransaction) -> Promise<T>) -> T:
         const results: List<T> = []
-        async def run<T>(native: NativeSqliteTransaction):
-            results.append(await operation(SqliteTransaction(native)))
+        async def run<T>(native: NativeSqliteTransaction): results.append(await operation(SqliteTransaction(native)))
         try:
             await self.native.transaction(run)
             assert results.size == 1 else "SQLite transaction did not return exactly one result"
             return results[0]
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw error
 
     async def close():
-        try:
-            await self.native.close()
+        try: await self.native.close()
         catch error:
-            if error is NativeSqliteError:
-                throw sqliteFailure(error)
+            if error is NativeSqliteError: throw sqliteFailure(error)
             throw SqliteError(error.message)
 
-    @dispose:
-        await self.close()
+    @dispose: await self.close()
 
 export async def openSqlite(path: string, options: SqliteOptions = {}) -> SqliteConnection:
-    try:
-        return SqliteConnection(await openNativeSqlite(path, options))
+    try: return SqliteConnection(await openNativeSqlite(path, options))
     catch error:
-        if error is NativeSqliteError:
-            throw sqliteFailure(error)
+        if error is NativeSqliteError: throw sqliteFailure(error)
         throw SqliteError(error.message)

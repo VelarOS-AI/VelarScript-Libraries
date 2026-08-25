@@ -64,19 +64,15 @@ test "bound attack text remains data and cannot change the statement":
 test "SQLite rejects multiple statements and raw placeholders before execution":
     using database = await openSqlite(":memory:")
     let multipleRejected = false
-    try:
-        await database.execute(trustedSql("CREATE TABLE hidden (value INTEGER); DROP TABLE hidden"))
+    try: await database.execute(trustedSql("CREATE TABLE hidden (value INTEGER); DROP TABLE hidden"))
     catch error:
-        if error is SqliteError:
-            multipleRejected = error.sqliteCode == "SQLITE_INPUT"
+        if error is SqliteError: multipleRejected = error.sqliteCode == "SQLITE_INPUT"
     assert multipleRejected else "Multiple SQLite statements were accepted"
 
     let placeholderRejected = false
-    try:
-        await database.one(trustedSql("SELECT ? AS count"), CountRow)
+    try: await database.one(trustedSql("SELECT ? AS count"), CountRow)
     catch error:
-        if error is SqliteError:
-            placeholderRejected = error.sqliteCode == "SQLITE_INPUT"
+        if error is SqliteError: placeholderRejected = error.sqliteCode == "SQLITE_INPUT"
     assert placeholderRejected else "Raw SQLite placeholder was accepted"
 
 test "SQLite literal escaping is limited to grammar positions that cannot bind":
@@ -100,10 +96,8 @@ test "SQLite identifiers are quoted as one name instead of executable grammar":
 test "SQLite denies attached databases at the driver policy boundary":
     using database = await openSqlite(":memory:")
     let rejected = false
-    try:
-        await database.execute(trustedSql("ATTACH DATABASE ':memory:' AS extra"))
-    catch error:
-        rejected = error is SqliteError
+    try: await database.execute(trustedSql("ATTACH DATABASE ':memory:' AS extra"))
+    catch error: rejected = error is SqliteError
     assert rejected else "SQLite ATTACH bypassed the connection policy"
 
 test "read-only connections reject write-oriented journal configuration":
@@ -111,8 +105,7 @@ test "read-only connections reject write-oriented journal configuration":
     try:
         const database = await openSqlite(":memory:", {readOnly: true, journalMode: SqliteJournalMode.wal})
         await database.close()
-    catch error:
-        rejected = error is SqliteError
+    catch error: rejected = error is SqliteError
     assert rejected else "Read-only SQLite accepted a journal mode change"
 
 test "transaction callbacks commit or roll back as one owned operation":
@@ -136,10 +129,8 @@ test "transaction callbacks commit or roll back as one owned operation":
         throw Error("rollback")
 
     let rejected = false
-    try:
-        await database.transaction(rollback)
-    catch error:
-        rejected = error.message == "rollback"
+    try: await database.transaction(rollback)
+    catch error: rejected = error.message == "rollback"
     assert rejected else "Transaction callback failure was replaced"
     const count = await database.one(trustedSql("SELECT COUNT(*) AS count FROM events"), CountRow)
     assert count != null and count.count == 1 else "Failed transaction was not rolled back"
@@ -152,10 +143,8 @@ test "connection use inside its transaction callback fails instead of deadlockin
         await database.execute(trustedSql("INSERT INTO values_table (value) VALUES (1)"))
 
     let rejected = false
-    try:
-        await database.transaction(misuse)
-    catch error:
-        rejected = error is SqliteConcurrencyError
+    try: await database.transaction(misuse)
+    catch error: rejected = error is SqliteConcurrencyError
     assert rejected else "Reentrant connection use did not fail with SqliteConcurrencyError"
 
 test "row and queue limits are explicit connection bounds":
@@ -168,9 +157,7 @@ test "row and queue limits are explicit connection bounds":
         sqlTuple([2]),
     ]))
     let rowLimitRejected = false
-    try:
-        await database.all(trustedSql("SELECT value AS count FROM numbers ORDER BY value"), CountRow)
+    try: await database.all(trustedSql("SELECT value AS count FROM numbers ORDER BY value"), CountRow)
     catch error:
-        if error is SqliteError:
-            rowLimitRejected = error.sqliteCode == "SQLITE_ROW_LIMIT"
+        if error is SqliteError: rowLimitRejected = error.sqliteCode == "SQLITE_ROW_LIMIT"
     assert rowLimitRejected else "SQLite row limit was not enforced"

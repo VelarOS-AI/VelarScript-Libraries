@@ -5,14 +5,12 @@ import {deflate, gunzip, gzip, inflate} from "../src/index.vel"
 
 def fixture() -> Bytes:
     const buffer = uint8Buffer(8)
-    for value, index in [1, 1, 2, 3, 5, 8, 13, 21]:
-        buffer[index] = value
+    for value, index in [1, 1, 2, 3, 5, 8, 13, 21]: buffer[index] = value
     return buffer.toBytes()
 
 def pattern(size: number) -> Bytes:
     const buffer = uint8Buffer(size)
-    for index in range(size):
-        buffer[index] = (index * 7 + (index / 13).floor()) % 251
+    for index in range(size): buffer[index] = (index * 7 + (index / 13).floor()) % 251
     return buffer.toBytes()
 
 def incompressible(size: number) -> Bytes:
@@ -33,22 +31,18 @@ def zeroYield(blocks: number) -> Bytes:
     return buffer.toBytes()
 
 def sameBytes(left: Bytes, right: Bytes) -> bool:
-    if left.size != right.size:
-        return false
+    if left.size != right.size: return false
     let index = 0
     while index < left.size:
-        if left[index] != right[index]:
-            return false
+        if left[index] != right[index]: return false
         index += 1
     return true
 
 def rejectionCost(archive: Bytes, limit: number) -> number:
     const started = monotonic()
     let name = ""
-    try:
-        inflate(archive, maxBytes=limit)
-    catch error:
-        name = error.name
+    try: inflate(archive, maxBytes=limit)
+    catch error: name = error.name
     const elapsed = monotonic() - started
     assert name == "AssertionError" else "A zero-yield stream was not rejected with an assertion error"
     return elapsed
@@ -80,10 +74,8 @@ test "DEFLATE and gzip preserve bounded binary values":
 test "decompression enforces the caller's output limit":
     const archive = gzip(fixture())
     let rejected = false
-    try:
-        gunzip(archive, maxBytes=4)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: gunzip(archive, maxBytes=4)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "gunzip exceeded maxBytes without rejection"
 
 test "a tight output budget still decompresses a multi-kilobyte payload":
@@ -94,19 +86,15 @@ test "a tight output budget still decompresses a multi-kilobyte payload":
 test "inflate enforces the caller's output limit":
     const archive = deflate(fixture())
     let rejected = false
-    try:
-        inflate(archive, maxBytes=4)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: inflate(archive, maxBytes=4)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "inflate exceeded maxBytes without rejection"
 
 test "decompression rejects a stream that consumes input without producing output":
     const hostile = zeroYield(240000)
     let rejected = false
-    try:
-        inflate(hostile)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: inflate(hostile)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "inflate read a zero-yield stream to the end"
 
 test "the productive-input bound does not reject a large incompressible payload":

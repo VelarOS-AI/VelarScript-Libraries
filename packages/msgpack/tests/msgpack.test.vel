@@ -11,44 +11,35 @@ type PackedBlob:
 
 def nested(levels: number) -> Bytes:
     const buffer = uint8Buffer(levels + 1)
-    for index in range(levels):
-        buffer[index] = 0x91
+    for index in range(levels): buffer[index] = 0x91
     buffer[levels] = 0xC0
     return buffer.toBytes()
 
 def filled(size: number, byte: number) -> Bytes:
     const buffer = uint8Buffer(size)
-    for index in range(size):
-        buffer[index] = byte
+    for index in range(size): buffer[index] = byte
     return buffer.toBytes()
 
 def bytesOf(values: List<number>) -> Bytes:
     const buffer = uint8Buffer(values.size)
-    for index in range(values.size):
-        buffer[index] = values[index]
+    for index in range(values.size): buffer[index] = values[index]
     return buffer.toBytes()
 
 def headedNesting(header: List<number>, levels: number) -> Bytes:
     const buffer = uint8Buffer(header.size + levels + 1)
-    for index in range(header.size):
-        buffer[index] = header[index]
-    for index in range(levels):
-        buffer[header.size + index] = 0x91
+    for index in range(header.size): buffer[index] = header[index]
+    for index in range(levels): buffer[header.size + index] = 0x91
     buffer[header.size + levels] = 0xC0
     return buffer.toBytes()
 
 def accepted(value: Bytes) -> bool:
-    try:
-        decode(value)
-    catch error:
-        return false
+    try: decode(value)
+    catch error: return false
     return true
 
 def rejected(action: () -> unknown) -> bool:
-    try:
-        action()
-    catch error:
-        return error.name == "AssertionError"
+    try: action()
+    catch error: return error.name == "AssertionError"
     return false
 
 test "MessagePack values round-trip through an explicit Runtime Type":

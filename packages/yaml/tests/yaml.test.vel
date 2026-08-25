@@ -21,13 +21,10 @@ test "duplicate keys and oversized documents fail at the adapter boundary":
             name: first
             name: second
         ")
-    catch error:
-        duplicateRejected = true
+    catch error: duplicateRejected = true
     assert duplicateRejected else "Duplicate YAML keys were accepted"
 
     let sizeRejected = false
-    try:
-        parseYaml("name: oversized", maxBytes=4)
-    catch error:
-        sizeRejected = true
+    try: parseYaml("name: oversized", maxBytes=4)
+    catch error: sizeRejected = true
     assert sizeRejected else "An oversized YAML document was accepted"

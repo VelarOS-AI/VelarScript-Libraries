@@ -9,8 +9,6 @@ test "equal seeds produce equal deterministic fields":
 test "non-finite coordinates are rejected at the adapter boundary":
     const field = simplex2("bounded")
     let rejected = false
-    try:
-        field(0 / 0, 1)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: field(0 / 0, 1)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "A non-finite coordinate crossed the adapter"

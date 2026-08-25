@@ -1360,34 +1360,34 @@ var ComposedDatabaseStatement = class {
   render(style) {
     const self = this;
     let text = __velarListIndexGet(__velarReadPrivateField(self.#fragments, "fragments"), 0);
-    for (const __velarForPair2172 of __velarCollectionPairIterator(__velarReadPrivateField(self.#parameters, "parameters"))) {
-      const parameter = __velarForPair2172[0];
-      const index = __velarForPair2172[1];
+    for (const __velarForPair2152 of __velarCollectionPairIterator(__velarReadPrivateField(self.#parameters, "parameters"))) {
+      const parameter = __velarForPair2152[0];
+      const index = __velarForPair2152[1];
       {
-        const __velarMatchValue2221 = style;
-        let __velarMatchDone2221 = false;
-        let __velarMatchCase2255 = null;
-        if (!__velarMatchDone2221 && (__velarMatchCase2255 = (() => {
-          if (!(__velarMatchValue2221 === DatabaseParameterStyle.questionMark)) return null;
+        const __velarMatchValue2201 = style;
+        let __velarMatchDone2201 = false;
+        let __velarMatchCase2235 = null;
+        if (!__velarMatchDone2201 && (__velarMatchCase2235 = (() => {
+          if (!(__velarMatchValue2201 === DatabaseParameterStyle.questionMark)) return null;
           return [];
         })()) !== null) {
-          __velarMatchDone2221 = true;
+          __velarMatchDone2201 = true;
           text += "?";
         }
-        let __velarMatchCase2345 = null;
-        if (!__velarMatchDone2221 && (__velarMatchCase2345 = (() => {
-          if (!(__velarMatchValue2221 === DatabaseParameterStyle.dollarNumber)) return null;
+        let __velarMatchCase2305 = null;
+        if (!__velarMatchDone2201 && (__velarMatchCase2305 = (() => {
+          if (!(__velarMatchValue2201 === DatabaseParameterStyle.dollarNumber)) return null;
           return [];
         })()) !== null) {
-          __velarMatchDone2221 = true;
+          __velarMatchDone2201 = true;
           text += "$" + String(index + 1);
         }
-        let __velarMatchCase2452 = null;
-        if (!__velarMatchDone2221 && (__velarMatchCase2452 = (() => {
-          if (!(__velarMatchValue2221 === DatabaseParameterStyle.colonNumber)) return null;
+        let __velarMatchCase2392 = null;
+        if (!__velarMatchDone2201 && (__velarMatchCase2392 = (() => {
+          if (!(__velarMatchValue2201 === DatabaseParameterStyle.colonNumber)) return null;
           return [];
         })()) !== null) {
-          __velarMatchDone2221 = true;
+          __velarMatchDone2201 = true;
           text += ":" + String(index + 1);
         }
       }
@@ -1431,13 +1431,13 @@ function sqlConcat(statements) {
   for (const statement of __velarReactiveListIterator(statements)) {
     const data = statement.data();
     {
-      const __velarIndexObject3983 = fragments;
-      const __velarIndexKey3983 = __velarListSize(fragments) - 1;
-      __velarListIndexSet(__velarIndexObject3983, __velarIndexKey3983, __velarListIndexGet(__velarIndexObject3983, __velarIndexKey3983) + __velarListIndexGet(data.fragments, 0));
+      const __velarIndexObject3899 = fragments;
+      const __velarIndexKey3899 = __velarListSize(fragments) - 1;
+      __velarListIndexSet(__velarIndexObject3899, __velarIndexKey3899, __velarListIndexGet(__velarIndexObject3899, __velarIndexKey3899) + __velarListIndexGet(data.fragments, 0));
     }
-    for (const __velarForPair4046 of __velarCollectionPairIterator(data.parameters)) {
-      const parameter = __velarForPair4046[0];
-      const index = __velarForPair4046[1];
+    for (const __velarForPair3962 of __velarCollectionPairIterator(data.parameters)) {
+      const parameter = __velarForPair3962[0];
+      const index = __velarForPair3962[1];
       __velarListAppend(parameters, parameter ?? null);
       __velarListAppend(fragments, __velarListIndexGet(data.fragments, index + 1));
     }
@@ -1446,9 +1446,9 @@ function sqlConcat(statements) {
 }
 function sqlJoin(statements, separator) {
   const parts = __velarAdoptList([]);
-  for (const __velarForPair4465 of __velarCollectionPairIterator(statements)) {
-    const statement = __velarForPair4465[0];
-    const index = __velarForPair4465[1];
+  for (const __velarForPair4381 of __velarCollectionPairIterator(statements)) {
+    const statement = __velarForPair4381[0];
+    const index = __velarForPair4381[1];
     if (index > 0) {
       __velarListAppend(parts, separator);
     }
@@ -1786,7 +1786,7 @@ async function requireOne(executor, operation, message = "Database query returne
   if ((row ?? null) === null) {
     throw new DatabaseRowNotFoundError(message);
   }
-  return __velarAsyncResolvedValue(((__velarValue) => __velarNarrow(__velarValue, __velarValue != null, "T", "row", 9253))(row));
+  return __velarAsyncResolvedValue(((__velarValue) => __velarNarrow(__velarValue, __velarValue != null, "T", "row", 9125))(row));
 }
 async function all(executor, operation) {
   const rows = await __velarNormalizePromiseValue(executor.all(operation.statement));

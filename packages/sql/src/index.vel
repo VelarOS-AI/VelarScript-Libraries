@@ -15,8 +15,7 @@ def quotedPath(parts: List<string>, label: string) -> DatabaseStatement:
     return sqlJoin(parts.map(part => quotedIdentifier(part, label)), trustedSql("."))
 
 def checkedOptionalIdentifier(value: string?, label: string) -> string?:
-    if value == null:
-        return null
+    if value == null: return null
     return checkedIdentifier(value, label)
 
 class ComposedSqlTable:
@@ -28,8 +27,7 @@ class ComposedSqlTable:
     def reference() -> DatabaseStatement:
         const parts = self.schema == null ? [self.name] : [self.schema, self.name]
         const name = quotedPath(parts, "SQL table name")
-        if self.alias == null:
-            return name
+        if self.alias == null: return name
         return sqlConcat([name, trustedSql(" AS "), quotedIdentifier(self.alias, "SQL table alias")])
 
     def writeTarget() -> DatabaseStatement:
@@ -45,19 +43,16 @@ export def sqlTable(name: string, schema: string? = null, alias: string? = null)
     return ComposedSqlTable(name, schema, alias)
 
 class ComposedSqlExpression:
-    constructor(private const value: DatabaseStatement):
-        value.render(DatabaseParameterStyle.questionMark)
+    constructor(private const value: DatabaseStatement): value.render(DatabaseParameterStyle.questionMark)
 
-    def statement() -> DatabaseStatement:
-        return self.value
+    def statement() -> DatabaseStatement: return self.value
 
 export type SqlExpression = ComposedSqlExpression
 
 /// References one column, optionally qualified by a table name or alias.
 export def sqlColumn(name: string, qualifier: string? = null) -> SqlExpression:
     const column = quotedIdentifier(name, "SQL column name")
-    if qualifier == null:
-        return ComposedSqlExpression(column)
+    if qualifier == null: return ComposedSqlExpression(column)
     return ComposedSqlExpression(sqlConcat([
         quotedIdentifier(qualifier, "SQL column qualifier"),
         trustedSql("."),
@@ -65,8 +60,7 @@ export def sqlColumn(name: string, qualifier: string? = null) -> SqlExpression:
     ]))
 
 /// Adds one bound runtime value to an expression.
-export def sqlValue(value: unknown) -> SqlExpression:
-    return ComposedSqlExpression(sqlParameter(value))
+export def sqlValue(value: unknown) -> SqlExpression: return ComposedSqlExpression(sqlParameter(value))
 
 class ComposedSqlField:
     constructor(private const expression: SqlExpression?, private const qualifier: string?, private const alias: string?):
@@ -79,10 +73,8 @@ class ComposedSqlField:
         if self.expression == null:
             if self.qualifier != null:
                 value = sqlConcat([quotedIdentifier(self.qualifier, "SQL field qualifier"), trustedSql(".*")])
-        else:
-            value = self.expression.statement()
-        if self.alias == null:
-            return value
+        else: value = self.expression.statement()
+        if self.alias == null: return value
         return sqlConcat([value, trustedSql(" AS "), quotedIdentifier(self.alias, "SQL field alias")])
 
 export type SqlField = ComposedSqlField
@@ -96,15 +88,12 @@ export def sqlNamedField(name: string, alias: string? = null, qualifier: string?
     return sqlField(sqlColumn(name, qualifier=qualifier), alias=alias)
 
 /// Selects every column, optionally from one qualified table reference.
-export def sqlAllFields(qualifier: string? = null) -> SqlField:
-    return ComposedSqlField(null, qualifier, null)
+export def sqlAllFields(qualifier: string? = null) -> SqlField: return ComposedSqlField(null, qualifier, null)
 
 class ComposedSqlPredicate:
-    constructor(private const value: DatabaseStatement):
-        value.render(DatabaseParameterStyle.questionMark)
+    constructor(private const value: DatabaseStatement): value.render(DatabaseParameterStyle.questionMark)
 
-    def statement() -> DatabaseStatement:
-        return self.value
+    def statement() -> DatabaseStatement: return self.value
 
 export type SqlPredicate = ComposedSqlPredicate
 
@@ -117,8 +106,7 @@ def binaryPredicate(left: SqlExpression, operator: string, right: SqlExpression)
         trustedSql(")"),
     ]))
 
-export def sqlEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
-    return binaryPredicate(left, "=", right)
+export def sqlEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate: return binaryPredicate(left, "=", right)
 
 export def sqlNotEqual(left: SqlExpression, right: SqlExpression) -> SqlPredicate:
     return binaryPredicate(left, "<>", right)
@@ -171,11 +159,9 @@ export def sqlBetween(expression: SqlExpression, minimum: unknown, maximum: unkn
     ]))
 
 /// The explicit predicate for an intentional unfiltered update or delete.
-export def sqlAllRows() -> SqlPredicate:
-    return ComposedSqlPredicate(trustedSql("(1 = 1)"))
+export def sqlAllRows() -> SqlPredicate: return ComposedSqlPredicate(trustedSql("(1 = 1)"))
 
-export def sqlNoRows() -> SqlPredicate:
-    return ComposedSqlPredicate(trustedSql("(1 = 0)"))
+export def sqlNoRows() -> SqlPredicate: return ComposedSqlPredicate(trustedSql("(1 = 0)"))
 
 export def sqlNot(predicate: SqlPredicate) -> SqlPredicate:
     return ComposedSqlPredicate(sqlConcat([
@@ -185,8 +171,7 @@ export def sqlNot(predicate: SqlPredicate) -> SqlPredicate:
     ]))
 
 def joinedPredicates(predicates: List<SqlPredicate>, separator: string, empty: SqlPredicate) -> SqlPredicate:
-    if predicates.size == 0:
-        return empty
+    if predicates.size == 0: return empty
     return ComposedSqlPredicate(sqlConcat([
         trustedSql("("),
         sqlJoin(predicates.map(predicate => predicate.statement()), trustedSql(separator)),
@@ -202,8 +187,7 @@ export def sqlOr(predicates: List<SqlPredicate>) -> SqlPredicate:
     return joinedPredicates(predicates, " OR ", sqlNoRows())
 
 export def sqlInValues(expression: SqlExpression, values: List<unknown>) -> SqlPredicate:
-    if values.size == 0:
-        return sqlNoRows()
+    if values.size == 0: return sqlNoRows()
     return ComposedSqlPredicate(sqlConcat([
         trustedSql("("),
         expression.statement(),
@@ -214,10 +198,8 @@ export def sqlInValues(expression: SqlExpression, values: List<unknown>) -> SqlP
 
 export def sqlTupleIn(expressions: List<SqlExpression>, rows: List<List<unknown>>) -> SqlPredicate:
     assert expressions.size > 0 else "SQL tuple predicates require at least one expression"
-    if rows.size == 0:
-        return sqlNoRows()
-    for row in rows:
-        assert row.size == expressions.size else "SQL tuple predicate rows must match the expression width"
+    if rows.size == 0: return sqlNoRows()
+    for row in rows: assert row.size == expressions.size else "SQL tuple predicate rows must match the expression width"
     return ComposedSqlPredicate(sqlConcat([
         trustedSql("("),
         sqlJoin(expressions.map(expression => expression.statement()), trustedSql(", ")),
@@ -227,8 +209,7 @@ export def sqlTupleIn(expressions: List<SqlExpression>, rows: List<List<unknown>
     ]))
 
 class ComposedSqlOrder:
-    constructor(private const expression: SqlExpression, private const descending: bool):
-        pass
+    constructor(private const expression: SqlExpression, private const descending: bool): pass
 
     def statement() -> DatabaseStatement:
         return sqlConcat([
@@ -238,20 +219,16 @@ class ComposedSqlOrder:
 
 export type SqlOrder = ComposedSqlOrder
 
-export def sqlAscending(expression: SqlExpression) -> SqlOrder:
-    return ComposedSqlOrder(expression, false)
+export def sqlAscending(expression: SqlExpression) -> SqlOrder: return ComposedSqlOrder(expression, false)
 
-export def sqlDescending(expression: SqlExpression) -> SqlOrder:
-    return ComposedSqlOrder(expression, true)
+export def sqlDescending(expression: SqlExpression) -> SqlOrder: return ComposedSqlOrder(expression, true)
 
 class ComposedSqlJoin:
-    constructor(private const kind: string, private const table: SqlTable, private const predicate: SqlPredicate?):
-        pass
+    constructor(private const kind: string, private const table: SqlTable, private const predicate: SqlPredicate?): pass
 
     def statement() -> DatabaseStatement:
         const base = sqlConcat([trustedSql(" " + self.kind + " "), self.table.reference()])
-        if self.predicate == null:
-            return base
+        if self.predicate == null: return base
         return sqlConcat([base, trustedSql(" ON "), self.predicate.statement()])
 
 export type SqlJoin = ComposedSqlJoin
@@ -262,8 +239,7 @@ export def sqlInnerJoin(table: SqlTable, predicate: SqlPredicate) -> SqlJoin:
 export def sqlLeftJoin(table: SqlTable, predicate: SqlPredicate) -> SqlJoin:
     return ComposedSqlJoin("LEFT JOIN", table, predicate)
 
-export def sqlCrossJoin(table: SqlTable) -> SqlJoin:
-    return ComposedSqlJoin("CROSS JOIN", table, null)
+export def sqlCrossJoin(table: SqlTable) -> SqlJoin: return ComposedSqlJoin("CROSS JOIN", table, null)
 
 def checkedLimit(value: number, label: string, minimum: number) -> number:
     assert value.isInteger() and value >= minimum and value <= 1000000 else f"{label} must be an integer from {minimum} through 1000000"
@@ -280,8 +256,7 @@ export def selectStatement(table: SqlTable, fields: List<SqlField>, joins: List<
         trustedSql(" FROM "),
         table.reference(),
     ]
-    for join in joins:
-        parts.append(join.statement())
+    for join in joins: parts.append(join.statement())
     if where != null:
         parts.append(trustedSql(" WHERE "))
         parts.append(where.statement())
@@ -314,8 +289,7 @@ def checkedColumns(columns: List<string>) -> List<DatabaseStatement>:
 export def insertStatement(table: SqlTable, columns: List<string>, rows: List<List<unknown>>) -> DatabaseStatement:
     const names = checkedColumns(columns)
     assert rows.size > 0 else "SQL INSERT requires at least one row"
-    for row in rows:
-        assert row.size == names.size else "SQL INSERT rows must match the column count"
+    for row in rows: assert row.size == names.size else "SQL INSERT rows must match the column count"
     return sqlConcat([
         trustedSql("INSERT INTO "),
         table.writeTarget(),
@@ -344,8 +318,7 @@ export type SqlAssignment = ComposedSqlAssignment
 export def sqlAssign(column: string, expression: SqlExpression) -> SqlAssignment:
     return ComposedSqlAssignment(column, expression)
 
-export def sqlSet(column: string, value: unknown) -> SqlAssignment:
-    return sqlAssign(column, sqlValue(value))
+export def sqlSet(column: string, value: unknown) -> SqlAssignment: return sqlAssign(column, sqlValue(value))
 
 export def updateStatement(table: SqlTable, assignments: List<SqlAssignment>, where: SqlPredicate) -> DatabaseStatement:
     assert assignments.size > 0 else "SQL UPDATE requires at least one assignment"

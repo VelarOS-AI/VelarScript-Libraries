@@ -1,6 +1,6 @@
 import {TextBuffer, TextHistory} from "../src/index.vel"
 
-extern js()`
+extern js`
     export function loneHigh() { return String.fromCharCode(0xD83D); }
     export function loneLow() { return String.fromCharCode(0xDE00); }
 `:

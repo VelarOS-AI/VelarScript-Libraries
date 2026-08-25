@@ -1813,14 +1813,14 @@ function requiredLeft(node) {
   if (!((value ?? null) !== null)) {
     throw new __VelarAssertionError("Invalid TextBuffer rope left branch");
   }
-  return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "value", 2830))(value);
+  return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "value", 2814))(value);
 }
 function requiredRight(node) {
   const value = __velarReadInstanceField(node, "right");
   if (!((value ?? null) !== null)) {
     throw new __VelarAssertionError("Invalid TextBuffer rope right branch");
   }
-  return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "value", 2993))(value);
+  return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "value", 2977))(value);
 }
 function branchNode(left, right) {
   const height = __velarReadInstanceField(left, "height") > __velarReadInstanceField(right, "height") ? __velarReadInstanceField(left, "height") + 1 : __velarReadInstanceField(right, "height") + 1;
@@ -1864,7 +1864,7 @@ function joinNonEmpty(left, right) {
   const leftText = __velarReadInstanceField(left, "text");
   const rightText = __velarReadInstanceField(right, "text");
   if ((leftText ?? null) !== null && (rightText ?? null) !== null && __velarReadInstanceField(left, "length") + __velarReadInstanceField(right, "length") <= 4096) {
-    const merged = leafNode(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "leftText", 4743))(leftText) + ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "rightText", 4754))(rightText)) ?? null ?? left;
+    const merged = leafNode(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "leftText", 4703))(leftText) + ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "rightText", 4714))(rightText)) ?? null ?? left;
     if (!__velarSameValueZero(__velarReadInstanceField(merged, "length"), __velarReadInstanceField(left, "length") + __velarReadInstanceField(right, "length"))) {
       throw new __VelarAssertionError("Invalid TextBuffer rope join length");
     }
@@ -1887,9 +1887,9 @@ function joinNodes(left, right) {
     return right ?? null;
   }
   if ((right ?? null) === null) {
-    return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "left", 5500))(left);
+    return ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "left", 5444))(left);
   }
-  return joinNonEmpty(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "left", 5529))(left), ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "right", 5535))(right));
+  return joinNonEmpty(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "left", 5473))(left), ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "right", 5479))(right));
 }
 function buildNodes(parts, start, end) {
   if (start >= end) {
@@ -1910,17 +1910,17 @@ function splitNode(node, offset) {
     return { left: null, right: null };
   }
   if (offset <= 0) {
-    return { left: null, right: ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6170))(node) };
+    return { left: null, right: ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6082))(node) };
   }
-  if (offset >= __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6193))(node), "length")) {
-    return { left: ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6228))(node), right: null };
+  if (offset >= __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6105))(node), "length")) {
+    return { left: ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6132))(node), right: null };
   }
-  const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6264))(node), "text");
+  const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6168))(node), "text");
   if ((text ?? null) !== null) {
-    return { left: leafNode(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 6326))(text), 0, offset)) ?? null, right: leafNode(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 6366))(text), offset)) ?? null };
+    return { left: leafNode(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 6222))(text), 0, offset)) ?? null, right: leafNode(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 6262))(text), offset)) ?? null };
   }
-  const left = requiredLeft(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6417))(node));
-  const right = requiredRight(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6455))(node));
+  const left = requiredLeft(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6313))(node));
+  const right = requiredRight(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 6351))(node));
   if (offset < __velarReadInstanceField(left, "length")) {
     const split2 = splitNode(left, offset);
     return { left: split2.left ?? null, right: joinNodes(split2.right ?? null, right) ?? null };
@@ -1940,13 +1940,13 @@ function appendNodeSlice(node, start, end, output) {
   if ((node ?? null) === null || start >= end) {
     return null;
   }
-  const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7229))(node), "text");
+  const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7109))(node), "text");
   if ((text ?? null) !== null) {
-    __velarListAppend(output, __velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 7282))(text), start, end));
+    __velarListAppend(output, __velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 7162))(text), start, end));
     return null;
   }
-  const left = requiredLeft(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7356))(node));
-  const right = requiredRight(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7394))(node));
+  const left = requiredLeft(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7236))(node));
+  const right = requiredRight(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "node", 7274))(node));
   if (start < __velarReadInstanceField(left, "length")) {
     appendNodeSlice(left, start, end < __velarReadInstanceField(left, "length") ? end : __velarReadInstanceField(left, "length"), output);
   }
@@ -1964,7 +1964,7 @@ function prefixMetrics(node, offset) {
   }
   const text = __velarReadInstanceField(node, "text");
   if ((text ?? null) !== null) {
-    const starts = lineStarts(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 7945))(text), 0, offset));
+    const starts = lineStarts(__velarStringSlice(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 7801))(text), 0, offset));
     return { newlines: __velarListSize(starts) - 1, tail: offset - __velarListIndexGet(starts, -1) };
   }
   const left = requiredLeft(node);
@@ -1994,7 +1994,7 @@ function copySelection(selection) {
   if ((selection ?? null) === null) {
     return null;
   }
-  return __velarRecordFrom(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 8916))(selection), null, [["anchor", false], ["head", false]], "TextSelection");
+  return __velarRecordFrom(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 8732))(selection), null, [["anchor", false], ["head", false]], "TextSelection");
 }
 function copyEdits(changes) {
   let forward = __velarAdoptList([]);
@@ -2047,11 +2047,11 @@ var TextBuffer = class _TextBuffer {
     if ((root ?? null) === null) {
       return "";
     }
-    const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10848))(root), "text");
+    const text = __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10620))(root), "text");
     if ((text ?? null) !== null) {
-      return ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 10902))(text);
+      return ((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "text", 10662))(text);
     }
-    return self.slice(0, __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10936))(root), "length"));
+    return self.slice(0, __velarReadInstanceField(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 10696))(root), "length"));
   }
   slice(start, end) {
     const self = this;
@@ -2107,8 +2107,8 @@ var TextBuffer = class _TextBuffer {
     }
     self.#root = nextRoot ?? null;
     {
-      const __velarMemberObject13092 = self;
-      __velarMemberObject13092.#version = __velarReadPrivateField(__velarMemberObject13092.#version, "version") + 1;
+      const __velarMemberObject12840 = self;
+      __velarMemberObject12840.#version = __velarReadPrivateField(__velarMemberObject12840.#version, "version") + 1;
     }
     return { changes, beforeRevision, afterRevision: __velarReadPrivateField(self.#version, "version") };
   }
@@ -2133,10 +2133,10 @@ var TextBuffer = class _TextBuffer {
     }
     const insideCrLf = offset > 0 && offset < self.size && self.slice(offset - 1, offset) === "\r" && self.slice(offset, offset + 1) === "\n";
     if (insideCrLf) {
-      const beforeCarriageReturn = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14191))(root), offset - 1);
+      const beforeCarriageReturn = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 13911))(root), offset - 1);
       return { line: beforeCarriageReturn.newlines, column: beforeCarriageReturn.tail };
     }
-    const metrics = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14339))(root), offset);
+    const metrics = prefixMetrics(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 14059))(root), offset);
     return { line: metrics.newlines, column: metrics.tail };
   }
   offsetAt(line, column) {
@@ -2177,7 +2177,7 @@ var TextBuffer = class _TextBuffer {
     if (!((root ?? null) !== null)) {
       throw new __VelarAssertionError("TextBuffer line is outside the document");
     }
-    return lineStartIn(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 15921))(root), line);
+    return lineStartIn(((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, RopeNode), "RopeNode", "root", 15629))(root), line);
   }
   #lineEnd(line, start) {
     const self = this;
@@ -2284,10 +2284,10 @@ var TextHistory = class _TextHistory {
     self.#expectedRevision = transaction.afterRevision;
     const group = __velarReadPrivateField(self.#groupSteps, "groupSteps");
     if ((group ?? null) !== null) {
-      __velarListAppend(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "group", 19595))(group), step);
+      __velarListAppend(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "group", 19243))(group), step);
       {
-        const __velarMemberObject19626 = self;
-        __velarMemberObject19626.#groupBytes = __velarReadPrivateField(__velarMemberObject19626.#groupBytes, "groupBytes") + step.bytes;
+        const __velarMemberObject19274 = self;
+        __velarMemberObject19274.#groupBytes = __velarReadPrivateField(__velarMemberObject19274.#groupBytes, "groupBytes") + step.bytes;
       }
       self.#groupAfterSelection = copySelection(afterSelection ?? null) ?? null;
       self.#trimUndo();
@@ -2323,7 +2323,7 @@ var TextHistory = class _TextHistory {
     self.#requireSelection(committedSelection ?? null, __velarReadPrivateField(self.#buffer, "buffer").size);
     const beforeSelection = __velarReadPrivateField(self.#groupBeforeSelection, "groupBeforeSelection");
     let bytes = 0;
-    for (const step of __velarReactiveListIterator(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21107))(steps))) {
+    for (const step of __velarReactiveListIterator(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 20755))(steps))) {
       bytes += step.bytes;
     }
     self.#groupSteps = null;
@@ -2332,9 +2332,9 @@ var TextHistory = class _TextHistory {
     self.#groupAfterSelection = null;
     self.#groupUndoEntries = __velarAdoptList([]);
     self.#groupUndoBytes = 0;
-    if (__velarListSize(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21364))(steps)) > 0) {
+    if (__velarListSize(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21e3))(steps)) > 0) {
       self.#redoEntries = __velarAdoptList([]);
-      self.#pushUndo({ steps: ((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21441))(steps), beforeSelection: beforeSelection ?? null, afterSelection: copySelection(committedSelection ?? null) ?? null, bytes });
+      self.#pushUndo({ steps: ((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21077))(steps), beforeSelection: beforeSelection ?? null, afterSelection: copySelection(committedSelection ?? null) ?? null, bytes });
     }
     return null;
   }
@@ -2346,7 +2346,7 @@ var TextHistory = class _TextHistory {
       throw new __VelarAssertionError("TextHistory has no active group");
     }
     const selection = copySelection(__velarReadPrivateField(self.#groupBeforeSelection, "groupBeforeSelection")) ?? null;
-    self.#revertSteps(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21878))(steps));
+    self.#revertSteps(((__velarValue) => __velarNarrow(__velarValue, __velarListTypeIs(__velarValue, (item) => __velarTypeCheck_HistoryStep(item)), "List<HistoryStep>", "steps", 21514))(steps));
     self.#undoEntries = __velarReadPrivateField(self.#groupUndoEntries, "groupUndoEntries");
     self.#undoBytes = __velarReadPrivateField(self.#groupUndoBytes, "groupUndoBytes");
     self.#groupSteps = null;
@@ -2365,8 +2365,8 @@ var TextHistory = class _TextHistory {
     }
     const entry = __velarListPop(__velarReadPrivateField(self.#undoEntries, "undoEntries"));
     {
-      const __velarMemberObject22462 = self;
-      __velarMemberObject22462.#undoBytes = __velarReadPrivateField(__velarMemberObject22462.#undoBytes, "undoBytes") - entry.bytes;
+      const __velarMemberObject22098 = self;
+      __velarMemberObject22098.#undoBytes = __velarReadPrivateField(__velarMemberObject22098.#undoBytes, "undoBytes") - entry.bytes;
     }
     self.#revertSteps(entry.steps);
     __velarListAppend(__velarReadPrivateField(self.#redoEntries, "redoEntries"), entry);
@@ -2414,8 +2414,8 @@ var TextHistory = class _TextHistory {
     const self = this;
     __velarListAppend(__velarReadPrivateField(self.#undoEntries, "undoEntries"), entry);
     {
-      const __velarMemberObject23953 = self;
-      __velarMemberObject23953.#undoBytes = __velarReadPrivateField(__velarMemberObject23953.#undoBytes, "undoBytes") + entry.bytes;
+      const __velarMemberObject23589 = self;
+      __velarMemberObject23589.#undoBytes = __velarReadPrivateField(__velarMemberObject23589.#undoBytes, "undoBytes") + entry.bytes;
     }
     self.#trimUndo();
     return null;
@@ -2425,8 +2425,8 @@ var TextHistory = class _TextHistory {
     while (__velarListSize(__velarReadPrivateField(self.#undoEntries, "undoEntries")) > 1 && (__velarListSize(__velarReadPrivateField(self.#undoEntries, "undoEntries")) > __velarReadPrivateField(self.#entryLimit, "entryLimit") || __velarReadPrivateField(self.#undoBytes, "undoBytes") + __velarReadPrivateField(self.#groupBytes, "groupBytes") > __velarReadPrivateField(self.#byteLimit, "byteLimit"))) {
       const removed = __velarListPop(__velarReadPrivateField(self.#undoEntries, "undoEntries"), 0);
       {
-        const __velarMemberObject24320 = self;
-        __velarMemberObject24320.#undoBytes = __velarReadPrivateField(__velarMemberObject24320.#undoBytes, "undoBytes") - removed.bytes;
+        const __velarMemberObject23956 = self;
+        __velarMemberObject23956.#undoBytes = __velarReadPrivateField(__velarMemberObject23956.#undoBytes, "undoBytes") - removed.bytes;
       }
     }
     return null;
@@ -2451,10 +2451,10 @@ var TextHistory = class _TextHistory {
     if ((selection ?? null) === null) {
       return null;
     }
-    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24786))(selection).anchor), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24814))(selection).anchor) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24835))(selection).anchor >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24861))(selection).anchor <= size)) {
+    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24410))(selection).anchor), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24438))(selection).anchor) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24459))(selection).anchor >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24485))(selection).anchor <= size)) {
       throw new __VelarAssertionError("TextHistory selection anchor is outside the document");
     }
-    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24961))(selection).head), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24987))(selection).head) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25006))(selection).head >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 25030))(selection).head <= size)) {
+    if (!(__velarSameValueZero(__velarNumberFloor(((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24585))(selection).head), ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24611))(selection).head) && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24630))(selection).head >= 0 && ((__velarValue) => __velarNarrow(__velarValue, __velarTypeCheck_TextSelection(__velarValue), "TextSelection", "selection", 24654))(selection).head <= size)) {
       throw new __VelarAssertionError("TextHistory selection head is outside the document");
     }
     return null;

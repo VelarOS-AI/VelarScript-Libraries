@@ -6,7 +6,7 @@ extern module "msgpackr":
 
 import js {pack, unpack} from "msgpackr"
 
-extern js()`
+extern js`
     export function unsupportedTag(value, maxDepth) {
       if (value === null || typeof value !== "object" || ArrayBuffer.isView(value)) return "";
       if (maxDepth <= 0) return "depth";
@@ -164,5 +164,4 @@ export def decode(value: Bytes) -> unknown:
     return unpack(checkedNesting(value))
 
 /// Decodes and validates one MessagePack document at the adapter boundary.
-export def parse<T>(value: Bytes, target: Type<T>) -> T:
-    return target.parse(decode(value))
+export def parse<T>(value: Bytes, target: Type<T>) -> T: return target.parse(decode(value))

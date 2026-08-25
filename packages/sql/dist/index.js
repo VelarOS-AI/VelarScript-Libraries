@@ -827,7 +827,7 @@ function checkedOptionalIdentifier(value, label) {
   if ((value ?? null) === null) {
     return null;
   }
-  return checkedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "value", 1102))(value), label);
+  return checkedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "value", 1094))(value), label);
 }
 var ComposedSqlTable = class {
   #name;
@@ -844,19 +844,19 @@ var ComposedSqlTable = class {
   }
   reference() {
     const self = this;
-    const parts = __velarReadPrivateField(self.#schema, "schema") === null ? [__velarReadPrivateField(self.#name, "name")] : [((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".schema", 1520))(__velarReadPrivateField(self.#schema, "schema")), __velarReadPrivateField(self.#name, "name")];
+    const parts = __velarReadPrivateField(self.#schema, "schema") === null ? [__velarReadPrivateField(self.#name, "name")] : [((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".schema", 1512))(__velarReadPrivateField(self.#schema, "schema")), __velarReadPrivateField(self.#name, "name")];
     const name = quotedPath(parts, "SQL table name");
     if (__velarReadPrivateField(self.#alias, "alias") === null) {
       return name;
     }
-    return sqlConcat([name, trustedSql(" AS "), quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".alias", 1725))(__velarReadPrivateField(self.#alias, "alias")), "SQL table alias")]);
+    return sqlConcat([name, trustedSql(" AS "), quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".alias", 1705))(__velarReadPrivateField(self.#alias, "alias")), "SQL table alias")]);
   }
   writeTarget() {
     const self = this;
     if (!(__velarReadPrivateField(self.#alias, "alias") === null)) {
       throw new __VelarAssertionError("SQL write targets must not use a table alias");
     }
-    const parts = __velarReadPrivateField(self.#schema, "schema") === null ? [__velarReadPrivateField(self.#name, "name")] : [((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".schema", 1948))(__velarReadPrivateField(self.#schema, "schema")), __velarReadPrivateField(self.#name, "name")];
+    const parts = __velarReadPrivateField(self.#schema, "schema") === null ? [__velarReadPrivateField(self.#name, "name")] : [((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".schema", 1928))(__velarReadPrivateField(self.#schema, "schema")), __velarReadPrivateField(self.#name, "name")];
     return quotedPath(parts, "SQL table name");
   }
 };
@@ -914,7 +914,7 @@ function sqlColumn(name, qualifier = null) {
   if ((qualifier ?? null) === null) {
     return new ComposedSqlExpression(column);
   }
-  return new ComposedSqlExpression(sqlConcat([quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "qualifier", 2982))(qualifier), "SQL column qualifier"), trustedSql("."), column]));
+  return new ComposedSqlExpression(sqlConcat([quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", "qualifier", 2938))(qualifier), "SQL column qualifier"), trustedSql("."), column]));
 }
 function sqlValue(value) {
   return new ComposedSqlExpression(sqlParameter(value ?? null));
@@ -939,15 +939,15 @@ var ComposedSqlField = class {
     let value = trustedSql("*");
     if (__velarReadPrivateField(self.#expression, "expression") === null) {
       if (__velarReadPrivateField(self.#qualifier, "qualifier") !== null) {
-        value = sqlConcat([quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".qualifier", 3807))(__velarReadPrivateField(self.#qualifier, "qualifier")), "SQL field qualifier"), trustedSql(".*")]);
+        value = sqlConcat([quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".qualifier", 3759))(__velarReadPrivateField(self.#qualifier, "qualifier")), "SQL field qualifier"), trustedSql(".*")]);
       }
     } else {
-      value = ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlExpression), "ComposedSqlExpression", ".expression", 3900))(__velarReadPrivateField(self.#expression, "expression")).statement();
+      value = ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlExpression), "ComposedSqlExpression", ".expression", 3840))(__velarReadPrivateField(self.#expression, "expression")).statement();
     }
     if (__velarReadPrivateField(self.#alias, "alias") === null) {
       return value;
     }
-    return sqlConcat([value, trustedSql(" AS "), quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".alias", 4054))(__velarReadPrivateField(self.#alias, "alias")), "SQL field alias")]);
+    return sqlConcat([value, trustedSql(" AS "), quotedIdentifier(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "string", "string", ".alias", 3982))(__velarReadPrivateField(self.#alias, "alias")), "SQL field alias")]);
   }
 };
 function __velarTypeCheck_SqlField(value) {
@@ -1137,7 +1137,7 @@ var ComposedSqlJoin = class {
     if (__velarReadPrivateField(self.#predicate, "predicate") === null) {
       return base;
     }
-    return sqlConcat([base, trustedSql(" ON "), ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlPredicate), "ComposedSqlPredicate", ".predicate", 10677))(__velarReadPrivateField(self.#predicate, "predicate")).statement()]);
+    return sqlConcat([base, trustedSql(" ON "), ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlPredicate), "ComposedSqlPredicate", ".predicate", 10505))(__velarReadPrivateField(self.#predicate, "predicate")).statement()]);
   }
 };
 function __velarTypeCheck_SqlJoin(value) {
@@ -1185,7 +1185,7 @@ function selectStatement(table, fields, joins = __velarAdoptList([]), where = nu
   }
   if ((where ?? null) !== null) {
     __velarListAppend(parts, trustedSql(" WHERE "));
-    __velarListAppend(parts, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlPredicate), "ComposedSqlPredicate", "where", 12321))(where).statement());
+    __velarListAppend(parts, ((__velarValue) => __velarNarrow(__velarValue, __velarValidationIsInstance(__velarValue, ComposedSqlPredicate), "ComposedSqlPredicate", "where", 12137))(where).statement());
   }
   if (__velarListSize(orderBy) > 0) {
     __velarListAppend(parts, trustedSql(" ORDER BY "));
@@ -1193,11 +1193,11 @@ function selectStatement(table, fields, joins = __velarAdoptList([]), where = nu
   }
   if ((limit ?? null) !== null) {
     __velarListAppend(parts, trustedSql(" LIMIT "));
-    __velarListAppend(parts, sqlParameter(checkedLimit(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "limit", 12614))(limit), "SQL SELECT limit", 1)));
+    __velarListAppend(parts, sqlParameter(checkedLimit(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "limit", 12430))(limit), "SQL SELECT limit", 1)));
   }
   if ((offset ?? null) !== null) {
     __velarListAppend(parts, trustedSql(" OFFSET "));
-    __velarListAppend(parts, sqlParameter(checkedLimit(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "offset", 12761))(offset), "SQL SELECT offset", 0)));
+    __velarListAppend(parts, sqlParameter(checkedLimit(((__velarValue) => __velarNarrow(__velarValue, typeof __velarValue === "number", "number", "offset", 12577))(offset), "SQL SELECT offset", 0)));
   }
   return sqlConcat(parts);
 }

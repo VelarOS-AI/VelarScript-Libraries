@@ -46,17 +46,14 @@ test "a trailing carriage return terminates the final line":
     assert buffer.lineText(2) == "" else "A final carriage return did not create the trailing empty line"
     assert buffer.offsetAt(2, 0) == buffer.size else "offsetAt rejected the trailing line position"
     let rejected = false
-    try:
-        buffer.offsetAt(1, 5)
-    catch error:
-        rejected = error.name == "AssertionError"
+    try: buffer.offsetAt(1, 5)
+    catch error: rejected = error.name == "AssertionError"
     assert rejected else "offsetAt accepted a column outside the line"
 
 test "one oversized edit keeps its own undo entry":
     const buffer = TextBuffer("")
     const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
-    for index in range(5):
-        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    for index in range(5): history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
     history.apply([{start: buffer.size, end: buffer.size, inserted: "b".repeat(2000)}])
     assert history.canUndo else "An oversized edit erased its own undo entry"
     history.undo()
@@ -65,11 +62,9 @@ test "one oversized edit keeps its own undo entry":
 test "a group's bytes evict older entries while the group itself stays undoable":
     const buffer = TextBuffer("")
     const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
-    for index in range(5):
-        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    for index in range(5): history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
     history.begin()
-    for index in range(50):
-        history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
+    for index in range(50): history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
     history.commit()
     assert history.canUndo else "A committed group erased its own undo entry"
     assert history.canRedo == false else "A committed group did not start a new branch of history"
@@ -80,11 +75,9 @@ test "a group's bytes evict older entries while the group itself stays undoable"
 test "a cancelled group restores the undo history its bytes displaced":
     const buffer = TextBuffer("")
     const history = TextHistory(buffer, maxEntries=1000, maxBytes=1024)
-    for index in range(5):
-        history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
+    for index in range(5): history.apply([{start: buffer.size, end: buffer.size, inserted: "a"}])
     history.begin()
-    for index in range(50):
-        history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
+    for index in range(50): history.apply([{start: buffer.size, end: buffer.size, inserted: "c".repeat(100)}])
     history.cancel()
     assert buffer.text() == "aaaaa" else "Cancel did not revert the group"
     let depth = 0
@@ -115,10 +108,8 @@ test "clear recovers a detached history that still holds an active group":
     history.begin()
     history.apply([{start: 0, end: 0, inserted: "g"}])
     let refused = false
-    try:
-        history.undo()
-    catch error:
-        refused = error.message == "TextHistory cannot undo or redo an active group"
+    try: history.undo()
+    catch error: refused = error.message == "TextHistory cannot undo or redo an active group"
     assert refused else "Undo stopped refusing an active group"
     buffer.insert(0, "X")
     assert history.isAttached == false else "History stayed attached across an outside edit"

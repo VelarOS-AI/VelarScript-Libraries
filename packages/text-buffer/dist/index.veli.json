@@ -37,7 +37,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextPosition"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextPosition"
                         ]
                       ]
                     }
@@ -73,7 +73,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                         ]
                       ]
                     }
@@ -109,7 +109,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                         ]
                       ]
                     }
@@ -145,7 +145,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                         ]
                       ]
                     }
@@ -181,7 +181,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
                         ]
                       ]
                     }
@@ -217,7 +217,7 @@
                         ],
                         [
                           "identity",
-                          "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextLineSlice"
+                          "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextLineSlice"
                         ]
                       ]
                     }
@@ -240,7 +240,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer"
                   ]
                 ]
               }
@@ -260,7 +260,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextHistory"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextHistory"
                   ]
                 ]
               }
@@ -506,7 +506,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                               ]
                             ]
                           }
@@ -638,7 +638,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                               ]
                             ]
                           }
@@ -670,7 +670,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                               ]
                             ]
                           }
@@ -742,7 +742,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                               ]
                             ]
                           }
@@ -774,7 +774,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                               ]
                             ]
                           }
@@ -826,7 +826,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryStep"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryStep"
                               ]
                             ]
                           }
@@ -858,7 +858,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                               ]
                             ]
                           }
@@ -890,7 +890,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                               ]
                             ]
                           }
@@ -914,7 +914,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextPosition",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextPosition",
               {
                 "tag": "map",
                 "value": [
@@ -946,7 +946,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection",
               {
                 "tag": "map",
                 "value": [
@@ -978,7 +978,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit",
               {
                 "tag": "map",
                 "value": [
@@ -1022,7 +1022,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange",
               {
                 "tag": "map",
                 "value": [
@@ -1090,7 +1090,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction",
               {
                 "tag": "map",
                 "value": [
@@ -1118,7 +1118,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                               ]
                             ]
                           }
@@ -1154,7 +1154,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextLineSlice",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextLineSlice",
               {
                 "tag": "map",
                 "value": [
@@ -1222,7 +1222,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:RopeSplit",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:RopeSplit",
               {
                 "tag": "map",
                 "value": [
@@ -1250,7 +1250,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                               ]
                             ]
                           }
@@ -1282,7 +1282,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                               ]
                             ]
                           }
@@ -1294,7 +1294,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:PrefixMetrics",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:PrefixMetrics",
               {
                 "tag": "map",
                 "value": [
@@ -1326,7 +1326,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryStep",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryStep",
               {
                 "tag": "map",
                 "value": [
@@ -1354,7 +1354,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                               ]
                             ]
                           }
@@ -1386,7 +1386,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                               ]
                             ]
                           }
@@ -1410,7 +1410,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryEntry",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryEntry",
               {
                 "tag": "map",
                 "value": [
@@ -1438,7 +1438,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryStep"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryStep"
                               ]
                             ]
                           }
@@ -1470,7 +1470,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                               ]
                             ]
                           }
@@ -1502,7 +1502,7 @@
                               ],
                               [
                                 "identity",
-                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                               ]
                             ]
                           }
@@ -1542,43 +1542,43 @@
           "value": [
             [
               "TextPosition",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextPosition"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextPosition"
             ],
             [
               "TextSelection",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
             ],
             [
               "TextEdit",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
             ],
             [
               "TextChange",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
             ],
             [
               "TextTransaction",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
             ],
             [
               "TextLineSlice",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextLineSlice"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextLineSlice"
             ],
             [
               "RopeSplit",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:RopeSplit"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:RopeSplit"
             ],
             [
               "PrefixMetrics",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:PrefixMetrics"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:PrefixMetrics"
             ],
             [
               "HistoryStep",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryStep"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryStep"
             ],
             [
               "HistoryEntry",
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:HistoryEntry"
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:HistoryEntry"
             ]
           ]
         }
@@ -1655,7 +1655,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                   ]
                                 ]
                               }
@@ -1684,7 +1684,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                   ]
                                 ]
                               }
@@ -1873,7 +1873,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                           ]
                                         ]
                                       }
@@ -1917,7 +1917,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                           ]
                                         ]
                                       }
@@ -2162,7 +2162,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                   ]
                 ]
               }
@@ -2480,7 +2480,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                                               ]
                                             ]
                                           }
@@ -2518,7 +2518,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
                                     ]
                                   ]
                                 }
@@ -2600,7 +2600,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -2672,7 +2672,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -2744,7 +2744,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -2806,7 +2806,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextPosition"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextPosition"
                                     ]
                                   ]
                                 }
@@ -2996,7 +2996,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextLineSlice"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextLineSlice"
                                     ]
                                   ]
                                 }
@@ -3037,7 +3037,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer"
                   ]
                 ]
               }
@@ -3065,7 +3065,7 @@
                             ],
                             [
                               "identity",
-                              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer"
+                              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer"
                             ]
                           ]
                         },
@@ -3252,7 +3252,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                                               ]
                                             ]
                                           }
@@ -3281,7 +3281,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -3310,7 +3310,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -3350,7 +3350,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
                                     ]
                                   ]
                                 }
@@ -3394,7 +3394,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -3468,7 +3468,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -3557,7 +3557,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -3619,7 +3619,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -3681,7 +3681,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -3767,13 +3767,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextHistory"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextHistory"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode",
               {
                 "tag": "object",
                 "value": [
@@ -3825,7 +3825,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                   ]
                                 ]
                               }
@@ -3854,7 +3854,7 @@
                                   ],
                                   [
                                     "identity",
-                                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                   ]
                                 ]
                               }
@@ -4043,7 +4043,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                           ]
                                         ]
                                       }
@@ -4087,7 +4087,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                                           ]
                                         ]
                                       }
@@ -4332,13 +4332,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#RopeNode"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#RopeNode"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer",
               {
                 "tag": "object",
                 "value": [
@@ -4650,7 +4650,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                                               ]
                                             ]
                                           }
@@ -4688,7 +4688,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
                                     ]
                                   ]
                                 }
@@ -4770,7 +4770,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -4842,7 +4842,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -4914,7 +4914,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextChange"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextChange"
                                     ]
                                   ]
                                 }
@@ -4976,7 +4976,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextPosition"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextPosition"
                                     ]
                                   ]
                                 }
@@ -5166,7 +5166,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextLineSlice"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextLineSlice"
                                     ]
                                   ]
                                 }
@@ -5207,13 +5207,13 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer"
                   ]
                 ]
               }
             ],
             [
-              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextHistory",
+              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextHistory",
               {
                 "tag": "object",
                 "value": [
@@ -5235,7 +5235,7 @@
                             ],
                             [
                               "identity",
-                              "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextBuffer"
+                              "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextBuffer"
                             ]
                           ]
                         },
@@ -5422,7 +5422,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextEdit"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextEdit"
                                               ]
                                             ]
                                           }
@@ -5451,7 +5451,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -5480,7 +5480,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -5520,7 +5520,7 @@
                                     ],
                                     [
                                       "identity",
-                                      "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextTransaction"
+                                      "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextTransaction"
                                     ]
                                   ]
                                 }
@@ -5564,7 +5564,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -5638,7 +5638,7 @@
                                               ],
                                               [
                                                 "identity",
-                                                "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                                "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                               ]
                                             ]
                                           }
@@ -5727,7 +5727,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -5789,7 +5789,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -5851,7 +5851,7 @@
                                           ],
                                           [
                                             "identity",
-                                            "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#type:TextSelection"
+                                            "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#type:TextSelection"
                                           ]
                                         ]
                                       }
@@ -5937,7 +5937,7 @@
                   ],
                   [
                     "identity",
-                    "velar:package:@velarscript-labs/text-buffer@0.10.8/src/index.vel#TextHistory"
+                    "velar:package:@velarscript-labs/text-buffer@0.10.9/src/index.vel#TextHistory"
                   ]
                 ]
               }

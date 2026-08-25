@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.9 — 2026-08-25
+
+- Rebuild the frozen library artifact with VelarScript 0.15 and require the
+  0.15 language generation.
+
 ## 0.10.8 — 2026-08-24
 
 - Correct the supported VelarScript language generation to 0.14 and verify the
