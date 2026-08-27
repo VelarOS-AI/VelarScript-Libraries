@@ -91,9 +91,22 @@ velar-contract-codegen generate contracts.json --report generation.json
 ```
 
 `--check` never writes and exits non-zero on drift, so a CI job fails when a
-contract moves without its generated types. Output is deterministic: declarations
-are sorted by name, fields keep their wire order, and the header records the tool
-version, the source package and version, and a digest of the source schemas.
+contract moves without its generated types. **`--check` and `--report <file>`
+are refused together**, with exit status 2: `--report` is a write, and a gate
+that writes into the tree it is checking is not a check. Check mode's
+machine-readable answer is `--json`, on stdout, which writes nothing.
+
+Output is deterministic: declarations are sorted by name, fields keep their wire
+order, and the header records the tool version, the source package and version,
+and a digest of the source schemas.
+
+The header's `Source:` line names the package that **authored** the contract.
+That answer comes from the nearest named `package.json` at or above the loaded
+file, and the walk stops at `resolveFrom`: a manifest above that directory
+belongs to the project that asked for the generation, and naming it would
+credit the consumer with writing its own wire contract. When no package owns the
+file, the line carries the specifier and no author — which is true — and a
+project that knows better says so with `modules[].versionFrom`.
 
 `velar format` is a safety net rather than a load-bearing step. The emitter's own
 output is already canonical — a test asserts that `velar format --check` accepts

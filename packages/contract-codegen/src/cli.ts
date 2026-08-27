@@ -22,6 +22,7 @@ const USAGE = `Usage:
   --check          Regenerate in memory and compare byte for byte; never writes.
   --json           Print the machine-readable report to stdout instead of text.
   --report <file>  Also write the machine-readable report to <file>.
+                   Not available with --check, which writes nothing: use --json.
 `;
 
 function toolVersion(): string {
@@ -57,6 +58,15 @@ function parseArguments(argv: readonly string[]): Parsed {
     else throw new Error(`unexpected argument '${argument}'`);
   }
   if (manifest === null) throw new Error("generate needs a manifest path");
+  // `--check` answers "is this tree what the contracts produce" and writes
+  // nothing, which is what makes it safe to run in a gate over the tree being
+  // checked. `--report <file>` is a write. Honouring both would have the check
+  // dirty its own subject, and check mode already has a machine-readable
+  // spelling that writes nothing, so the combination is refused rather than
+  // silently redirected.
+  if (check && reportFile !== null) {
+    throw new Error("--check writes nothing and --report writes a file; read the report on stdout with --json instead");
+  }
   return { manifest, check, json, reportFile };
 }
 

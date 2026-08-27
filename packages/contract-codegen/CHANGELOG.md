@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Stop the owning-package walk inside the contract's own tree. It climbed past
+  every directory without a manifest until it found one, which for a contract
+  bundled into the consuming project reached that project's `package.json` and
+  wrote the consumer's name into the generated header as the contract's author —
+  the one claim that line exists to deny. The walk now stops at the manifest's
+  `resolveFrom`, and answers `null` rather than naming the caller; a manifest
+  carrying no `name` (the `{"type": "module"}` marker in a compiled `dist/`) is
+  passed over rather than treated as a boundary, and a file below `node_modules`
+  but inside no package names none. The package's own fixture was reproducing
+  the bug: its header credited this generator with authoring its own fixture.
+- Refuse `--check` together with `--report <file>`. `--check` is documented to
+  write nothing, and honouring `--report` had it write into the very tree the
+  gate was checking. Check mode's machine-readable answer is `--json`, on
+  stdout; the refusal says so and exits 2.
 - Map an integer literal to an enum member carrying that number, which is D102
   ruling 1 §4. `z.literal(1)` becomes a single-member enum; an integer
   discriminator becomes a member of its union's tag enum; `z.enum({Low: 1})`

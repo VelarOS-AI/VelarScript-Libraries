@@ -7,7 +7,7 @@
 import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { dirname, join } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 
 /**
  * The zod major version this generator understands, matching the VelarOS
@@ -112,25 +112,61 @@ export async function loadModule(specifier: string, resolveFrom: string): Promis
   return { exports: (await import(pathToFileURL(resolved).href)) as Record<string, unknown>, file: resolved };
 }
 
+export interface PackageIdentity {
+  readonly name: string;
+  readonly version: string | null;
+}
+
+function namedManifest(path: string): PackageIdentity | null {
+  let manifest: { name?: unknown; version?: unknown };
+  try {
+    manifest = JSON.parse(readFileSync(path, "utf8")) as { name?: unknown; version?: unknown };
+  } catch {
+    // No manifest here, or one no reader can parse: neither is an answer.
+    return null;
+  }
+  // A manifest with no name is the `{"type": "module"}` marker a compiled
+  // `dist/` carries. It declares a module format, not a package boundary, so
+  // the walk goes past it rather than stopping on nothing.
+  if (typeof manifest.name !== "string") return null;
+  return { name: manifest.name, version: typeof manifest.version === "string" ? manifest.version : null };
+}
+
+function inside(root: string, directory: string): boolean {
+  const path = relative(root, directory);
+  return path === "" || (!path.startsWith("..") && !isAbsolute(path));
+}
+
 /**
- * Walks up from a loaded file to the package that owns it. A relative
- * specifier has no package name to look up, and guessing one would put a
- * fiction in the generated header.
+ * The package that owns a loaded file: the nearest named `package.json` at or
+ * above it. The generated header's source line exists to say who authored the
+ * contract, so an answer that is not that package is worse than no answer.
+ *
+ * Two things bound the walk, and the first is the one that matters:
+ *
+ * - `resolutionRoot` is the manifest's own `resolveFrom` — the directory the
+ *   consuming project declared as where contracts are resolved. A manifest
+ *   found *above* it belongs to the project that asked for the generation, not
+ *   to the package that wrote the contract, and crediting the consumer with
+ *   authoring its own wire contract is the one thing the source line exists to
+ *   deny. The bound applies only when the loaded file is inside that root: a
+ *   package reached through an install or a link resolves into its own tree,
+ *   about which the caller's root says nothing.
+ * - A `node_modules` directory ends the walk too. A file below one but inside
+ *   no named package has no package to name, and climbing out of the install
+ *   reaches whichever project happens to host it.
+ *
+ * `null` is a real answer: the header then names the specifier and no author.
  */
-export function owningPackage(file: string): { readonly name: string; readonly version: string | null } | null {
-  let directory = dirname(file);
+export function owningPackage(file: string, resolutionRoot?: string): PackageIdentity | null {
+  const root = resolutionRoot === undefined ? null : resolve(resolutionRoot);
+  let directory = dirname(resolve(file));
+  const bounded = root !== null && inside(root, directory);
   for (;;) {
-    try {
-      const manifest = JSON.parse(readFileSync(join(directory, "package.json"), "utf8")) as {
-        name?: unknown;
-        version?: unknown;
-      };
-      if (typeof manifest.name === "string") {
-        return { name: manifest.name, version: typeof manifest.version === "string" ? manifest.version : null };
-      }
-    } catch {
-      // Keep walking: a directory without a manifest is not an answer.
-    }
+    const owner = namedManifest(join(directory, "package.json"));
+    if (owner !== null) return owner;
+    if (bounded && directory === root) return null;
+    if (basename(directory) === "node_modules") return null;
     const parent = dirname(directory);
     if (parent === directory) return null;
     directory = parent;

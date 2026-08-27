@@ -104,9 +104,11 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
       { stripSuffix: manifest.naming.stripSuffix, prefix: manifest.naming.prefix, degrades: entry.unknownDegrade },
       entry.specifier,
     );
-    // A relative specifier names no package, so the owning manifest beside the
-    // loaded file is what the header records.
-    const owner = owningPackage(module.file);
+    // A relative specifier names no package, so the manifest that owns the
+    // loaded file is what the header records — bounded by `resolveFrom`, or the
+    // walk climbs out of the contract's tree and credits this project with
+    // authoring its own wire contract.
+    const owner = owningPackage(module.file, resolveFrom);
     const declared = entry.versionFrom ?? packageOf(entry.specifier);
     const sourcePackage = declared ?? owner?.name ?? entry.specifier;
     const header: HeaderFields = {

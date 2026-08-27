@@ -57,7 +57,13 @@ export function renderReportText(report: GenerationReport): string {
   );
   for (const module of report.modules) {
     lines.push("");
-    lines.push(`${module.output} <- ${module.sourcePackage}${module.sourceVersion === null ? "" : `@${module.sourceVersion}`} "${module.specifier}"`);
+    // When no package owns the loaded file the source package *is* the
+    // specifier, and printing it twice reads as two facts rather than one.
+    const version = module.sourceVersion === null ? "" : `@${module.sourceVersion}`;
+    const source = module.sourcePackage === module.specifier
+      ? `${module.sourcePackage}${version}`
+      : `${module.sourcePackage}${version} "${module.specifier}"`;
+    lines.push(`${module.output} <- ${source}`);
     lines.push(`  ${module.exportedSchemas} exported schemas -> ${module.declarations} declarations`);
     lines.push(`  digest ${module.schemaDigest}`);
     if (module.degrades.length > 0) {

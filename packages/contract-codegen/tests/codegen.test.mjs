@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import test from "node:test";
 
 import { z } from "zod";
@@ -20,6 +20,7 @@ import {
   isVelarIdentifier,
   lowerModule,
   optional,
+  owningPackage,
   parseManifest,
   renderType,
   resolveZod,
@@ -782,6 +783,77 @@ test("the generated header records the tool, the source, and the schema digest",
   assert.match(lines[1], /^\/\/ Source: /u);
   assert.match(lines[2], /^\/\/ Schema digest: sha256-[0-9a-f]{64}$/u);
   assert.match(lines[3], /^\/\/ Regenerate: velar-contract-codegen generate /u);
+  // This fixture's contracts sit in a directory with no manifest of its own, so
+  // no package authored them and the source line says exactly that. Before the
+  // walk was bounded it climbed to this package's own manifest and named the
+  // generator as the author of its own fixture.
+  assert.equal(lines[1], "// Source: ./contracts.mjs");
+});
+
+test("the owning package is the one that holds the file, not the one that asked", () => {
+  // The layout the VelarOS shell hit: a contract bundled into the consuming
+  // project's own tree, resolved from the directory it was bundled into.
+  const consumer = mkdtempSync(join(tmpdir(), "contract-codegen-owner-"));
+  try {
+    const target = join(consumer, "contracts", "target");
+    mkdirSync(target, { recursive: true });
+    writeFileSync(join(consumer, "package.json"), JSON.stringify({ name: "consumer-app", version: "0.1.0" }), "utf8");
+    const loaded = join(target, "schemas.mjs");
+    writeFileSync(loaded, "export const x = 1;\n", "utf8");
+
+    // Unbounded, the walk leaves the contract's tree and answers with the
+    // project that asked for the generation — the one thing the header denies.
+    assert.deepEqual(owningPackage(loaded), { name: "consumer-app", version: "0.1.0" });
+    assert.equal(owningPackage(loaded, target), null);
+    assert.equal(owningPackage(loaded, join(consumer, "contracts")), null);
+
+    // A manifest beside the file is the direct owner, which is what the shell's
+    // workaround wrote by hand.
+    writeFileSync(join(target, "package.json"), JSON.stringify({ name: "@example/ipc", version: "2.3.4" }), "utf8");
+    assert.deepEqual(owningPackage(loaded, target), { name: "@example/ipc", version: "2.3.4" });
+
+    // An installed package answers from however deep its entry sits, and a
+    // `{"type": "module"}` marker in the compiled output is a module format,
+    // not a package boundary.
+    const installed = join(consumer, "node_modules", "@example", "agent");
+    mkdirSync(join(installed, "dist", "protocol"), { recursive: true });
+    writeFileSync(join(installed, "package.json"), JSON.stringify({ name: "@example/agent", version: "1.0.0" }), "utf8");
+    writeFileSync(join(installed, "dist", "package.json"), JSON.stringify({ type: "module" }), "utf8");
+    const entry = join(installed, "dist", "protocol", "index.js");
+    writeFileSync(entry, "export const y = 1;\n", "utf8");
+    assert.deepEqual(owningPackage(entry, consumer), { name: "@example/agent", version: "1.0.0" });
+
+    // A file below `node_modules` but inside no package names none: climbing
+    // out of the install would reach whichever project happens to host it.
+    const orphan = join(consumer, "node_modules", "loose.mjs");
+    writeFileSync(orphan, "export const z = 1;\n", "utf8");
+    assert.equal(owningPackage(orphan, consumer), null);
+  } finally {
+    rmSync(consumer, { recursive: true, force: true });
+  }
+});
+
+test("--check refuses to write a report, because --check writes nothing", () => {
+  const cli = join(PACKAGE_ROOT, "dist", "cli.js");
+  const reportFile = join(mkdtempSync(join(tmpdir(), "contract-codegen-report-")), "generation.json");
+  try {
+    execFileSync(process.execPath, [cli, "generate", MANIFEST, "--check", "--report", reportFile], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    assert.fail("expected the flag combination to be refused");
+  } catch (error) {
+    assert.equal(error.status, 2);
+    assert.match(String(error.stderr), /--check writes nothing and --report writes a file/u);
+    assert.match(String(error.stderr), /--json/u);
+    assert.equal(existsSync(reportFile), false, "the refused run wrote the report anyway");
+  }
+  // Generate mode writes it, and check mode reads the same shape on stdout.
+  execFileSync(process.execPath, [cli, "generate", MANIFEST, "--report", reportFile], { encoding: "utf8" });
+  assert.equal(JSON.parse(readFileSync(reportFile, "utf8")).mode, "generate");
+  const streamed = execFileSync(process.execPath, [cli, "generate", MANIFEST, "--check", "--json"], { encoding: "utf8" });
+  assert.equal(JSON.parse(streamed).mode, "check");
+  rmSync(dirname(reportFile), { recursive: true, force: true });
 });
 
 test("the digest moves when the source schema moves and not when naming does", async () => {
