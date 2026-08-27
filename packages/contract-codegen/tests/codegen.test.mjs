@@ -22,7 +22,7 @@ import {
   resolveZod,
   run,
 } from "../dist/index.js";
-import { FIXTURES, PACKAGE_ROOT, copyFixtures } from "./support/equivalence.mjs";
+import { FIXTURES, PACKAGE_ROOT, copyFixtures, velarExecutable } from "./support/equivalence.mjs";
 
 const MANIFEST = join(FIXTURES, "manifest.json");
 const GENERATED = join(FIXTURES, "vel", "generated");
@@ -325,6 +325,27 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
     );
     // --check never writes.
     assert.equal(readFileSync(driftedFile, "utf8"), `${first}\n// stale\n`);
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
+});
+
+test("the emitter's own output is already `velar format` canonical", () => {
+  // `velar format` is a safety net, not a load-bearing step: a consumer who
+  // sets "velarFormat": false must still get formatted source.
+  const temporary = copyFixtures("unformatted");
+  try {
+    const manifestPath = join(temporary, "unformatted.json");
+    const manifest = JSON.parse(readFileSync(join(temporary, "manifest.json"), "utf8"));
+    manifest.velarFormat = false;
+    manifest.outputDirectory = "./vel/unformatted";
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+    execFileSync(process.execPath, [join(PACKAGE_ROOT, "dist", "cli.js"), "generate", manifestPath], { encoding: "utf8" });
+    for (const output of ["contracts.vel", "channels.vel"]) {
+      const file = join(temporary, "vel", "unformatted", output);
+      const result = execFileSync(velarExecutable(), ["format", "--check", file], { encoding: "utf8" });
+      assert.match(result, /is formatted/u, `${output} needed reformatting`);
+    }
   } finally {
     rmSync(temporary, { recursive: true, force: true });
   }

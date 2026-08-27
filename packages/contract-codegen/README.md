@@ -85,6 +85,11 @@ contract moves without its generated types. Output is deterministic: declaration
 are sorted by name, fields keep their wire order, and the header records the tool
 version, the source package and version, and a digest of the source schemas.
 
+`velar format` is a safety net rather than a load-bearing step. The emitter's own
+output is already canonical — a test asserts that `velar format --check` accepts
+it unformatted — so `"velarFormat": false` in a project without a toolchain on
+`PATH` still produces formatted source.
+
 ## The closed type-mapping table
 
 | zod | VelarScript |
