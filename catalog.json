@@ -85,6 +85,14 @@
       "status": "experimental",
       "supportedVelarScript": ">=0.18.0 <0.19.0",
       "targets": ["node"]
+    },
+    {
+      "name": "@velarscript-labs/screencast",
+      "path": "packages/screencast",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.19.0 <0.20.0",
+      "targets": ["web", "desktop"]
     }
   ]
 }

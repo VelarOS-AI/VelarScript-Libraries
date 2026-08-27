@@ -1,0 +1,237 @@
+/// The smallest application that drives the adapter end to end: a canvas, a fake
+/// frame source, and a control for every part of the surface contract.
+///
+/// The page reports what the surface says about itself — geometry, counters, the
+/// error stream — as plain text, so `example/src/screencast.browser.test.vel`
+/// can read the same facts a product would act on.
+import {every} from "velar/browser"
+
+import {ScreencastSurface, attach} from "@velarscript-labs/screencast"
+
+import {
+    brokenBytes,
+    brokenFrame,
+    frameBytes,
+    frameSequence,
+    jpegBytes,
+    jpegFrame,
+    mismatchedBytes,
+    mismatchedFrame,
+    stall,
+} from "./frames.vel"
+
+component Screencast:
+    state geometryLine = "idle"
+    state statsLine = "idle"
+    state backingLine = "idle"
+    state errorLog = ""
+    state errorReason = ""
+    state streamState = "unwatched"
+    state failureLine = ""
+    state pullFailureLine = ""
+    state ownedLine = ""
+    state wide = false
+    state ratio = 1
+    let canvas: CanvasElement? = null
+    let scratch: CanvasElement? = null
+    let surface: ScreencastSurface? = null
+    let stopReporting: (() -> null)? = null
+
+    def report():
+        const element = canvas
+        if element != null: backingLine = f"{element.width}x{element.height}"
+        const live = surface
+        if live == null:
+            geometryLine = "detached"
+            statsLine = "detached"
+            return
+        const geometry = live.geometry()
+        const bounds = geometry.contentBounds
+        geometryLine = f"{bounds.x} {bounds.y} {bounds.width} {bounds.height} {geometry.scale} {geometry.pixelRatio}"
+        const stats = live.stats()
+        statsLine = f"{stats.submitted} {stats.drawn} {stats.dropped} {stats.failed} {stats.lastDrawnSequence}"
+
+    // One pull at a time, for as long as the surface lives. A decode failure
+    // arrives here; releasing the surface ends the loop with `null`.
+    action watchErrors():
+        const live = surface
+        if live == null: return
+        streamState = "watching"
+        const stream = live.watchErrors()
+        let entry = await stream.next()
+        while entry != null:
+            errorLog = errorLog == "" ? f"{entry.sequence}:{entry.dropped}" : f"{errorLog} {entry.sequence}:{entry.dropped}"
+            errorReason = entry.reason
+            entry = await stream.next()
+        streamState = "closed"
+
+    def openSurface(pixelRatio: number):
+        const element = canvas
+        if element == null: return
+        // A small capacity so a consumer that is not pulling can be shown losing
+        // the oldest records rather than growing without a bound.
+        surface = attach(element, {pixelRatio, errorCapacity: 4})
+        ratio = pixelRatio
+        report()
+
+    def closeSurface():
+        const live = surface
+        if live != null: live.release()
+        surface = null
+        report()
+
+    def submit(index: number):
+        const live = surface
+        if live == null: return
+        live.submitFrame(frameBytes(index), frameSequence[index])
+
+    def submitPair():
+        submit(2)
+        submit(3)
+
+    // Four frames inside one turn of the event loop, each of them behind a stall
+    // that no decode can finish inside. The first one is already decoding, the
+    // last one is the replacement waiting for it, and the two in between are
+    // dropped without ever reaching the decoder.
+    def submitBurst():
+        submit(1)
+        stall(20)
+        submit(2)
+        stall(20)
+        submit(3)
+        stall(20)
+        submit(4)
+
+    def submitJpeg():
+        const live = surface
+        if live == null: return
+        live.submitFrame(jpegBytes(), jpegFrame)
+
+    // Waits until nothing is pending and nothing is decoding, which the counters
+    // say exactly: every submitted frame has been drawn, dropped, or failed.
+    async def settle():
+        const live = surface
+        if live == null: return
+        let guard = 0
+        while guard < 500:
+            const stats = live.stats()
+            if stats.submitted == stats.drawn + stats.dropped + stats.failed: return
+            await Promise.sleep(2ms)
+            guard += 1
+
+    // Six failures, one at a time, so each of them reaches the decoder instead of
+    // being dropped by the keep-latest rule the burst above exercises.
+    action submitBroken():
+        const live = surface
+        if live == null: return
+        for attempt in range(6):
+            live.submitFrame(brokenBytes(), brokenFrame)
+            await settle()
+
+    def submitMismatch():
+        const live = surface
+        if live == null: return
+        live.submitFrame(mismatchedBytes(), mismatchedFrame)
+
+    def submitAfterRelease():
+        const live = surface
+        if live == null:
+            failureLine = "no surface"
+            return
+        try: live.submitFrame(frameBytes(0), frameSequence[0])
+        catch error: failureLine = error.message
+
+    // A canvas has one owner: the surface owns its backing store, so a second
+    // attachment to the same element is refused rather than silently fighting
+    // the first over what is drawn.
+    def attachTwice():
+        const element = canvas
+        if element == null: return
+        try: attach(element)
+        catch error: failureLine = error.message
+
+    // The error stream permits one pull at a time. The page's own reader is
+    // parked on `next()` here, so this second pull is refused instead of
+    // quietly taking the record the reader was waiting for.
+    action pullTwice():
+        const live = surface
+        if live == null: return
+        try: await live.watchErrors().next()
+        catch error: pullFailureLine = error.message
+
+    // A scope that ends owns the surface with `using`, and the release contract
+    // runs on the way out. The component above cannot: a component body is not an
+    // owning scope, so it holds the surface and releases it in `@cleanup:`.
+    def ownScratch():
+        const element = scratch
+        if element == null: return
+        using owned = attach(element, {pixelRatio: 1})
+        owned.submitFrame(frameBytes(0), frameSequence[0])
+
+    def ownScratchTwice():
+        try:
+            ownScratch()
+            // The same canvas again — which only attaches if the scope above
+            // really did release it.
+            ownScratch()
+            ownedLine = "released"
+        catch error: ownedLine = error.message
+
+    def toggleWidth(): wide = not wide
+
+    def reattachDoubled():
+        closeSurface()
+        openSurface(2)
+        async watchErrors()
+
+    def releaseSurface():
+        const live = surface
+        if live == null: return
+        live.release()
+        report()
+
+    @mounted:
+        openSurface(1)
+        stopReporting = every(16ms, report)
+
+    @cleanup:
+        if stopReporting != null: stopReporting()
+        closeSurface()
+
+    return <main data-example>
+        <canvas
+            ref={canvas}
+            data-canvas
+            style:display={"block"}
+            style:width={wide ? 480px : 320px}
+            style:height={180px}
+        ></canvas>
+        <p data-geometry>{geometryLine}</p>
+        <p data-stats>{statsLine}</p>
+        <p data-backing>{backingLine}</p>
+        <p data-errors>{errorLog}</p>
+        <p data-error-reason>{errorReason}</p>
+        <p data-stream>{streamState}</p>
+        <p data-failure>{failureLine}</p>
+        <p data-pull-failure>{pullFailureLine}</p>
+        <p data-owned>{ownedLine}</p>
+        <canvas ref={scratch} data-scratch style:display={"block"} style:width={160px} style:height={90px}></canvas>
+        <p data-ratio>{ratio}</p>
+        <button type="button" data-frame-1 on:click={() => submit(0)}>Frame 1</button>
+        <button type="button" data-frame-2 on:click={() => submit(1)}>Frame 2</button>
+        <button type="button" data-pair on:click={submitPair}>Two frames at once</button>
+        <button type="button" data-burst on:click={submitBurst}>Burst of four</button>
+        <button type="button" data-jpeg on:click={submitJpeg}>JPEG frame</button>
+        <button type="button" data-broken on:click={submitBroken}>Six broken frames</button>
+        <button type="button" data-mismatch on:click={submitMismatch}>Mismatched frame</button>
+        <button type="button" data-watch on:click={watchErrors}>Watch errors</button>
+        <button type="button" data-wide on:click={toggleWidth}>Toggle width</button>
+        <button type="button" data-release on:click={releaseSurface}>Release</button>
+        <button type="button" data-submit-after-release on:click={submitAfterRelease}>Submit after release</button>
+        <button type="button" data-attach-twice on:click={attachTwice}>Attach twice</button>
+        <button type="button" data-pull-twice on:click={pullTwice}>Pull twice</button>
+        <button type="button" data-owned-scope on:click={ownScratchTwice}>Own a surface with using</button>
+        <button type="button" data-reattach on:click={reattachDoubled}>Reattach at ratio 2</button>
+    </main>
+
+mount(<Screencast />, "#app")

@@ -1,0 +1,166 @@
+/// A fake frame source: the deterministic pattern sequence the example draws and
+/// the browser test asserts against.
+///
+/// The PNGs are assembled here rather than encoded by the browser, so the same
+/// bytes reach Chromium and WebKit. Every fixture has its own aspect ratio, which
+/// is what lets the test read `geometry()` and say which frame is on screen.
+import {Bytes, UInt8Buffer, uint8Buffer} from "velar/binary"
+
+import {FrameFormat, FrameInfo} from "@velarscript-labs/screencast"
+
+def crc32Table() -> List<number>:
+    const table: List<number> = []
+    for entry in range(256):
+        let value = entry
+        for round in range(8): value = (value & 1) != 0 ? 0xEDB88320 ^ (value >>> 1) : value >>> 1
+        table.append(value)
+    return table
+
+const crcTable = crc32Table()
+
+const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10]
+const ihdrTag = [73, 72, 68, 82]
+const idatTag = [73, 68, 65, 84]
+const iendTag = [73, 69, 78, 68]
+
+/// A cursor over one exact-size buffer, with the two checksums PNG needs.
+class ByteWriter:
+    let position: number = 0
+
+    constructor(private const buffer: UInt8Buffer): pass
+
+    def byte(value: number):
+        self.buffer[self.position] = value & 0xFF
+        self.position += 1
+
+    def uint32(value: number):
+        self.byte((value >>> 24) & 0xFF)
+        self.byte((value >>> 16) & 0xFF)
+        self.byte((value >>> 8) & 0xFF)
+        self.byte(value & 0xFF)
+
+    def marker(values: readonly List<number>):
+        for value in values: self.byte(value)
+
+    /// Writes the CRC-32 of everything since `start`, which is what closes a PNG chunk.
+    def chunkCrc(start: number):
+        let value = 0xFFFFFFFF
+        for index in range(start, self.position): value = crcTable[(value ^ self.buffer[index]) & 0xFF] ^ (value >>> 8)
+        self.uint32((value ^ 0xFFFFFFFF) >>> 0)
+
+    /// Writes the Adler-32 of everything since `start`, which is what closes a zlib stream.
+    def adler32(start: number):
+        let low = 1
+        let high = 0
+        for index in range(start, self.position):
+            low = (low + self.buffer[index]) % 65521
+            high = (high + low) % 65521
+        self.uint32(high * 65536 + low)
+
+    def result() -> Bytes: return self.buffer.toBytes()
+
+/// One truecolor PNG whose pixels are a pure function of `seed`, stored
+/// uncompressed so the fixture needs no encoder.
+def pngFrame(width: number, height: number, seed: number) -> Bytes:
+    const rawSize = height * (1 + width * 3)
+    assert rawSize <= 65535 else "A fixture frame must fit in one uncompressed DEFLATE block"
+    const idatSize = 11 + rawSize
+    const writer = ByteWriter(uint8Buffer(57 + idatSize))
+    writer.marker(pngSignature)
+    writer.uint32(13)
+    const ihdrStart = writer.position
+    writer.marker(ihdrTag)
+    writer.uint32(width)
+    writer.uint32(height)
+    writer.marker([8, 2, 0, 0, 0])
+    writer.chunkCrc(ihdrStart)
+    writer.uint32(idatSize)
+    const idatStart = writer.position
+    writer.marker(idatTag)
+    const nlen = 65535 - rawSize
+    writer.marker([0x78, 0x01, 0x01, rawSize & 0xFF, (rawSize >>> 8) & 0xFF, nlen & 0xFF, (nlen >>> 8) & 0xFF])
+    const rawStart = writer.position
+    for row in range(height):
+        writer.byte(0)
+        for column in range(width):
+            writer.byte(column * 7 + seed * 37)
+            writer.byte(row * 11 + seed * 53)
+            writer.byte(column + row + seed * 97)
+    writer.adler32(rawStart)
+    writer.chunkCrc(idatStart)
+    writer.uint32(0)
+    const iendStart = writer.position
+    writer.marker(iendTag)
+    writer.chunkCrc(iendStart)
+    return writer.result()
+
+def bytesOf(values: readonly List<number>) -> Bytes:
+    const buffer = uint8Buffer(values.size)
+    for index in range(values.size): buffer[index] = values[index]
+    return buffer.toBytes()
+
+/// The pattern sequence. No two entries share an aspect ratio, so the letterbox
+/// geometry names the frame that is on screen.
+export const frameSequence: List<FrameInfo> = [
+    {width: 80, height: 60, format: FrameFormat.png},
+    {width: 80, height: 45, format: FrameFormat.png},
+    {width: 40, height: 45, format: FrameFormat.png},
+    {width: 80, height: 30, format: FrameFormat.png},
+    {width: 160, height: 45, format: FrameFormat.png},
+]
+
+export def frameBytes(index: number) -> Bytes:
+    const frame = frameSequence[index]
+    return pngFrame(frame.width, frame.height, index + 1)
+
+/// A real JPEG, frozen byte for byte, so both engines decode the same picture
+/// through the same code path the PNG fixtures use.
+export const jpegFrame: FrameInfo = {width: 16, height: 12, format: FrameFormat.jpeg}
+
+const jpegData = [
+    255, 216, 255, 219, 0, 67, 0, 16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16,
+    19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40, 58, 51, 61, 60, 57, 51, 56,
+    55, 64, 72, 92, 78, 64, 68, 87, 69, 55, 56, 80, 109, 81, 87, 95, 98, 103, 104, 103,
+    62, 77, 113, 121, 112, 100, 120, 92, 101, 103, 99, 255, 219, 0, 67, 1, 17, 18, 18, 24,
+    21, 24, 47, 26, 26, 47, 99, 66, 56, 66, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+    255, 192, 0, 17, 8, 0, 12, 0, 16, 3, 1, 34, 0, 2, 17, 1, 3, 17, 1, 255,
+    196, 0, 21, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    5, 6, 255, 196, 0, 26, 16, 0, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 4, 3, 33, 5, 34, 49, 255, 196, 0, 21, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 255, 196, 0, 25, 17, 0, 2,
+    3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 3, 4, 33,
+    255, 218, 0, 12, 3, 1, 0, 2, 17, 3, 17, 0, 63, 0, 159, 91, 25, 205, 69, 214,
+    198, 115, 81, 69, 151, 142, 168, 93, 101, 227, 170, 38, 150, 72, 48, 110, 110, 31, 255, 217,
+]
+
+export def jpegBytes() -> Bytes: return bytesOf(jpegData)
+
+/// Bytes no decoder can read, announced as a PNG. The frame reaches the decoder
+/// and fails there, which is the surface's error path rather than its argument
+/// checks.
+export const brokenFrame: FrameInfo = {width: 80, height: 60, format: FrameFormat.png}
+
+export def brokenBytes() -> Bytes: return bytesOf([137, 80, 78, 71, 0, 0, 0, 0, 1, 2, 3, 4])
+
+/// A perfectly good 80x60 PNG announced as 80x45. The decode succeeds and the
+/// adapter refuses the result because the metadata lied about it.
+export const mismatchedFrame: FrameInfo = {width: 80, height: 45, format: FrameFormat.png}
+
+export def mismatchedBytes() -> Bytes: return pngFrame(80, 60, 9)
+
+extern js`
+    export function holdMainThread(milliseconds) {
+      const deadline = Date.now() + milliseconds;
+      // Nothing else runs while this loop does, so a decode that was started
+      // before it cannot possibly finish during it.
+      while (Date.now() < deadline) { /* deliberately empty */ }
+      return null;
+    }
+`:
+    export def holdMainThread(milliseconds: number) -> null
+
+/// Holds the main thread so an in-flight decode cannot complete. This is how the
+/// example makes decoding artificially slower than the producer.
+export def stall(milliseconds: number): holdMainThread(milliseconds)

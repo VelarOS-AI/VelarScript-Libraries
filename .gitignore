@@ -3,5 +3,7 @@ node_modules/
 # readable .vel source. TypeScript tooling packages rebuild their dist output.
 packages/editor-kit/dist/
 packages/contract-codegen/dist/
+# Example applications are built on demand by the browser gate.
+examples/*/dist/
 release/
 .DS_Store

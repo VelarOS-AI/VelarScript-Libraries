@@ -1,0 +1,4315 @@
+{
+  "formatVersion": 1,
+  "abiVersion": 1,
+  "interface": {
+    "tag": "object",
+    "value": [
+      [
+        "exports",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "FrameFormat",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "enumObject"
+                  ],
+                  [
+                    "name",
+                    "FrameFormat"
+                  ],
+                  [
+                    "identity",
+                    "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "jpeg",
+                        "png"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "FrameInfo",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "FrameInfo"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "FrameInfo"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:FrameInfo"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ContentBounds",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "ContentBounds"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ContentBounds"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ContentBounds"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "SurfaceGeometry",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "SurfaceGeometry"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "SurfaceGeometry"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:SurfaceGeometry"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastError",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "ScreencastError"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ScreencastError"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastError"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastStats",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "ScreencastStats"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ScreencastStats"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastStats"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastOptions",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "typeObject"
+                  ],
+                  [
+                    "name",
+                    "ScreencastOptions"
+                  ],
+                  [
+                    "value",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ScreencastOptions"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastOptions"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastErrorStream",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "classConstructor"
+                  ],
+                  [
+                    "name",
+                    "ScreencastErrorStream"
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream"
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastSurface",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "classConstructor"
+                  ],
+                  [
+                    "name",
+                    "ScreencastSurface"
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastSurface"
+                  ]
+                ]
+              }
+            ],
+            [
+              "attach",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "kind",
+                    "function"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "unknown"
+                            ],
+                            [
+                              "boundary",
+                              true
+                            ]
+                          ]
+                        },
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "named"
+                            ],
+                            [
+                              "name",
+                              "ScreencastOptions"
+                            ],
+                            [
+                              "identity",
+                              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastOptions"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "canvas",
+                        "options"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "result",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "class"
+                        ],
+                        [
+                          "name",
+                          "ScreencastSurface"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastSurface"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "hoistedExports",
+        {
+          "tag": "set",
+          "value": [
+            "attach"
+          ]
+        }
+      ],
+      [
+        "mutableExports",
+        {
+          "tag": "set",
+          "value": []
+        }
+      ],
+      [
+        "reactiveExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "reExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "FrameInfo",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "width",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "height",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "format",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "enum"
+                        ],
+                        [
+                          "name",
+                          "FrameFormat"
+                        ],
+                        [
+                          "identity",
+                          "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ContentBounds",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "x",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "y",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "width",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "height",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "SurfaceGeometry",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "contentBounds",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ContentBounds"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ContentBounds"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "scale",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "pixelRatio",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastError",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "sequence",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "reason",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "string"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "dropped",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastStats",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "submitted",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "drawn",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "dropped",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "failed",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "lastDrawnSequence",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "errorCapacity",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "pixelRatio",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:FrameInfo",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "width",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "height",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "format",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "enum"
+                        ],
+                        [
+                          "name",
+                          "FrameFormat"
+                        ],
+                        [
+                          "identity",
+                          "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ContentBounds",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "x",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "y",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "width",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "height",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:SurfaceGeometry",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "contentBounds",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "named"
+                        ],
+                        [
+                          "name",
+                          "ContentBounds"
+                        ],
+                        [
+                          "identity",
+                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ContentBounds"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "scale",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "pixelRatio",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastError",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "sequence",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "reason",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "string"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "dropped",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastStats",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "submitted",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "drawn",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "dropped",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "failed",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "lastDrawnSequence",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastOptions",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "errorCapacity",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "pixelRatio",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "number"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Bytes",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "Bytes",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt8Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt8Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt8Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt8Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt16Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt16Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt16Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt16Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "copy",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "slice",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              },
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "toBytes",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "order"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "enum"
+                                  ],
+                                  [
+                                    "name",
+                                    "ByteOrder"
+                                  ],
+                                  [
+                                    "identity",
+                                    "velar/binary#enum:ByteOrder"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Bytes"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Bytes"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "values",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "list"
+                              ],
+                              [
+                                "element",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "number"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxElements",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "push",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "value"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "null"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "finish",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "UInt32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:UInt32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              {
+                "tag": "map",
+                "value": [
+                  [
+                    "size",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "maxElements",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "number"
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "push",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": [
+                              "value"
+                            ]
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": [
+                              {
+                                "tag": "object",
+                                "value": [
+                                  [
+                                    "kind",
+                                    "number"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          1
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "null"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "finish",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "function"
+                        ],
+                        [
+                          "parameterNames",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "parameters",
+                          {
+                            "tag": "array",
+                            "value": []
+                          }
+                        ],
+                        [
+                          "requiredParameters",
+                          0
+                        ],
+                        [
+                          "result",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "named"
+                              ],
+                              [
+                                "name",
+                                "Float32Buffer"
+                              ],
+                              [
+                                "identity",
+                                "velar/binary#type:Float32Buffer"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeReadonlyFields",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "velar/binary#type:Bytes",
+              {
+                "tag": "set",
+                "value": [
+                  "size"
+                ]
+              }
+            ],
+            [
+              "Bytes",
+              {
+                "tag": "set",
+                "value": [
+                  "size"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes",
+                  "values"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes",
+                  "values"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes",
+                  "values"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "copy",
+                  "slice",
+                  "toBytes",
+                  "values"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "maxElements",
+                  "push",
+                  "finish"
+                ]
+              }
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              {
+                "tag": "set",
+                "value": [
+                  "size",
+                  "maxElements",
+                  "push",
+                  "finish"
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "namedTypeIdentities",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "FrameInfo",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:FrameInfo"
+            ],
+            [
+              "ContentBounds",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ContentBounds"
+            ],
+            [
+              "SurfaceGeometry",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:SurfaceGeometry"
+            ],
+            [
+              "ScreencastError",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastError"
+            ],
+            [
+              "ScreencastStats",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastStats"
+            ],
+            [
+              "ScreencastOptions",
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastOptions"
+            ],
+            [
+              "velar/binary#type:Bytes",
+              "velar/binary#type:Bytes"
+            ],
+            [
+              "Bytes",
+              "velar/binary#type:Bytes"
+            ],
+            [
+              "velar/binary#type:UInt8Buffer",
+              "velar/binary#type:UInt8Buffer"
+            ],
+            [
+              "velar/binary#type:UInt16Buffer",
+              "velar/binary#type:UInt16Buffer"
+            ],
+            [
+              "velar/binary#type:UInt32Buffer",
+              "velar/binary#type:UInt32Buffer"
+            ],
+            [
+              "velar/binary#type:Float32Buffer",
+              "velar/binary#type:Float32Buffer"
+            ],
+            [
+              "velar/binary#type:UInt32Builder",
+              "velar/binary#type:UInt32Builder"
+            ],
+            [
+              "velar/binary#type:Float32Builder",
+              "velar/binary#type:Float32Builder"
+            ]
+          ]
+        }
+      ],
+      [
+        "typeAliases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "enums",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "FrameFormat",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "jpeg",
+                        "png"
+                      ]
+                    }
+                  ],
+                  [
+                    "wireValues",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "jpeg",
+                          "jpeg"
+                        ],
+                        [
+                          "png",
+                          "png"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "jpeg",
+                        "png"
+                      ]
+                    }
+                  ],
+                  [
+                    "wireValues",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "jpeg",
+                          "jpeg"
+                        ],
+                        [
+                          "png",
+                          "png"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar/binary#enum:ByteOrder",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "velar/binary#enum:ByteOrder"
+                  ],
+                  [
+                    "members",
+                    {
+                      "tag": "set",
+                      "value": [
+                        "little",
+                        "big"
+                      ]
+                    }
+                  ],
+                  [
+                    "wireValues",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "little",
+                          "little"
+                        ],
+                        [
+                          "big",
+                          "big"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "classes",
+        {
+          "tag": "map",
+          "value": [
+            [
+              "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "identity",
+                    "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    0
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "submitFrame",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "Bytes"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar/binary#type:Bytes"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "number"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "number"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "enum"
+                                        ],
+                                        [
+                                          "name",
+                                          "FrameFormat"
+                                        ],
+                                        [
+                                          "identity",
+                                          "package:@velarscript-labs/screencast@0.1.0/src/index.vel#enum:FrameFormat"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "bytes",
+                                    "width",
+                                    "height",
+                                    "format"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                4
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "geometry",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "unknown"
+                                    ],
+                                    [
+                                      "boundary",
+                                      true
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "stats",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "unknown"
+                                    ],
+                                    [
+                                      "boundary",
+                                      true
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "nextError",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "promise"
+                                    ],
+                                    [
+                                      "value",
+                                      {
+                                        "tag": "object",
+                                        "value": [
+                                          [
+                                            "kind",
+                                            "unknown"
+                                          ],
+                                          [
+                                            "boundary",
+                                            true
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "release",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastErrorStream",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "class"
+                            ],
+                            [
+                              "name",
+                              "NativeScreencastSurface"
+                            ],
+                            [
+                              "identity",
+                              "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "native"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "next",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "promise"
+                                    ],
+                                    [
+                                      "value",
+                                      {
+                                        "tag": "object",
+                                        "value": [
+                                          [
+                                            "kind",
+                                            "optional"
+                                          ],
+                                          [
+                                            "inner",
+                                            {
+                                              "tag": "object",
+                                              "value": [
+                                                [
+                                                  "kind",
+                                                  "named"
+                                                ],
+                                                [
+                                                  "name",
+                                                  "ScreencastError"
+                                                ],
+                                                [
+                                                  "identity",
+                                                  "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastError"
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream"
+                  ]
+                ]
+              }
+            ],
+            [
+              "ScreencastSurface",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "dispose",
+                    "sync"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "class"
+                            ],
+                            [
+                              "name",
+                              "NativeScreencastSurface"
+                            ],
+                            [
+                              "identity",
+                              "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "native"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "submitFrame",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "Bytes"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar/binary#type:Bytes"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "FrameInfo"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:FrameInfo"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "bytes",
+                                    "frame"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                2
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "geometry",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "SurfaceGeometry"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:SurfaceGeometry"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "stats",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "ScreencastStats"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastStats"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "watchErrors",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "class"
+                                    ],
+                                    [
+                                      "name",
+                                      "ScreencastErrorStream"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "release",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastSurface"
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "class"
+                            ],
+                            [
+                              "name",
+                              "NativeScreencastSurface"
+                            ],
+                            [
+                              "identity",
+                              "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "native"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "next",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "promise"
+                                    ],
+                                    [
+                                      "value",
+                                      {
+                                        "tag": "object",
+                                        "value": [
+                                          [
+                                            "kind",
+                                            "optional"
+                                          ],
+                                          [
+                                            "inner",
+                                            {
+                                              "tag": "object",
+                                              "value": [
+                                                [
+                                                  "kind",
+                                                  "named"
+                                                ],
+                                                [
+                                                  "name",
+                                                  "ScreencastError"
+                                                ],
+                                                [
+                                                  "identity",
+                                                  "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastError"
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream"
+                  ]
+                ]
+              }
+            ],
+            [
+              "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastSurface",
+              {
+                "tag": "object",
+                "value": [
+                  [
+                    "dispose",
+                    "sync"
+                  ],
+                  [
+                    "parameters",
+                    {
+                      "tag": "array",
+                      "value": [
+                        {
+                          "tag": "object",
+                          "value": [
+                            [
+                              "kind",
+                              "class"
+                            ],
+                            [
+                              "name",
+                              "NativeScreencastSurface"
+                            ],
+                            [
+                              "identity",
+                              "js:./index.2ibbmz.embedded-1.js#NativeScreencastSurface"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "parameterNames",
+                    {
+                      "tag": "array",
+                      "value": [
+                        "native"
+                      ]
+                    }
+                  ],
+                  [
+                    "requiredParameters",
+                    1
+                  ],
+                  [
+                    "base",
+                    null
+                  ],
+                  [
+                    "abstract",
+                    false
+                  ],
+                  [
+                    "fields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "getters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "abstractGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "methods",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "submitFrame",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "Bytes"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar/binary#type:Bytes"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "tag": "object",
+                                      "value": [
+                                        [
+                                          "kind",
+                                          "named"
+                                        ],
+                                        [
+                                          "name",
+                                          "FrameInfo"
+                                        ],
+                                        [
+                                          "identity",
+                                          "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:FrameInfo"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": [
+                                    "bytes",
+                                    "frame"
+                                  ]
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                2
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "geometry",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "SurfaceGeometry"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:SurfaceGeometry"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "stats",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "named"
+                                    ],
+                                    [
+                                      "name",
+                                      "ScreencastStats"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#type:ScreencastStats"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "watchErrors",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "class"
+                                    ],
+                                    [
+                                      "name",
+                                      "ScreencastErrorStream"
+                                    ],
+                                    [
+                                      "identity",
+                                      "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastErrorStream"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ],
+                        [
+                          "release",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "function"
+                              ],
+                              [
+                                "parameters",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "parameterNames",
+                                {
+                                  "tag": "array",
+                                  "value": []
+                                }
+                              ],
+                              [
+                                "requiredParameters",
+                                0
+                              ],
+                              [
+                                "result",
+                                {
+                                  "tag": "object",
+                                  "value": [
+                                    [
+                                      "kind",
+                                      "null"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "abstractMethods",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticFields",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticGetters",
+                    {
+                      "tag": "set",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "staticMethods",
+                    {
+                      "tag": "map",
+                      "value": []
+                    }
+                  ],
+                  [
+                    "identity",
+                    "velar:package:@velarscript-labs/screencast@0.1.0/src/index.vel#ScreencastSurface"
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        "tests",
+        {
+          "tag": "array",
+          "value": []
+        }
+      ],
+      [
+        "extensionExports",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "extensionData",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "namedTypeBases",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ],
+      [
+        "genericTypes",
+        {
+          "tag": "map",
+          "value": []
+        }
+      ]
+    ]
+  }
+}
