@@ -677,10 +677,10 @@ test("a shape outside the table is refused with its schema path and reason", asy
     ["CaughtSchema", /catch fallback/u],
     // D102 ruling 1 stops at a string or a safe integer, so each of these says
     // which side of that line it fell on.
-    ["BooleanLiteralSchema", /the boolean true cannot back a VelarScript enum member/u],
+    ["BooleanLiteralSchema", /the boolean true cannot back an enum member: .*no ruling extends it to a boolean/u],
     ["FractionalLiteralSchema", /1\.5, which is not a whole number/u],
     ["UnsafeIntegerLiteralSchema", /outside the safe integer range/u],
-    ["NullLiteralSchema", /null cannot back a VelarScript enum member/u],
+    ["NullLiteralSchema", /null cannot back an enum member/u],
     ["BooleanTagSchema", /a discriminator names one enum member, and the boolean true/u],
     ["DatedSchema", /host Date instance/u],
     ["UndiscriminatedSchema", /without a discriminator/u],

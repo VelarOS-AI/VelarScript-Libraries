@@ -162,8 +162,14 @@ function describeValue(value: unknown): string {
 
 /** Names the one rule every wire value has to satisfy, in one wording. */
 function wireValueRefusal(value: unknown): string {
-  return `${describeValue(value)} cannot back a VelarScript enum member: a member's wire value is a string or a `
-    + "safe integer (D102 ruling 1), and the language has no boolean or null singleton type";
+  const rule = "a VelarScript enum member's wire value is a string or a safe integer (D102 ruling 1)";
+  // D102 extended wire values from strings to integers and stopped there. A
+  // boolean or null singleton is not a shape the language declines to spell; it
+  // is one nothing has ruled on, and saying so is the accurate refusal.
+  const unruled = typeof value === "boolean" || value === null
+    ? ", and no ruling extends it to a boolean or a null singleton"
+    : "";
+  return `${describeValue(value)} cannot back an enum member: ${rule}${unruled}`;
 }
 
 /**
