@@ -139,6 +139,21 @@ export const FormatsSchema = z.strictObject({
   count: z.int(),
 });
 
+// A plain z.object strips a surplus key, and so does a VelarScript record
+// (D102 ruling 2), so the two agree on every payload and the mapping reports no
+// widening here. The surplus-key samples in samples.json are the evidence.
+export const PlainRecordSchema = z.object({
+  id: z.string(),
+  label: z.string().optional(),
+});
+
+// A plain object nested inside a strict one: the widening count follows the
+// shape that actually widens, not the record that contains it.
+export const MixedStrictnessSchema = z.strictObject({
+  strict: z.strictObject({ value: z.string() }),
+  plain: z.object({ value: z.string() }),
+});
+
 // Outside the closed table on purpose: the fixture manifest degrades this
 // path, so the golden output carries an `unknown` field with a recorded reason.
 export const DegradedSchema = z.strictObject({

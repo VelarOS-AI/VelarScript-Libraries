@@ -975,6 +975,138 @@
       "zod": false,
       "vel": true,
       "divergence": "refinement-not-carried"
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "a complete payload",
+      "payload": {
+        "id": "p-1",
+        "label": "first"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "the optional key left out",
+      "payload": {
+        "id": "p-1"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "a surplus key, which both sides strip rather than reject",
+      "payload": {
+        "id": "p-1",
+        "label": "first",
+        "extra": 1
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "surplus keys of every JSON kind, still stripped by both sides",
+      "payload": {
+        "id": "p-1",
+        "extra": null,
+        "nested": {
+          "deep": [
+            1,
+            2
+          ]
+        },
+        "flag": false
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "the required key missing, which stripping does not excuse",
+      "payload": {
+        "label": "first",
+        "extra": 1
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "PlainRecord",
+      "zodExport": "PlainRecordSchema",
+      "why": "a declared key holding the wrong type",
+      "payload": {
+        "id": 1
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "MixedStrictness",
+      "zodExport": "MixedStrictnessSchema",
+      "why": "a complete payload",
+      "payload": {
+        "strict": {
+          "value": "a"
+        },
+        "plain": {
+          "value": "b"
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MixedStrictness",
+      "zodExport": "MixedStrictnessSchema",
+      "why": "a surplus key inside the plain half only",
+      "payload": {
+        "strict": {
+          "value": "a"
+        },
+        "plain": {
+          "value": "b",
+          "extra": 1
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MixedStrictness",
+      "zodExport": "MixedStrictnessSchema",
+      "why": "a surplus key inside the strict half, which only that half rejects",
+      "payload": {
+        "strict": {
+          "value": "a",
+          "extra": 1
+        },
+        "plain": {
+          "value": "b"
+        }
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "strict-unknown-keys"
+    },
+    {
+      "schema": "MixedStrictness",
+      "zodExport": "MixedStrictnessSchema",
+      "why": "the plain half missing entirely",
+      "payload": {
+        "strict": {
+          "value": "a"
+        }
+      },
+      "zod": false,
+      "vel": false
     }
   ]
 }

@@ -8,7 +8,9 @@ import {
     Article,
     HookEvent,
     Kind,
+    MixedStrictness,
     Optionality,
+    PlainRecord,
     Primitives,
     ReservedWords,
     StreamEvent,
@@ -66,6 +68,27 @@ test "a primitive union accepts each arm and refuses the rest":
     const value = Unions.parse(Json.parse(`{"scalar":1,"maybeScalar":null,"listOrText":["a"]}`))
     expect(value.maybeScalar).toBe(null)
     expect(Unions.is(Json.parse(`{"scalar":true,"maybeScalar":null,"listOrText":"a"}`))).toBeFalsy()
+
+// D102 ruling 2: a record drops what its type does not declare. A plain
+// z.object does exactly the same thing to exactly the same payload, which is
+// why it needs no exemption and reports no widening.
+test "a plain z.object and its record both strip a surplus key":
+    const value = PlainRecord.parse(Json.parse(`{"id":"p-1","label":"first","extra":1}`))
+    expect(value.id).toBe("p-1")
+    expect(value.label).toBe("first")
+    expect(Json.stringify(value)).toBe(`{"id":"p-1","label":"first"}`)
+    const sparse = PlainRecord.parse(Json.parse(`{"id":"p-1","nested":{"deep":[1,2]},"flag":false}`))
+    expect(Json.stringify(sparse)).toBe(`{"id":"p-1"}`)
+    // Stripping is not forgiveness: a declared key still has to be there.
+    expect(PlainRecord.is(Json.parse(`{"label":"first","extra":1}`))).toBeFalsy()
+    expect(PlainRecord.is(Json.parse(`{"id":1}`))).toBeFalsy()
+
+test "strictness is a property of the half that declares it":
+    const value = MixedStrictness.parse(Json.parse(
+        `{"strict":{"value":"a","extra":1},"plain":{"value":"b","extra":2}}`,
+    ))
+    expect(Json.stringify(value)).toBe(`{"strict":{"value":"a"},"plain":{"value":"b"}}`)
+    expect(MixedStrictness.is(Json.parse(`{"strict":{"value":"a"}}`))).toBeFalsy()
 
 test "the channel table binds a validator to each channel name":
     expect(str(FixtureChannel.chatDescribeArticle)).toBe("chat:describe-article")

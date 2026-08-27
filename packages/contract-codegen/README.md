@@ -102,17 +102,36 @@ it unformatted — so `"velarFormat": false` in a project without a toolchain on
 | `array` | `List<T>` |
 | `record(string, V)` | `Record<V>` |
 | `enum`, string `literal`, string literal union | `enum`, with a wire value for any member no identifier can spell |
-| `strictObject` | record `type` |
+| `object` | record `type`. Both strip a surplus key, so the two agree on every payload |
+| `strictObject` | record `type`, plus one counted `strict-unknown-keys` widening |
 | `lazy` and other self-references | a record that names itself; VelarScript records are recursive |
 | `discriminatedUnion` | tag `enum` + one record per case + a union alias |
 | union of primitives, lists, and aliases | VelarScript union |
 
 Anything else is **fail-closed**: generation stops and names the schema path and
-the reason. That covers non-strict `z.object` (it strips unknown keys rather than
-rejecting them), catchall objects, `transform`/`pipe`/effects, `default`,
-`catch`, `z.date`, `z.any`, tuples, intersections, numeric and boolean literals,
-zero-field records, non-string record keys, record unions with no discriminator,
-and field names that are not VelarScript identifiers.
+the reason. That covers catchall objects (`z.looseObject`, `.catchall(T)`: they
+keep a surplus key in the parsed value, which a fixed record shape cannot
+carry), `transform`/`pipe`/effects, `default`, `catch`, `z.date`, `z.any`,
+tuples, intersections, boolean literals, zero-field records, non-string record
+keys, record unions with no discriminator, and field names that are not
+VelarScript identifiers.
+
+### Surplus keys, and why `z.object` is the exact one
+
+A VelarScript record drops what its type does not declare, permanently: that is
+[D102](https://github.com/VelarOS-AI/VelarScript) ruling 2 — *the type is the
+contract, and data outside the contract does not exist for the program*. So the
+three zod spellings stand in three different relations to it:
+
+| zod | a surplus key | Vel record `parse` | relation |
+| --- | --- | --- | --- |
+| `z.object` | stripped | stripped | equivalent, sample for sample |
+| `z.strictObject` | the value is rejected | stripped | widened; counted as `strict-unknown-keys` |
+| `z.looseObject`, `.catchall(T)` | kept in the parsed value | stripped | the parsed value differs; refused |
+
+Only the third loses information a consumer could have read, so only it is
+refused. The equivalence fixtures carry surplus-key payloads on both sides of
+the first row.
 
 To accept one of those as opaque data, exempt its path:
 

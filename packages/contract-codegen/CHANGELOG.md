@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Accept a plain `z.object`. D102 ruling 2 makes surplus-field stripping the
+  permanent semantics of a VelarScript record, which is exactly what `z.object`
+  does — the two agree on every payload — while `z.strictObject` is the spelling
+  that widens. The generator had it backwards: it refused the equivalent one and
+  accepted the wider one. A plain object now lowers like a strict one and
+  reports no `strict-unknown-keys` widening, because there is none. A catchall
+  object (`z.looseObject`, `.catchall(T)`) stays refused, with its reason
+  restated: it keeps the surplus key in the parsed value, which a fixed record
+  shape cannot carry.
 - Keep every claimed name distinct: the collision counter could hand a second
   claimant a name an earlier one already took, collapsing two declarations and
   emitting duplicate enum member names.

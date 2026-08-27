@@ -532,6 +532,17 @@ test("every row of the closed mapping table lowers to its declared VelarScript s
     ["label: string", "children: List<Tree>"],
   );
 
+  // A plain z.object lowers exactly like a strict one: D102 ruling 2 makes the
+  // record's surplus-key answer the same as z.object's.
+  assert.deepEqual(
+    byName.get("PlainRecord").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
+    ["id: string", "label: string?"],
+  );
+  assert.deepEqual(
+    byName.get("MixedStrictness").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
+    ["strict: MixedStrictnessStrict", "plain: MixedStrictnessPlain"],
+  );
+
   // The manifest exemption keeps the export and opens exactly one field.
   assert.deepEqual(
     byName.get("Degraded").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
@@ -540,10 +551,42 @@ test("every row of the closed mapping table lowers to its declared VelarScript s
   assert.deepEqual(result.degrades.map((degrade) => degrade.path), ["DegradedSchema.protocolVersion"]);
 });
 
+test("a plain z.object is an equivalence, not a widening", async () => {
+  // Under D102 ruling 2 a VelarScript record strips a surplus key, which is
+  // what z.object does and what z.strictObject refuses to do. The generator
+  // accepts both and counts the widening only where one exists.
+  const contracts = await import(join(FIXTURES, "contracts", "contracts.mjs"));
+  assert.deepEqual(contracts.PlainRecordSchema.parse({ id: "p-1", extra: 1 }), { id: "p-1" });
+  assert.equal(contracts.PrimitivesSchema.safeParse({
+    name: "n", count: 1, enabled: true, nothing: null, extra: 1,
+  }).success, false);
+
+  const plain = lowerInline({ PlainSchema: z.object({ id: z.string() }) });
+  assert.deepEqual(fieldsOf(plain, "Plain"), ["id: string"]);
+  assert.deepEqual(plain.boundaryNotes.map((note) => note.kind), []);
+
+  const strict = lowerInline({ StrictSchema: z.strictObject({ id: z.string() }) });
+  assert.deepEqual(fieldsOf(strict, "Strict"), ["id: string"]);
+  assert.deepEqual(
+    strict.boundaryNotes.map((note) => [note.kind, note.count, note.samplePaths]),
+    [["strict-unknown-keys", 1, ["StrictSchema"]]],
+  );
+
+  // The count follows the shape that widens, not the record that holds it.
+  const mixed = await lowerFixture("contracts.mjs");
+  const widened = mixed.boundaryNotes.find((note) => note.kind === "strict-unknown-keys");
+  assert.ok(!widened.samplePaths.includes("MixedStrictnessSchema.plain"), widened.samplePaths.join(", "));
+
+  // A catchall keeps the surplus key in the parsed value, which no fixed record
+  // shape can carry, so it stays refused with its own words.
+  const refusal = refusalOf(() => lowerInline({ LooseSchema: z.looseObject({ id: z.string() }) }));
+  assert.match(refusal[0].reason, /keeps its surplus keys in the parsed value/u);
+});
+
 test("a shape outside the table is refused with its schema path and reason", async () => {
   const cases = [
-    ["NonStrictSchema", /strips unknown keys/u],
-    ["LooseSchema", /catchall object/u],
+    ["LooseSchema", /keeps its surplus keys/u],
+    ["CatchallSchema", /keeps its surplus keys/u],
     ["TransformedSchema", /transform and effect schemas/u],
     ["DefaultedSchema", /default value changes the parsed result/u],
     ["CaughtSchema", /catch fallback/u],
@@ -634,7 +677,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   // Both modes answer the same question about the tree, so a committed report
   // does not depend on whether the run that made it had to write.
   assert.deepEqual(checked.files, report.files);
-  assert.equal(checked.modules[0].exportedSchemas, 22);
+  assert.equal(checked.modules[0].exportedSchemas, 24);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);

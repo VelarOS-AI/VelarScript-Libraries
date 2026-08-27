@@ -3,11 +3,11 @@
 
 import { z } from "zod";
 
-// z.object() strips unknown keys instead of rejecting them
-export const NonStrictSchema = z.object({ id: z.string() });
-
-// a catchall object is not a fixed record shape
+// a catchall object keeps its surplus keys in the parsed value; a record cannot
 export const LooseSchema = z.looseObject({ id: z.string() });
+
+// the same, written as an explicit catchall
+export const CatchallSchema = z.object({ id: z.string() }).catchall(z.string());
 
 // transform / effect
 export const TransformedSchema = z.strictObject({ id: z.string().transform((value) => value.trim()) });

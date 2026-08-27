@@ -105,9 +105,23 @@ function shapeOf(schema: ZodSchema): Record<string, ZodSchema> {
   return (typeof shape === "object" && shape !== null ? shape : {}) as Record<string, ZodSchema>;
 }
 
-function isStrictObject(schema: ZodSchema): boolean {
+/**
+ * How an object schema answers a key it does not declare. D102 ruling 2 makes
+ * surplus-field stripping the permanent semantics of a VelarScript record, so
+ * the three answers stand in three different relations to it:
+ *
+ * | zod | surplus key | Vel record `parse` | relation |
+ * | --- | --- | --- | --- |
+ * | `z.object` | strips it | strips it | equivalent, sample for sample |
+ * | `z.strictObject` | rejects the value | strips it | widened; counted |
+ * | `z.looseObject`, `.catchall(T)` | keeps it in the parsed value | strips it | the parsed value differs |
+ *
+ * Only the third loses data a consumer could read, so only it is refused.
+ */
+function surplusKeys(schema: ZodSchema): "strip" | "reject" | "keep" {
   const catchall = def(schema)["catchall"];
-  return isZodSchema(catchall) && zodType(catchall) === "never";
+  if (catchall === undefined) return "strip";
+  return isZodSchema(catchall) && zodType(catchall) === "never" ? "reject" : "keep";
 }
 
 function literalValues(schema: ZodSchema): readonly unknown[] {
@@ -751,13 +765,12 @@ export function lowerModule(
       case "literal":
         return enumDeclaration(schema, name, path);
       case "object": {
-        if (!isStrictObject(schema)) {
+        const surplus = surplusKeys(schema);
+        if (surplus === "keep") {
           refuse(
             path,
             schema,
-            def(schema)["catchall"] === undefined
-              ? "z.object() strips unknown keys instead of rejecting them; declare z.strictObject() or degrade this path"
-              : "a catchall object is not a fixed record shape",
+            "a catchall object keeps its surplus keys in the parsed value, which a fixed record shape cannot carry",
           );
           return null;
         }
@@ -766,7 +779,10 @@ export function lowerModule(
           refuse(path, schema, "VelarScript has no zero-field record declaration");
           return null;
         }
-        note("strict-unknown-keys", path);
+        // A plain `z.object` strips a surplus key and so does the record, so
+        // there is no widening here to report. Only `z.strictObject`, which
+        // rejects the whole value, is wider on the Vel side.
+        if (surplus === "reject") note("strict-unknown-keys", path);
         const tag = caseTags.get(schema);
         const fields: RecordField[] = [];
         for (const [key, value] of entries) {
