@@ -41,6 +41,17 @@ function posixPath(path: string): string {
   return path.split(sep).join("/");
 }
 
+/**
+ * A generated file imports its sibling by where it sits, not by its name: a
+ * table written to `channels/agent.vel` referring to `types/contracts.vel` has
+ * to say `../types/contracts.vel`. Both names are relative to the output
+ * directory, so the import is the path between them.
+ */
+function relativeImport(from: string, to: string): string {
+  const path = posixPath(relative(dirname(from), to));
+  return path.startsWith(".") ? path : `./${path}`;
+}
+
 export interface RunOptions {
   readonly manifestPath: string;
   readonly mode: "generate" | "check";
@@ -152,38 +163,37 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
     channelReports.push(built.report);
   }
 
-  const files: FileStatus[] = [];
-  const formatRoot = outputDirectory;
-  for (const file of rendered) {
-    const text = manifest.velarFormat
-      ? formatThroughToolchain(file.text, basename(file.output), { projectRoot: formatRoot, command: manifest.velarCommand })
-      : file.text;
-    if (options.mode === "check") {
-      let current: string | null = null;
-      try {
-        current = readFileSync(file.absolute, "utf8");
-      } catch {
-        current = null;
-      }
-      files.push({
-        output: file.output,
-        status: current === null ? "missing" : current === text ? "unchanged" : "drift",
-      });
-      continue;
+  // Formatting is a step that can fail, and it fails per file. Rendering and
+  // formatting the whole tree before the first write is what keeps a failure
+  // from leaving half a generation behind.
+  const formatted = rendered.map((file) => ({
+    output: file.output,
+    absolute: file.absolute,
+    text: manifest.velarFormat
+      ? formatThroughToolchain(file.text, basename(file.output), {
+          projectRoot: outputDirectory,
+          command: manifest.velarCommand,
+        })
+      : file.text,
+  }));
+
+  // `status` says what was on disk, identically in both modes, so a committed
+  // report is the same file whether or not the run had to write it.
+  const files: FileStatus[] = formatted.map((file) => {
+    const current = readIfPresent(file.absolute);
+    return {
+      output: file.output,
+      status: current === null ? "missing" : current === file.text ? "unchanged" : "drift",
+      written: false,
+    };
+  });
+  if (options.mode === "generate") {
+    for (const [index, file] of formatted.entries()) {
+      if (files[index]!.status === "unchanged") continue;
+      mkdirSync(dirname(file.absolute), { recursive: true });
+      writeFileSync(file.absolute, file.text, "utf8");
+      files[index] = { ...files[index]!, written: true };
     }
-    let current: string | null = null;
-    try {
-      current = readFileSync(file.absolute, "utf8");
-    } catch {
-      current = null;
-    }
-    if (current === text) {
-      files.push({ output: file.output, status: "unchanged" });
-      continue;
-    }
-    mkdirSync(dirname(file.absolute), { recursive: true });
-    writeFileSync(file.absolute, text, "utf8");
-    files.push({ output: file.output, status: "written" });
   }
 
   const ok = options.mode === "generate" || files.every((file) => file.status === "unchanged");
@@ -191,7 +201,9 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
     tool: TOOL_NAME,
     toolVersion: options.toolVersion,
     mode: options.mode,
-    zod: { supportedMajor: SUPPORTED_ZOD_MAJOR, resolved: zod.version, path: zod.path },
+    // The install's absolute path is a property of the machine, not of the
+    // generation, and a committed report has to read the same on every one.
+    zod: { supportedMajor: SUPPORTED_ZOD_MAJOR, resolved: zod.version, resolvedFrom: manifest.resolveFrom },
     formatted: manifest.velarFormat,
     modules: moduleReports,
     channelTables: channelReports,
@@ -200,6 +212,14 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
   };
   if (!ok) throw new DriftError(files.filter((file) => file.status !== "unchanged"), report);
   return report;
+}
+
+function readIfPresent(file: string): string | null {
+  try {
+    return readFileSync(file, "utf8");
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -277,7 +297,7 @@ async function buildChannelTable(
     }
   }
 
-  const typesImport = `./${basename(table.typesOutput)}`;
+  const typesImport = relativeImport(table.output, table.typesOutput);
   const sourcePackage = table.source === undefined
     ? `${basename(context.manifestPath)} channel table`
     : `${packageOf(table.source.specifier) ?? table.source.specifier} '${table.source.export}'`;
@@ -319,6 +339,15 @@ async function readRuntimeChannels(table: ChannelTableEntry, context: ChannelCon
   if (typeof value !== "object" || value === null) {
     throw new Error(`'${source.specifier}' export '${source.export}' is not a channel map object`);
   }
+  // `Object.entries` reads a Map, a Set, and an array as empty or as indices
+  // rather than as channels, and an empty answer would emit an enum with no
+  // members. The shape is named instead of quietly producing one.
+  if (value instanceof Map || value instanceof Set || Array.isArray(value)) {
+    throw new Error(
+      `'${source.specifier}' export '${source.export}' is a ${value instanceof Map ? "Map" : value instanceof Set ? "Set" : "array"}; `
+        + "a channel table reads a plain object whose keys are the channel names",
+    );
+  }
   const rows: ChannelRow[] = [];
   for (const [channel, contract] of Object.entries(value as Record<string, unknown>)) {
     if (typeof contract !== "object" || contract === null) {
@@ -344,6 +373,9 @@ async function readRuntimeChannels(table: ChannelTableEntry, context: ChannelCon
       throw new Error(`channel '${channel}' in '${source.export}' binds no request, response, or event schema`);
     }
     rows.push({ name: channel, ...row });
+  }
+  if (rows.length === 0) {
+    throw new Error(`'${source.specifier}' export '${source.export}' declares no channels for '${table.output}'`);
   }
   return rows;
 }

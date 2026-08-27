@@ -26,14 +26,22 @@ export interface ChannelTableReport {
 
 export interface FileStatus {
   readonly output: string;
-  readonly status: "written" | "unchanged" | "drift" | "missing";
+  /** What was on disk when the run read it, in `generate` and `--check` alike. */
+  readonly status: "unchanged" | "drift" | "missing";
+  /** Whether this run wrote the file. Always false under `--check`. */
+  readonly written: boolean;
 }
 
 export interface GenerationReport {
   readonly tool: string;
   readonly toolVersion: string;
   readonly mode: "generate" | "check";
-  readonly zod: { readonly supportedMajor: number; readonly resolved: string; readonly path: string };
+  readonly zod: {
+    readonly supportedMajor: number;
+    readonly resolved: string;
+    /** The manifest's `resolveFrom`: the install is named without a machine path. */
+    readonly resolvedFrom: string;
+  };
   readonly formatted: boolean;
   readonly modules: readonly ModuleReport[];
   readonly channelTables: readonly ChannelTableReport[];
@@ -44,7 +52,9 @@ export interface GenerationReport {
 export function renderReportText(report: GenerationReport): string {
   const lines: string[] = [];
   lines.push(`${report.tool} ${report.toolVersion} (${report.mode})`);
-  lines.push(`zod ${report.zod.resolved} (supported major ${report.zod.supportedMajor})`);
+  lines.push(
+    `zod ${report.zod.resolved} resolved from ${report.zod.resolvedFrom} (supported major ${report.zod.supportedMajor})`,
+  );
   for (const module of report.modules) {
     lines.push("");
     lines.push(`${module.output} <- ${module.sourcePackage}${module.sourceVersion === null ? "" : `@${module.sourceVersion}`} "${module.specifier}"`);
@@ -76,6 +86,8 @@ export function renderReportText(report: GenerationReport): string {
     lines.push(`${table.output}: ${table.channels} channels, ${table.bindings} type bindings`);
   }
   lines.push("");
-  for (const file of report.files) lines.push(`  ${file.status.padEnd(9)} ${file.output}`);
+  for (const file of report.files) {
+    lines.push(`  ${(file.written ? "written" : file.status).padEnd(9)} ${file.output}`);
+  }
   return `${lines.join("\n")}\n`;
 }
