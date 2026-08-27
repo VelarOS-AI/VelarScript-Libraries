@@ -124,6 +124,10 @@ try {
     for (const required of ["package.json", "README.md", "CHANGELOG.md", "LICENSE"]) assert.ok(files.has(required), `${entry.name} omitted ${required}`);
     if (entry.kind === "tooling") {
       assert.ok(files.has("dist/index.js") && files.has("dist/index.d.ts"), `${entry.name} omitted its compiled root export`);
+      const manifest = JSON.parse(await readFile(join(root, entry.path, "package.json"), "utf8"));
+      for (const command of Object.values(manifest.bin ?? {})) {
+        assert.ok(files.has(command.replace(/^\.\//u, "")), `${entry.name} omitted its executable ${command}`);
+      }
     } else {
       const manifest = JSON.parse(await readFile(join(root, entry.path, "package.json"), "utf8"));
       assert.ok(files.has(manifest.velar.entry), `${entry.name} omitted velar.entry`);
@@ -240,6 +244,16 @@ test "packed SQLite and database packages execute together":
   const editorKit = await import(pathToFileURL(join(consumer, "node_modules", "@velarscript-labs", "editor-kit", "dist", "index.js")).href);
   assert.equal(editorKit.VelarLanguageService.command, "velar");
   await verifyInstalledLsp(consumer, cli, editorKit.assertVelarProtocolCompatible);
+
+  // The contract generator is a Node tool: the packed install has to expose its
+  // library surface and its executable, and refuse a manifest it cannot act on.
+  const contractCodegen = await import(pathToFileURL(join(consumer, "node_modules", "@velarscript-labs", "contract-codegen", "dist", "index.js")).href);
+  assert.equal(contractCodegen.SUPPORTED_ZOD_MAJOR, 4);
+  assert.throws(() => contractCodegen.parseManifest({ formatVersion: 2 }), /formatVersion/u);
+  const codegenCommand = process.platform === "win32" ? "velar-contract-codegen.cmd" : "velar-contract-codegen";
+  const codegenUsage = await run(join(consumer, "node_modules", ".bin", codegenCommand), [], consumer)
+    .then(() => null, (error) => String(error.message));
+  assert.match(codegenUsage ?? "", /velar-contract-codegen generate/u);
 
   process.stdout.write(`Verified packed consumers with ${velarPackage ? `local @velarscript/cli (${resolve(velarPackage)})` : `@velarscript/cli@${velarVersion}`}: ${artifacts.join(", ")}.\n`);
 } finally {

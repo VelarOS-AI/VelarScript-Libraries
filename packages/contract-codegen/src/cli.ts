@@ -6,7 +6,7 @@
  * a contract that moved without its generated types.
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -96,7 +96,21 @@ export async function main(argv: readonly string[]): Promise<number> {
   }
 }
 
-const entry = process.argv[1];
-if (entry !== undefined && pathToFileURL(entry).href === import.meta.url) {
+/**
+ * npm installs a bin as a link, so `process.argv[1]` is the link and
+ * `import.meta.url` is the file it points at. Comparing the two without
+ * resolving both would leave the installed executable doing nothing.
+ */
+function invokedDirectly(): boolean {
+  const entry = process.argv[1];
+  if (entry === undefined) return false;
+  try {
+    return realpathSync(entry) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return pathToFileURL(entry).href === import.meta.url;
+  }
+}
+
+if (invokedDirectly()) {
   process.exitCode = await main(process.argv.slice(2));
 }
