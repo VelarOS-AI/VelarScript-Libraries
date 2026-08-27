@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "kind": "velar-library-artifact",
+  "abiVersion": 1,
+  "package": {
+    "name": "@velarscript-labs/screencast",
+    "version": "0.1.0"
+  },
+  "target": "core",
+  "compilerVersion": "0.19.1",
+  "sourceEntry": "src/index.vel",
+  "sources": [
+    {
+      "path": "src/index.vel",
+      "sha256": "fdad77357862dba37a609a1cc847ee53f7fd0dc079bd77dbe9d57df4f12bf635"
+    }
+  ],
+  "entry": {
+    "javascript": "index.js",
+    "sourceMap": "index.js.map",
+    "interface": "index.veli.json",
+    "sha256": {
+      "javascript": "fa63967e55b61c767029f0db55544bcd1c354612e6808e6b982dba3ebe0b48fd",
+      "sourceMap": "64c6dadba975c7571f036b90f564cf00ef8f26cf4968ad9390bdfac269416e00",
+      "interface": "67389dae32d8a6c4e354146107d56890a26d1f38afe61c1cf1af72fab1430031"
+    }
+  }
+}

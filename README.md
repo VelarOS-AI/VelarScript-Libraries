@@ -22,6 +22,7 @@ repository does not depend on this repository.
 | `@velarscript-labs/contract-codegen` | tooling | experimental | Checked VelarScript declarations generated from a foreign package's zod wire contracts |
 | `@velarscript-labs/yaml` | adapter | experimental | Strict, bounded YAML parsing |
 | `@velarscript-labs/sqlite` | adapter | experimental | Worker-isolated SQLite capability for Node applications |
+| `@velarscript-labs/screencast` | adapter | experimental | Bounded encoded-frame rendering onto a host canvas |
 
 All non-standard packages use the dedicated public npm scope
 `@velarscript-labs`. The `@velarscript/*` scope remains reserved for the

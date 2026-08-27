@@ -15,7 +15,8 @@
 - `@velarscript-labs/compression`：有界 DEFLATE/gzip；
 - `@velarscript-labs/editor-kit`：编辑器接入 `velar lsp` 的中立元数据与兼容检查；
 - `@velarscript-labs/yaml`：严格、有界的 YAML 解析边界；
-- `@velarscript-labs/sqlite`：Node Worker 隔离、串行化且有界的 SQLite 能力。
+- `@velarscript-labs/sqlite`：Node Worker 隔离、串行化且有界的 SQLite 能力；
+- `@velarscript-labs/screencast`：把编码帧流有界地画到宿主 canvas 上的适配器。
 
 全部非标准包统一使用公开 npm scope `@velarscript-labs`；`@velarscript/*` 只保留
 语言工具链、标准能力所有者和官方目标框架。只安装应用实际使用的包：

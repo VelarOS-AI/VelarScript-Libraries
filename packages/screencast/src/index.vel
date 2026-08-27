@@ -1,0 +1,430 @@
+/// Draws an encoded screencast frame stream onto a canvas the host application owns.
+///
+/// The adapter never opens a screencast session, never acknowledges a frame, and
+/// never maps an input event: transport belongs to the application, and this
+/// package only turns encoded bytes into pixels on one canvas element.
+import {Bytes} from "velar/binary"
+
+/// The largest encoded frame the adapter accepts. A screencast frame is a single
+/// still image; anything past this is a transport defect rather than a picture.
+const maxFrameBytes = 16 * 1024 * 1024
+
+/// The largest frame edge the adapter accepts, in encoded pixels.
+const maxFrameEdge = 16384
+
+/// Bounds for the pull error stream. One entry per failed frame; a consumer that
+/// never pulls costs a fixed, small amount of memory.
+const defaultErrorCapacity = 32
+const maxErrorCapacity = 1024
+
+/// The encoded image formats a screencast frame may carry.
+export enum FrameFormat:
+    jpeg
+    png
+
+/// One encoded frame's declared metadata. `width` and `height` are the encoded
+/// image's own pixel dimensions, which the adapter verifies after decoding.
+export type FrameInfo:
+    width: number
+    height: number
+    format: FrameFormat
+
+/// A rectangle on the canvas backing store, in device pixels.
+export type ContentBounds:
+    x: number
+    y: number
+    width: number
+    height: number
+
+/// Where the most recent frame is drawn and how it is scaled.
+///
+/// `contentBounds` is the letterboxed destination rectangle in backing-store
+/// (device) pixels, `scale` is device pixels per frame pixel, and `pixelRatio` is
+/// device pixels per CSS pixel. An application maps a CSS-pixel pointer position
+/// `p` measured from the canvas's content box back to frame coordinates with
+/// `(p * pixelRatio - contentBounds.origin) / scale`. Before the first frame is
+/// drawn `scale` is `0` and the bounds are empty.
+export type SurfaceGeometry:
+    contentBounds: ContentBounds
+    scale: number
+    pixelRatio: number
+
+/// One frame the surface could not draw. `sequence` is the frame's submission
+/// number, counting from 1. `dropped` is how many error records the bounded
+/// stream discarded between the previous delivered record and this one.
+export type ScreencastError:
+    sequence: number
+    reason: string
+    dropped: number
+
+/// What the surface has done with the frames it was given. `dropped` counts
+/// frames replaced by a newer frame before their decode started, which is the
+/// keep-latest discipline working rather than a failure; `failed` counts frames
+/// that reached the decoder and did not produce a drawable image.
+export type ScreencastStats:
+    submitted: number
+    drawn: number
+    dropped: number
+    failed: number
+    lastDrawnSequence: number
+
+/// Attachment options. `errorCapacity` bounds the pull error stream, and
+/// `pixelRatio` fixes the backing-store scale instead of following the host's
+/// `devicePixelRatio`.
+export type ScreencastOptions:
+    errorCapacity: number?
+    pixelRatio: number?
+
+extern js(maxFrameBytes: number, defaultErrorCapacity: number)`
+    const G = globalThis;
+    const own = Object.getOwnPropertyDescriptor;
+    const apply = Reflect.apply;
+    const prototypeOf = (name) => (typeof G[name] === "function" ? G[name].prototype : null);
+    const member = (target, name) => (target === null ? undefined : own(target, name));
+    const canvasProto = prototypeOf("HTMLCanvasElement");
+    const elementProto = prototypeOf("Element");
+    const contextProto = prototypeOf("CanvasRenderingContext2D");
+    const bitmapProto = prototypeOf("ImageBitmap");
+    const observerProto = prototypeOf("ResizeObserver");
+    const getContext = member(canvasProto, "getContext")?.value;
+    const readWidth = member(canvasProto, "width")?.get;
+    const writeWidth = member(canvasProto, "width")?.set;
+    const readHeight = member(canvasProto, "height")?.get;
+    const writeHeight = member(canvasProto, "height")?.set;
+    const readClientWidth = member(elementProto, "clientWidth")?.get;
+    const readClientHeight = member(elementProto, "clientHeight")?.get;
+    const drawImage = member(contextProto, "drawImage")?.value;
+    const clearRect = member(contextProto, "clearRect")?.value;
+    const setTransform = member(contextProto, "setTransform")?.value;
+    const readBitmapWidth = member(bitmapProto, "width")?.get;
+    const readBitmapHeight = member(bitmapProto, "height")?.get;
+    const closeBitmap = member(bitmapProto, "close")?.value;
+    const observe = member(observerProto, "observe")?.value;
+    const disconnect = member(observerProto, "disconnect")?.value;
+    const decodeBlob = G.createImageBitmap;
+    const BlobClass = G.Blob;
+    const ObserverClass = G.ResizeObserver;
+    const captured = [getContext, readWidth, writeWidth, readHeight, writeHeight, readClientWidth,
+      readClientHeight, drawImage, clearRect, setTransform, readBitmapWidth, readBitmapHeight,
+      closeBitmap, observe, disconnect, decodeBlob, BlobClass, ObserverClass];
+    // Everything the adapter calls is read from the platform prototype once, here,
+    // so a later instance or prototype override cannot redirect a draw.
+    const hostReady = typeof G.HTMLCanvasElement === "function" && captured.every((value) => typeof value === "function");
+
+    const TOKEN = Object.freeze({});
+    const states = new WeakMap();
+    const mediaTypes = { jpeg: "image/jpeg", png: "image/png" };
+    const emptyBounds = () => ({ x: 0, y: 0, width: 0, height: 0 });
+
+    function stateOf(surface) {
+      const state = states.get(surface);
+      if (state === undefined) throw new TypeError("Invalid screencast surface");
+      return state;
+    }
+
+    function ratioOf(state) {
+      if (state.pixelRatio !== null) return state.pixelRatio;
+      const host = G.devicePixelRatio;
+      return typeof host === "number" && Number.isFinite(host) && host > 0 ? host : 1;
+    }
+
+    function surfaceSize(state) {
+      const ratio = ratioOf(state);
+      return {
+        width: Math.max(0, Math.round(apply(readClientWidth, state.canvas, []) * ratio)),
+        height: Math.max(0, Math.round(apply(readClientHeight, state.canvas, []) * ratio)),
+        ratio,
+      };
+    }
+
+    function letterbox(state, size) {
+      if (state.frameWidth <= 0 || state.frameHeight <= 0 || size.width <= 0 || size.height <= 0) {
+        return { contentBounds: emptyBounds(), scale: 0, pixelRatio: size.ratio };
+      }
+      const scale = Math.min(size.width / state.frameWidth, size.height / state.frameHeight);
+      const width = state.frameWidth * scale;
+      const height = state.frameHeight * scale;
+      const bounds = { x: (size.width - width) / 2, y: (size.height - height) / 2, width, height };
+      return { contentBounds: bounds, scale, pixelRatio: size.ratio };
+    }
+
+    function draw(state) {
+      if (state.released) return;
+      const size = surfaceSize(state);
+      if (apply(readWidth, state.canvas, []) !== size.width) apply(writeWidth, state.canvas, [size.width]);
+      if (apply(readHeight, state.canvas, []) !== size.height) apply(writeHeight, state.canvas, [size.height]);
+      apply(setTransform, state.context, [1, 0, 0, 1, 0, 0]);
+      apply(clearRect, state.context, [0, 0, size.width, size.height]);
+      if (state.bitmap === null) return;
+      const box = letterbox(state, size).contentBounds;
+      if (box.width <= 0 || box.height <= 0) return;
+      apply(drawImage, state.context, [state.bitmap, box.x, box.y, box.width, box.height]);
+    }
+
+    function takeError(state) {
+      const entry = state.errors.shift();
+      const dropped = state.errorDrops;
+      state.errorDrops = 0;
+      return { sequence: entry.sequence, reason: entry.reason, dropped };
+    }
+
+    function pushError(state, sequence, reason) {
+      if (state.errors.length >= state.errorCapacity) {
+        state.errors.shift();
+        state.errorDrops += 1;
+      }
+      state.errors.push({ sequence, reason });
+      const waiting = state.waiter;
+      if (waiting !== null) {
+        state.waiter = null;
+        state.pulling = false;
+        waiting(takeError(state));
+      }
+    }
+
+    // At most one frame is ever waiting to be decoded: a frame that arrives while
+    // an older frame is still queued replaces it, and a frame that arrives during
+    // a decode becomes the replacement the decode picks up when it finishes.
+    function startDecode(state) {
+      if (state.released || state.decoding || state.pending === null) return;
+      const frame = state.pending;
+      state.pending = null;
+      state.decoding = true;
+      const blob = new BlobClass([frame.bytes], { type: mediaTypes[frame.format] });
+      apply(decodeBlob, G, [blob]).then(
+        (bitmap) => finishDecode(state, frame, bitmap),
+        (error) => failDecode(state, frame, error),
+      );
+    }
+
+    function finishDecode(state, frame, bitmap) {
+      state.decoding = false;
+      const width = apply(readBitmapWidth, bitmap, []);
+      const height = apply(readBitmapHeight, bitmap, []);
+      if (state.released) {
+        apply(closeBitmap, bitmap, []);
+        return;
+      }
+      if (width !== frame.width || height !== frame.height) {
+        apply(closeBitmap, bitmap, []);
+        state.failed += 1;
+        pushError(state, frame.sequence, "the decoded image is " + width + "x" + height
+          + " and the frame declared " + frame.width + "x" + frame.height);
+      } else {
+        if (state.bitmap !== null) apply(closeBitmap, state.bitmap, []);
+        state.bitmap = bitmap;
+        state.frameWidth = width;
+        state.frameHeight = height;
+        state.drawn += 1;
+        state.lastDrawnSequence = frame.sequence;
+        draw(state);
+      }
+      startDecode(state);
+    }
+
+    function failDecode(state, frame, error) {
+      state.decoding = false;
+      state.failed += 1;
+      if (!state.released) {
+        pushError(state, frame.sequence, error instanceof Error ? error.message : String(error));
+        startDecode(state);
+      }
+    }
+
+    function releaseState(state) {
+      if (state.released) return null;
+      state.released = true;
+      state.pending = null;
+      apply(disconnect, state.observer, []);
+      state.observer = null;
+      if (state.bitmap !== null) apply(closeBitmap, state.bitmap, []);
+      state.bitmap = null;
+      state.frameWidth = 0;
+      state.frameHeight = 0;
+      apply(setTransform, state.context, [1, 0, 0, 1, 0, 0]);
+      apply(clearRect, state.context, [0, 0, apply(readWidth, state.canvas, []), apply(readHeight, state.canvas, [])]);
+      state.canvas = null;
+      state.context = null;
+      const waiting = state.waiter;
+      if (waiting !== null) {
+        state.waiter = null;
+        state.pulling = false;
+        waiting(null);
+      }
+      return null;
+    }
+
+    export class NativeScreencastSurface {
+      constructor(token, state) {
+        if (token !== TOKEN) throw new TypeError("Use attach to create a screencast surface");
+        states.set(this, state);
+      }
+
+      submitFrame(bytes, width, height, format) {
+        const state = stateOf(this);
+        if (state.released) throw new Error("This screencast surface is released");
+        if (!(bytes instanceof Uint8Array) || bytes.byteLength === 0 || bytes.byteLength > maxFrameBytes) {
+          throw new TypeError("A screencast frame must carry 1 through " + maxFrameBytes + " bytes");
+        }
+        if (mediaTypes[format] === undefined) throw new TypeError("A screencast frame format must be jpeg or png");
+        state.sequence += 1;
+        state.submitted += 1;
+        if (state.pending !== null) state.dropped += 1;
+        state.pending = { bytes, width, height, format, sequence: state.sequence };
+        startDecode(state);
+        return null;
+      }
+
+      geometry() {
+        const state = stateOf(this);
+        if (state.released) return { contentBounds: emptyBounds(), scale: 0, pixelRatio: ratioOf(state) };
+        return letterbox(state, surfaceSize(state));
+      }
+
+      stats() {
+        const state = stateOf(this);
+        return {
+          submitted: state.submitted,
+          drawn: state.drawn,
+          dropped: state.dropped,
+          failed: state.failed,
+          lastDrawnSequence: state.lastDrawnSequence,
+        };
+      }
+
+      nextError() {
+        const state = stateOf(this);
+        if (state.pulling) return Promise.reject(new Error("A screencast error stream permits one active pull"));
+        if (state.errors.length > 0) return Promise.resolve(takeError(state));
+        if (state.released) return Promise.resolve(null);
+        state.pulling = true;
+        return new Promise((resolve) => { state.waiter = resolve; });
+      }
+
+      release() { return releaseState(stateOf(this)); }
+    }
+
+    export function attachNativeScreencast(canvas, options) {
+      if (!hostReady) throw new Error("A screencast surface requires a browser document with canvas and createImageBitmap support");
+      if (!(canvas instanceof G.HTMLCanvasElement)) throw new TypeError("A screencast surface requires a canvas element");
+      const context = apply(getContext, canvas, ["2d", { alpha: true, desynchronized: true }]);
+      if (context === null) throw new Error("The canvas element did not provide a 2d rendering context");
+      const state = {
+        canvas,
+        context,
+        pixelRatio: options.pixelRatio ?? null,
+        errorCapacity: options.errorCapacity ?? defaultErrorCapacity,
+        sequence: 0,
+        submitted: 0,
+        drawn: 0,
+        dropped: 0,
+        failed: 0,
+        lastDrawnSequence: 0,
+        pending: null,
+        decoding: false,
+        bitmap: null,
+        frameWidth: 0,
+        frameHeight: 0,
+        errors: [],
+        errorDrops: 0,
+        waiter: null,
+        pulling: false,
+        released: false,
+        observer: null,
+      };
+      state.observer = new ObserverClass(() => draw(state));
+      // The device-pixel box is what actually changes when the window moves to a
+      // display with a different devicePixelRatio; engines that do not know the
+      // box name still redraw from the CSS box below.
+      try {
+        apply(observe, state.observer, [canvas, { box: "device-pixel-content-box" }]);
+      } catch {
+        // The CSS content box alone.
+      }
+      apply(observe, state.observer, [canvas, { box: "content-box" }]);
+      return new NativeScreencastSurface(TOKEN, state);
+    }
+`:
+    export class NativeScreencastSurface:
+        def submitFrame(bytes: Bytes, width: number, height: number, format: FrameFormat) -> null
+        def geometry() -> unknown
+        def stats() -> unknown
+        async def nextError() -> unknown
+        def release() -> null
+
+    export def attachNativeScreencast(canvas: unknown, options: ScreencastOptions) -> NativeScreencastSurface
+
+/// The surface's bounded pull stream of frames it could not draw.
+///
+/// One record per failed frame, oldest first, and one active pull at a time. A
+/// decode failure never stops the surface: the frames after it are decoded and
+/// drawn whether or not anybody is reading this stream. Once the surface is
+/// released the stream drains what it already holds and then answers `null`.
+export class ScreencastErrorStream:
+    constructor(private const native: NativeScreencastSurface): pass
+
+    /// Pulls the next failed frame, or `null` once the surface is released and
+    /// the queue is drained.
+    async def next() -> ScreencastError?:
+        const value = await self.native.nextError()
+        if value == null: return null
+        return ScreencastError.parse(value)
+
+/// One canvas being driven by a frame stream. Own it with `using`; releasing
+/// stops decoding, discards the frame waiting to be decoded, and detaches the
+/// canvas.
+export class ScreencastSurface:
+    constructor(private const native: NativeScreencastSurface): pass
+
+    /// Hands one encoded frame to the surface.
+    ///
+    /// The frame is decoded off the calling task. At most one frame is ever
+    /// waiting to be decoded, so a producer faster than the decoder replaces the
+    /// waiting frame instead of queueing behind it and never grows memory.
+    /// Submitting to a released surface fails.
+    def submitFrame(bytes: Bytes, frame: FrameInfo):
+        assert bytes.size > 0 else "A screencast frame cannot be empty"
+        assert bytes.size <= maxFrameBytes else f"A screencast frame cannot exceed {maxFrameBytes} bytes"
+        assert frame.width.isInteger() and frame.width >= 1 and frame.width <= maxFrameEdge else f"A screencast frame width must be an integer from 1 through {maxFrameEdge}"
+        assert frame.height.isInteger() and frame.height >= 1 and frame.height <= maxFrameEdge else f"A screencast frame height must be an integer from 1 through {maxFrameEdge}"
+        self.native.submitFrame(bytes, frame.width, frame.height, frame.format)
+
+    /// Reads where the most recent frame sits on the canvas right now, measured
+    /// from the element's current content box rather than from the last draw, so
+    /// a layout change is visible before the next frame arrives.
+    def geometry() -> SurfaceGeometry: return SurfaceGeometry.parse(self.native.geometry())
+
+    /// Reads the surface's frame counters. `dropped` and `failed` are the two
+    /// numbers a producer needs to see: the first says the producer is faster
+    /// than the decoder, the second says frames are arriving broken.
+    def stats() -> ScreencastStats: return ScreencastStats.parse(self.native.stats())
+
+    /// Reads the surface's error stream. Every call returns a view of the same
+    /// bounded queue.
+    def watchErrors() -> ScreencastErrorStream: return ScreencastErrorStream(self.native)
+
+    /// Stops decoding, discards the waiting frame, clears and detaches the
+    /// canvas. Releasing twice is not an error.
+    def release(): self.native.release()
+
+    @dispose: self.release()
+
+def checkedOptions(options: ScreencastOptions) -> ScreencastOptions:
+    const capacity = options.errorCapacity
+    if capacity != null:
+        assert capacity.isInteger() and capacity >= 1 and capacity <= maxErrorCapacity else f"A screencast errorCapacity must be an integer from 1 through {maxErrorCapacity}"
+    const ratio = options.pixelRatio
+    if ratio != null:
+        assert ratio.isFinite() and ratio >= 0.25 and ratio <= 8 else "A screencast pixelRatio must be a finite number from 0.25 through 8"
+    return options
+
+/// Attaches a frame stream to one canvas element the application already
+/// rendered, and hands back the owned surface.
+///
+/// The canvas crosses the boundary by raw identity, which is why it is declared
+/// as untyped host data here and validated as a real canvas element before any
+/// frame is accepted. The adapter owns the canvas's backing store for the life
+/// of the surface and sizes it from the element's content box times the pixel
+/// ratio, so the element itself must carry no padding or border.
+export def attach(canvas: unknown, options: ScreencastOptions = {}) -> ScreencastSurface:
+    return ScreencastSurface(attachNativeScreencast(canvas, checkedOptions(options)))

@@ -1,0 +1,51 @@
+{
+  "name": "@velarscript-labs/screencast",
+  "version": "0.1.0",
+  "description": "Bounded screencast frame adapter that draws an encoded frame stream onto a host canvas.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "src/index.vel",
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "velar build-library",
+    "check": "velar format --check && velar check && velar format --check ../../examples/screencast && velar check ../../examples/screencast",
+    "test": "velar test",
+    "test:browser": "velar test ../../examples/screencast --browser=chromium && velar test ../../examples/screencast --browser=webkit"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
+    "directory": "packages/screencast"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "velar": {
+    "entry": "src/index.vel",
+    "artifacts": {
+      "core": "dist/velar-library.json"
+    },
+    "targets": [
+      "web",
+      "desktop"
+    ],
+    "requires": {
+      "capabilities": [],
+      "language": ">=0.19 <0.20"
+    }
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.19.1"
+  }
+}

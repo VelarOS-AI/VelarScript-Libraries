@@ -1,0 +1,47 @@
+/// What a Core test can answer about a canvas adapter: the argument bounds that
+/// are checked before any host object is touched, the refusal to attach to
+/// something that is not a canvas, and the validators that every result from the
+/// host crosses on its way back into VelarScript.
+///
+/// Everything that needs a real canvas — keep-latest under a decode that cannot
+/// keep up, letterbox geometry across a resize and a pixel-ratio change, the
+/// error stream, and release — is in `example/src/screencast.browser.test.vel`,
+/// which runs the whole chain in Chromium and WebKit.
+import {ScreencastError, ScreencastStats, SurfaceGeometry, attach} from "../src/index.vel"
+
+def assertionFrom(action: () -> unknown) -> bool:
+    try: action()
+    catch error: return error.name == "AssertionError"
+    return false
+
+def messageFrom(action: () -> unknown) -> string:
+    try: action()
+    catch error: return error.message
+    return ""
+
+test "an error capacity outside the stream's bound is refused before the host is touched":
+    assert assertionFrom(() => attach({}, {errorCapacity: 0})) else "An empty error stream was accepted"
+    assert assertionFrom(() => attach({}, {errorCapacity: 1025})) else "An error capacity past 1024 was accepted"
+    assert assertionFrom(() => attach({}, {errorCapacity: 2.5})) else "A fractional error capacity was accepted"
+
+test "a pixel ratio outside the backing store's bound is refused before the host is touched":
+    assert assertionFrom(() => attach({}, {pixelRatio: 0})) else "A zero pixel ratio was accepted"
+    assert assertionFrom(() => attach({}, {pixelRatio: 0.1})) else "A pixel ratio below 0.25 was accepted"
+    assert assertionFrom(() => attach({}, {pixelRatio: 9})) else "A pixel ratio above 8 was accepted"
+
+test "attaching to something that is not a canvas element fails closed":
+    // Options inside the bounds get past the argument checks, so what refuses
+    // here is the host boundary itself rather than an earlier assertion.
+    assert not assertionFrom(() => attach({}, {errorCapacity: 8, pixelRatio: 2})) else "The host boundary was never reached"
+    assert messageFrom(() => attach({}, {errorCapacity: 8, pixelRatio: 2})).has("screencast") else "A non-canvas value attached without naming the adapter"
+    assert messageFrom(() => attach(42)).has("screencast") else "A number attached without naming the adapter"
+
+test "every record the host produces crosses a validator":
+    const bounds = {x: 0, y: 4, width: 320, height: 180}
+    assert SurfaceGeometry.is({contentBounds: bounds, scale: 2, pixelRatio: 2}) else "A well-formed geometry was rejected"
+    assert not SurfaceGeometry.is({contentBounds: bounds, scale: 2}) else "A geometry missing its pixel ratio was accepted"
+    assert not SurfaceGeometry.is({contentBounds: {x: 0, y: 0}, scale: 1, pixelRatio: 1}) else "A truncated content box was accepted"
+    assert ScreencastError.is({sequence: 3, reason: "decode failed", dropped: 0}) else "A well-formed error record was rejected"
+    assert not ScreencastError.is({sequence: "3", reason: "decode failed", dropped: 0}) else "A non-numeric frame sequence was accepted"
+    assert ScreencastStats.is({submitted: 5, drawn: 3, dropped: 2, failed: 0, lastDrawnSequence: 5}) else "A well-formed counter record was rejected"
+    assert not ScreencastStats.is({submitted: 5, drawn: 3, dropped: 2, failed: 0}) else "A counter record missing a field was accepted"
