@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -125,6 +126,49 @@ test("the supported zod major is stated and a mismatch names both versions", () 
       && /4\.4\.3/u.test(error.message)
       && /zod 3\.24\.1/u.test(error.message),
   );
+});
+
+test("a contract package on another zod major is refused before anything is written", async () => {
+  const temporary = mkdtempSync(join(tmpdir(), "contract-codegen-zod3-"));
+  try {
+    mkdirSync(join(temporary, "contracts", "node_modules", "zod"), { recursive: true });
+    mkdirSync(join(temporary, "out"), { recursive: true });
+    writeFileSync(
+      join(temporary, "contracts", "node_modules", "zod", "package.json"),
+      JSON.stringify({ name: "zod", version: "3.24.1", main: "index.js" }),
+      "utf8",
+    );
+    writeFileSync(join(temporary, "contracts", "node_modules", "zod", "index.js"), "module.exports = {};\n", "utf8");
+    // A zod 3 schema carries `_def.typeName`, which the walker cannot read.
+    writeFileSync(
+      join(temporary, "contracts", "contracts.mjs"),
+      "export const UserSchema = { _def: { typeName: \"ZodObject\" } };\n",
+      "utf8",
+    );
+    writeFileSync(
+      join(temporary, "manifest.json"),
+      JSON.stringify({
+        formatVersion: 1,
+        resolveFrom: "./contracts",
+        outputDirectory: "./out",
+        velarFormat: false,
+        modules: [{ specifier: "./contracts.mjs", output: "user.vel", exports: "all" }],
+      }),
+      "utf8",
+    );
+    await assert.rejects(
+      () => run({ manifestPath: join(temporary, "manifest.json"), mode: "generate", toolVersion: "0.1.0" }),
+      (error) => {
+        assert.ok(error instanceof ZodVersionError, String(error));
+        assert.match(error.message, /zod 4\.x/u);
+        assert.match(error.message, /zod 3\.24\.1/u);
+        return true;
+      },
+    );
+    assert.deepEqual(readdirSync(join(temporary, "out")), [], "a refused run must write nothing");
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
 });
 
 test("names avoid VelarScript keywords and the enum's reserved surface", () => {
