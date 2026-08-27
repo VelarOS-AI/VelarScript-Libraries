@@ -4,10 +4,10 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/noise",
-    "version": "0.1.5"
+    "version": "0.1.6"
   },
   "target": "core",
-  "compilerVersion": "0.15.0",
+  "compilerVersion": "0.18.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -20,8 +20,8 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "ef96fbc3d176764c027214b977ac815236d3aea861c72976171d68d1f3ef4662",
-      "sourceMap": "c6a55bdf5ec7e089af0035a6a10059c1058fe37f8f4993370eac9ff94a74d71e",
+      "javascript": "af946d4b3d54a3c7e02d0161f19b561497e560e49f05a24f0d54dbc27890ca62",
+      "sourceMap": "0cc86bb0d6eba63b67c60002cb2e1bc16a530220d0038b87768f11a4ede5701d",
       "interface": "81d34f5507519661bbb8bd97001e2d345b9b1623b3e8aa9ad3a85732be083a36"
     }
   }

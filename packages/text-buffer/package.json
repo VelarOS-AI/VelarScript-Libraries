@@ -1,6 +1,6 @@
 {
   "name": "@velarscript-labs/text-buffer",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "description": "A bounded incremental text buffer authored in pure VelarScript.",
   "license": "Apache-2.0",
   "files": [
@@ -32,8 +32,18 @@
   },
   "velar": {
     "entry": "src/index.vel",
-    "artifacts": { "core": "dist/velar-library.json" },
-    "targets": ["core", "node", "web", "desktop"],
-    "requires": { "capabilities": [], "language": ">=0.15 <0.16" }
+    "artifacts": {
+      "core": "dist/velar-library.json"
+    },
+    "targets": [
+      "core",
+      "node",
+      "web",
+      "desktop"
+    ],
+    "requires": {
+      "capabilities": [],
+      "language": ">=0.18 <0.19"
+    }
   }
 }

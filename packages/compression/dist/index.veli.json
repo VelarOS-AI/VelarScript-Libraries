@@ -391,7 +391,7 @@
               }
             ],
             [
-              "velar:package:@velarscript-labs/compression@0.1.4/src/index.vel#type:CompressionOptions",
+              "velar:package:@velarscript-labs/compression@0.1.5/src/index.vel#type:CompressionOptions",
               {
                 "tag": "map",
                 "value": [
@@ -1878,7 +1878,7 @@
           "value": [
             [
               "CompressionOptions",
-              "velar:package:@velarscript-labs/compression@0.1.4/src/index.vel#type:CompressionOptions"
+              "velar:package:@velarscript-labs/compression@0.1.5/src/index.vel#type:CompressionOptions"
             ],
             [
               "velar/binary#type:Bytes",
@@ -1943,6 +1943,22 @@
                       "value": [
                         "little",
                         "big"
+                      ]
+                    }
+                  ],
+                  [
+                    "wireValues",
+                    {
+                      "tag": "map",
+                      "value": [
+                        [
+                          "little",
+                          "little"
+                        ],
+                        [
+                          "big",
+                          "big"
+                        ]
                       ]
                     }
                   ]

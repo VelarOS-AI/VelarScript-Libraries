@@ -4,10 +4,10 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/text-buffer",
-    "version": "0.10.9"
+    "version": "0.10.10"
   },
   "target": "core",
-  "compilerVersion": "0.15.0",
+  "compilerVersion": "0.18.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -20,9 +20,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "0fb054139e606c628dfdcc4d43f82a012fbcd1a4ec58b339386399a03e76bf89",
-      "sourceMap": "e486296120f95c9164ade32c07a97608f01674f6e1bef1fe3f7a4a5401cc4215",
-      "interface": "4fa16a6216600b8a1fd91fe03f97ee59572b64ea9a1d13ad3a225eea11d01a8e"
+      "javascript": "32e1c84248db6845f8c38e40b9e88defa25bbeaee03119c0bb8d28235dbc25b0",
+      "sourceMap": "52107d2d951052afe97f753adb521b91a1f25d5ed474178fe6609b6738a0a782",
+      "interface": "dd13d57f99d656ab4598aac576536b1be981f60c4d12fff317522f765e3eebe6"
     }
   }
 }

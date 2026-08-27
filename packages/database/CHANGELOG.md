@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3 — 2026-08-27
+
+- Rebuild the frozen library artifact with VelarScript 0.18, including the
+  current portable enum interface contract.
+
 ## 0.3.2 — 2026-08-25
 
 - Rebuild the frozen library artifact with VelarScript 0.15 and require the

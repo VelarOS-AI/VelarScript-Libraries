@@ -101,7 +101,7 @@ try {
   const consumer = join(temporary, "consumer");
   await mkdir(packs, { recursive: true });
   await mkdir(consumer, { recursive: true });
-  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.15.0";
+  const velarVersion = process.env.VELAR_CLI_VERSION ?? "0.18.0";
   const velarPackage = process.env.VELAR_CLI_PACKAGE;
   const verifyFrozenArtifacts = process.env.VELAR_VERIFY_FROZEN_ARTIFACTS !== "false";
   const dependencies = { "@velarscript/cli": velarPackage ? `file:${resolve(velarPackage)}` : velarVersion };
@@ -109,7 +109,11 @@ try {
 
   for (const entry of catalog.packages) {
     const result = await run(npmCommand, ["pack", "--ignore-scripts", "--workspace", entry.name, "--pack-destination", packs, "--json"], root);
-    const values = JSON.parse(result.stdout);
+    const output = JSON.parse(result.stdout);
+    // npm 11 在配合 --workspace 使用时，把 JSON 结果从数组改成了按包名
+    // 索引的对象；旧版本仍返回数组。这里只统一结果的外层形状，包描述本身
+    // 仍由后面的完整性与文件清单检查负责验证。
+    const values = Array.isArray(output) ? output : Object.values(output);
     assert.equal(values.length, 1, `npm pack returned an unexpected result for ${entry.name}`);
     const artifact = values[0];
     const path = join(packs, artifact.filename);

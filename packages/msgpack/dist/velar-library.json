@@ -4,10 +4,10 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/msgpack",
-    "version": "0.1.5"
+    "version": "0.1.6"
   },
   "target": "core",
-  "compilerVersion": "0.15.0",
+  "compilerVersion": "0.18.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -20,9 +20,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "8ce176d121d0364e329c0edc3a22b3d6087e608e59d69605ead3b48743a55339",
-      "sourceMap": "723f1503fbfd72bef25837ec592ca7a88fb2107ceb55616990c86bff97782f46",
-      "interface": "2833b08c57a82f40d8677a0c5fbaaf60667270d638de3577ea13181ca3bc3efa"
+      "javascript": "f647d5bc27c94716720879239da0a8596df5c513930aebb214335c1f428e0a45",
+      "sourceMap": "5f7e23b028a98c8db4c72bdb6d13b0ea7a10a5903d35a324eca146fdb028e3b6",
+      "interface": "b8f42119c83d4bf0e95f2f25ea141df23dc5e010fdc86117f275991dcf1968fb"
     }
   }
 }

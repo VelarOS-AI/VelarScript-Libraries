@@ -4,10 +4,10 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/compression",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "target": "core",
-  "compilerVersion": "0.15.0",
+  "compilerVersion": "0.18.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -20,9 +20,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "cb3323e33ac65efe88990ca5edf268683f0bcf06dd58d167f14319e6d3cc75fa",
-      "sourceMap": "52a0745609bd33435dc8cf428d0f343f6673a0ef979d6c658f8a1017fda66f8f",
-      "interface": "5c14140dbef18de75b3824df845ba4623c5370ee37e10ae31baff4c9906ec0a3"
+      "javascript": "16f186f6eeac040ab6e69ef55e743defdcd6c3e31f598e31a204f2e7ffe8aab5",
+      "sourceMap": "1acc546d9cc18aed1c78d8f49f276ad8bc5d8a00ee96fc23cf254abc99681b3c",
+      "interface": "d3d0d201ecb3c98a9e7508653cdc3f4a8a0f57eb8aee32f83a3d3da0021bd57a"
     }
   }
 }
