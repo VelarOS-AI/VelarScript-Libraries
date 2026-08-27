@@ -14,66 +14,6 @@
       "exports": "all",
       "unknownDegrade": [
         {
-          "path": "CapabilityCallFailureSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilityCallRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilityCallSuccessSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilitySessionCloseRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilitySessionCloseResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilitySessionOpenFailureSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilitySessionOpenRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "CapabilitySessionOpenSuccessSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsInstallFromDirectoryRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsInstallFromDirectoryResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsListRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsListResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsSetEnabledRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "ModsSetEnabledResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
-          "path": "RemoteNodeHelloSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
-        },
-        {
           "path": "VelarosModCapabilityRequirementSchema.id",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },

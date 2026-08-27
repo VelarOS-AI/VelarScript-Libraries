@@ -16,7 +16,7 @@
       "sourceVersion": "0.6.3",
       "schemaDigest": "sha256-5e450e4653f10fb446f7c58c76b6978746644ff693916e1c350e985404a378ff",
       "exportedSchemas": 92,
-      "declarations": 102,
+      "declarations": 108,
       "degrades": [
         {
           "path": "AgentModCommandHandlerSchema.entry",
@@ -137,11 +137,6 @@
           "path": "AgentModManifestSchema.locale",
           "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data",
           "zodType": "optional record"
-        },
-        {
-          "path": "AgentModManifestSchema.manifestSchemaVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
         },
         {
           "path": "AgentModManifestSchema.permissions",
@@ -279,109 +274,9 @@
           "zodType": "optional pipe"
         },
         {
-          "path": "ExecuteToolRequestSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExecuteToolResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeAckSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeCommandMessageSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeDisconnectSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeDisconnectedSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeErrorSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeEventAckSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeEventSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeHelloSchema.protocol",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeHelloSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
           "path": "ExternalAgentBridgeMessageSchema",
           "reason": "a union of two discriminated unions carries no single discriminator; the shell consumes the two halves directly",
           "zodType": "union"
-        },
-        {
-          "path": "ExternalAgentBridgePairSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgePairedSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgePingSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgePongSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeProbeSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeResumeSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ExternalAgentBridgeResumedSchema.version",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "LeaseDeniedResponseSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
-        },
-        {
-          "path": "ToolCatalogSnapshotSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
-          "zodType": "literal"
         }
       ],
       "constraints": [

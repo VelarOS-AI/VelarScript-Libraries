@@ -81,8 +81,19 @@ test("the committed reports state what each target degraded", () => {
   assert.equal(kernel.exportedSchemas, 56);
   // One exemption per exempted path: a schema object standing in two records
   // occupies two positions, and each one is a decision the consumer declares.
-  assert.equal(agent.degrades.length, 73);
-  assert.equal(kernel.degrades.length, 28);
+  // D102 ruling 1 took 21 of the agent's exemptions and 15 of the kernel's off
+  // this list: every one of them was an integer protocol-version literal, which
+  // the table now maps to a pinned enum member.
+  assert.equal(agent.degrades.length, 52);
+  assert.equal(kernel.degrades.length, 13);
+  assert.equal(agent.declarations, 108);
+  assert.equal(kernel.declarations, 76);
+  // No exemption left standing anywhere names an integer literal.
+  for (const module of [agent, kernel]) {
+    for (const degrade of module.degrades) {
+      assert.notEqual(degrade.zodType, "literal", `${degrade.path} is a literal the table now maps`);
+    }
+  }
   for (const module of [agent, kernel]) {
     assert.deepEqual(module.unusedDegrades, [], `${module.sourcePackage} carries a stale exemption`);
     for (const degrade of module.degrades) assert.ok(degrade.reason.length > 20, degrade.path);

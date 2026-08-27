@@ -9,9 +9,16 @@ import {
     HookEvent,
     Kind,
     MixedStrictness,
+    MixedTag,
+    MixedTagTag,
     Optionality,
     PlainRecord,
     Primitives,
+    Priority,
+    ProtocolFrame,
+    ProtocolFrameTag,
+    RegistrySnapshot,
+    RegistryVersion,
     ReservedWords,
     StreamEvent,
     StreamEventTag,
@@ -89,6 +96,36 @@ test "strictness is a property of the half that declares it":
     ))
     expect(Json.stringify(value)).toBe(`{"strict":{"value":"a"},"plain":{"value":"b"}}`)
     expect(MixedStrictness.is(Json.parse(`{"strict":{"value":"a"}}`))).toBeFalsy()
+
+// D102 ruling 1: an enum member's wire value may be a safe integer, which is
+// how a wire protocol pins its version.
+def frameLabel(frame: ProtocolFrame) -> string:
+    if frame.version == ProtocolFrameTag.value1: return f"v1:{frame.payload}"
+    return f"v2:{frame.payload}"
+
+test "an integer literal is an enum member carrying its number":
+    expect(RegistryVersion.is(Json.parse("1"))).toBeTruthy()
+    expect(RegistryVersion.is(Json.parse("2"))).toBeFalsy()
+    // A string is a different wire value, and neither parses as the other.
+    expect(RegistryVersion.is(Json.parse(`"1"`))).toBeFalsy()
+    const snapshot = RegistrySnapshot.parse(Json.parse(`{"version":1,"folders":["inbox"]}`))
+    expect(snapshot.folders.size).toBe(1)
+    expect(RegistrySnapshot.is(Json.parse(`{"version":2,"folders":[]}`))).toBeFalsy()
+    expect(Priority.is(Json.parse("2"))).toBeTruthy()
+    expect(Priority.is(Json.parse("3"))).toBeFalsy()
+
+test "an integer discriminator narrows the union its tag names":
+    expect(frameLabel(ProtocolFrame.parse(Json.parse(`{"version":1,"payload":"p"}`)))).toBe("v1:p")
+    expect(frameLabel(ProtocolFrame.parse(Json.parse(`{"version":2,"payload":"q"}`)))).toBe("v2:q")
+    expect(ProtocolFrame.is(Json.parse(`{"version":3,"payload":"p"}`))).toBeFalsy()
+    expect(ProtocolFrame.is(Json.parse(`{"version":"1","payload":"p"}`))).toBeFalsy()
+
+test "one tag enum carries both wire kinds without confusing them":
+    const named = MixedTag.parse(Json.parse(`{"kind":"named","name":"n"}`))
+    expect(named.kind == MixedTagTag.named).toBe(true)
+    const coded = MixedTag.parse(Json.parse(`{"kind":7,"code":3}`))
+    expect(coded.kind == MixedTagTag.value7).toBe(true)
+    expect(MixedTag.is(Json.parse(`{"kind":"7","code":3}`))).toBeFalsy()
 
 test "the channel table binds a validator to each channel name":
     expect(str(FixtureChannel.chatDescribeArticle)).toBe("chat:describe-article")

@@ -154,8 +154,38 @@ export const MixedStrictnessSchema = z.strictObject({
   plain: z.object({ value: z.string() }),
 });
 
+// D102 ruling 1: an integer literal is a single-member enum carrying a numeric
+// wire value, which is how a wire protocol pins its version.
+export const RegistryVersionSchema = z.literal(1);
+
+// The same literal inside the record that pins it, which is the shape a real
+// contract writes.
+export const RegistrySnapshotSchema = z.object({
+  version: z.literal(1),
+  folders: z.array(z.string()),
+});
+
+// An integer discriminator: the tag enum carries the numbers, and each case
+// narrows through its own member.
+export const ProtocolFrameSchema = z.discriminatedUnion("version", [
+  z.strictObject({ version: z.literal(1), payload: z.string() }),
+  z.strictObject({ version: z.literal(2), payload: z.string(), trace: z.string().optional() }),
+]);
+
+// One enum may carry both wire kinds: they are unique by value identity, and
+// neither parses as the other.
+export const MixedTagSchema = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("named"), name: z.string() }),
+  z.strictObject({ kind: z.literal(7), code: z.number() }),
+]);
+
+// z.enum over an integer-valued object reads its values the same way.
+export const PrioritySchema = z.enum({ Low: 1, High: 2 });
+
 // Outside the closed table on purpose: the fixture manifest degrades this
 // path, so the golden output carries an `unknown` field with a recorded reason.
+// The shape is mappable now — an exemption is the consumer's decision to read a
+// position as opaque data, not only an escape from a shape the table refuses.
 export const DegradedSchema = z.strictObject({
   protocolVersion: z.literal(2),
   payload: z.string(),

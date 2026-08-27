@@ -100,7 +100,7 @@ export type AgentModManifest:
     publisher: string?
     displayName: string?
     description: string?
-    manifestSchemaVersion: unknown
+    manifestSchemaVersion: AgentModManifestManifestSchemaVersion
     engines: AgentModEngines
     trust: AgentModManifestTrust
     permissions: unknown?
@@ -113,6 +113,10 @@ export type AgentModManifest:
 // Record shape of AgentModManifestSchema.budget.
 export type AgentModManifestBudget:
     residentPromptTokens: number?
+
+// Wire values of AgentModManifestSchema.manifestSchemaVersion.
+export enum AgentModManifestManifestSchemaVersion:
+    value1 = 1
 
 // Wire values of AgentModManifestSchema.trust.
 export enum AgentModManifestTrust:
@@ -311,16 +315,20 @@ export type DescribeToolSchemaResponse:
 
 // Record shape of ExecuteToolRequestSchema.
 export type ExecuteToolRequest:
-    protocolVersion: unknown
+    protocolVersion: ExecuteToolRequestProtocolVersion
     contractId: string
     catalogRevision: string
     toolCallId: string
     toolName: string
     input: Record<unknown>
 
+// Wire values of ExecuteToolRequestSchema.protocolVersion.
+export enum ExecuteToolRequestProtocolVersion:
+    value1 = 1
+
 // Record shape of ExecuteToolResponseSchema.
 export type ExecuteToolResponse:
-    protocolVersion: unknown
+    protocolVersion: ExecuteToolResponseProtocolVersion
     contractId: string
     catalogRevision: string
     toolCallId: string
@@ -328,6 +336,10 @@ export type ExecuteToolResponse:
     status: VelarToolResultStatus
     output: unknown?
     error: string?
+
+// Wire values of ExecuteToolResponseSchema.protocolVersion.
+export enum ExecuteToolResponseProtocolVersion:
+    value1 = 1
 
 // Discriminated union of ExecutionSpanSchema on 'category'.
 export type ExecutionSpan = RunSpan | TurnSpan | ModelSpan | ToolSpan | CapabilitySpan | PolicySpan
@@ -365,9 +377,13 @@ export enum ExecutionSpanTag:
 
 // Record shape of ExternalAgentBridgeAckSchema.
 export type ExternalAgentBridgeAck:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.ack
     sequence: number
+
+// Wire values of ExternalAgentBridgeAckSchema.version.
+export enum ExternalAgentBridgeAckVersion:
+    value2 = 2
 
 // Discriminated union of ExternalAgentBridgeClientMessageSchema on 'type'.
 export type ExternalAgentBridgeClientMessage = ExternalAgentBridgeProbe | ExternalAgentBridgePair | ExternalAgentBridgeResume | ExternalAgentBridgePing | ExternalAgentBridgeAck | ExternalAgentBridgeEvent | ExternalAgentBridgeDisconnect
@@ -390,46 +406,46 @@ export type ExternalAgentBridgeCommand:
 
 // Record shape of ExternalAgentBridgeCommandMessageSchema.
 export type ExternalAgentBridgeCommandMessage:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.command
     command: ExternalAgentBridgeCommand
 
 // Record shape of ExternalAgentBridgeDisconnectSchema.
 export type ExternalAgentBridgeDisconnect:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.disconnect
 
 // Record shape of ExternalAgentBridgeDisconnectedSchema.
 export type ExternalAgentBridgeDisconnected:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.disconnected
 
 // Record shape of ExternalAgentBridgeErrorSchema.
 export type ExternalAgentBridgeError:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.error
     code: string
     error: string
 
 // Record shape of ExternalAgentBridgeEventSchema.
 export type ExternalAgentBridgeEvent:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.event
     eventId: string
     event: Record<unknown>
 
 // Record shape of ExternalAgentBridgeEventAckSchema.
 export type ExternalAgentBridgeEventAck:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.eventAck
     eventId: string
 
 // Record shape of ExternalAgentBridgeHelloSchema.
 export type ExternalAgentBridgeHello:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.hello
     service: string
-    protocol: unknown
+    protocol: ExternalAgentBridgeAckVersion
     pairingAvailable: bool
     deviceId: string?
 
@@ -452,7 +468,7 @@ export type ExternalAgentBridgeMessage = unknown
 
 // Record shape of ExternalAgentBridgePairSchema.
 export type ExternalAgentBridgePair:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.pair
     code: string
     provider: string
@@ -463,30 +479,30 @@ export type ExternalAgentBridgePair:
 
 // Record shape of ExternalAgentBridgePairedSchema.
 export type ExternalAgentBridgePaired:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.paired
     token: string
     device: Record<unknown>
 
 // Record shape of ExternalAgentBridgePingSchema.
 export type ExternalAgentBridgePing:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.ping
 
 // Record shape of ExternalAgentBridgePongSchema.
 export type ExternalAgentBridgePong:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.pong
     at: number
 
 // Record shape of ExternalAgentBridgeProbeSchema.
 export type ExternalAgentBridgeProbe:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.probe
 
 // Record shape of ExternalAgentBridgeResumeSchema.
 export type ExternalAgentBridgeResume:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeClientMessageTag.resume
     token: string
     deviceId: string
@@ -494,7 +510,7 @@ export type ExternalAgentBridgeResume:
 
 // Record shape of ExternalAgentBridgeResumedSchema.
 export type ExternalAgentBridgeResumed:
-    version: unknown
+    version: ExternalAgentBridgeAckVersion
     type: ExternalAgentBridgeHostMessageTag.resumed
     device: Record<unknown>
     after: number
@@ -515,11 +531,15 @@ export enum LeaseDenialReason:
 
 // Record shape of LeaseDeniedResponseSchema.
 export type LeaseDeniedResponse:
-    protocolVersion: unknown
+    protocolVersion: LeaseDeniedResponseProtocolVersion
     status: LeaseDeniedResponseStatus
     reason: LeaseDenialReason
     contractId: string?
     latestCatalogRevision: string
+
+// Wire values of LeaseDeniedResponseSchema.protocolVersion.
+export enum LeaseDeniedResponseProtocolVersion:
+    value1 = 1
 
 // Wire values of LeaseDeniedResponseSchema.status.
 export enum LeaseDeniedResponseStatus:
@@ -725,9 +745,13 @@ export type ToolCatalogEntry:
 
 // Record shape of ToolCatalogSnapshotSchema.
 export type ToolCatalogSnapshot:
-    protocolVersion: unknown
+    protocolVersion: ToolCatalogSnapshotProtocolVersion
     catalogRevision: string
     tools: List<ToolCatalogEntry>
+
+// Wire values of ToolCatalogSnapshotSchema.protocolVersion.
+export enum ToolCatalogSnapshotProtocolVersion:
+    value1 = 1
 
 // Record shape of ToolResultPartSchema.
 export type ToolResultPart:

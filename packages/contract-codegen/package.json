@@ -40,7 +40,7 @@
     }
   },
   "devDependencies": {
-    "@velarscript/cli": "0.19.1",
+    "@velarscript/cli": "file:../../../VelarScript/packages/cli",
     "zod": "4.4.3"
   }
 }

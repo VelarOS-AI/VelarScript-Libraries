@@ -12,7 +12,13 @@ import {
     SessionEntryTag,
 } from "../generated/agent-protocol.vel"
 import {KernelChannel, kernelCapabilityCallResponse} from "../generated/kernel-channels.vel"
-import {CapabilityCallResponseTag, RemoteNodeClientFrame, RemoteNodeClientFrameTag} from "../generated/kernel-protocol.vel"
+import {
+    CapabilityCallResponseTag,
+    CapabilityCallSuccessProtocolVersion,
+    RemoteNodeClientFrame,
+    RemoteNodeClientFrameTag,
+    RemoteNodeHelloProtocolVersion,
+} from "../generated/kernel-protocol.vel"
 
 test "a session entry narrows to the payload its tag promises":
     const entry = SessionEntry.parse(Json.parse(
@@ -50,6 +56,22 @@ test "a remote node frame refuses a server tag on the client side":
         `{"type":"hello","protocolVersion":1,"clientId":"n-1","clientName":"laptop","platform":"darwin"}`,
     ))
     if hello.type == RemoteNodeClientFrameTag.hello: expect(hello.clientName).toBe("laptop")
+
+// D102 ruling 1: these were the 36 exemptions the two targets carried purely
+// because an integer wire value had no VelarScript spelling. Version pinning is
+// the anti-drift mechanism of these protocols, so this is what it buys.
+test "a platform protocol version is pinned rather than opaque":
+    expect(str(CapabilityCallSuccessProtocolVersion.value2)).toBe("2")
+    expect(CapabilityCallSuccessProtocolVersion.is(Json.parse("2"))).toBeTruthy()
+    expect(CapabilityCallSuccessProtocolVersion.is(Json.parse("3"))).toBeFalsy()
+    expect(CapabilityCallSuccessProtocolVersion.is(Json.parse(`"2"`))).toBeFalsy()
+    expect(kernelCapabilityCallResponse.is(Json.parse(
+        `{"protocolVersion":3,"callId":"c-1","status":"ok","output":{}}`,
+    ))).toBeFalsy()
+    expect(RemoteNodeClientFrame.is(Json.parse(
+        `{"type":"hello","protocolVersion":2,"clientId":"n-1","clientName":"laptop","platform":"darwin"}`,
+    ))).toBeFalsy()
+    expect(RemoteNodeHelloProtocolVersion.is(Json.parse("1"))).toBeTruthy()
 
 test "the channel table binds the platform's own request and event types":
     expect(str(AgentChannel.agentAdmit)).toBe("agent:admit")

@@ -452,7 +452,7 @@
       "module": "agent",
       "schema": "ExecuteToolRequest",
       "zodExport": "ExecuteToolRequestSchema",
-      "why": "a protocol version the degraded field no longer pins",
+      "why": "a protocol version the contract does not pin, now refused on both sides",
       "payload": {
         "protocolVersion": 99,
         "contractId": "c-1",
@@ -462,8 +462,7 @@
         "input": {}
       },
       "zod": false,
-      "vel": true,
-      "divergence": "degraded-to-unknown"
+      "vel": false
     },
     {
       "module": "agent",
@@ -830,6 +829,86 @@
       "zod": false,
       "vel": true,
       "divergence": "degraded-to-unknown"
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "the pinned kernel protocol version",
+      "payload": {
+        "protocolVersion": 2,
+        "callId": "c-1",
+        "status": "ok",
+        "output": {
+          "bytes": 3
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "a kernel protocol version the contract does not pin",
+      "payload": {
+        "protocolVersion": 3,
+        "callId": "c-1",
+        "status": "ok",
+        "output": {
+          "bytes": 3
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "the pinned version written as a string, which is a different wire value",
+      "payload": {
+        "protocolVersion": "2",
+        "callId": "c-1",
+        "status": "ok",
+        "output": {
+          "bytes": 3
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "ExternalAgentBridgeHello",
+      "zodExport": "ExternalAgentBridgeHelloSchema",
+      "why": "a host hello pinning both of its integer literals",
+      "payload": {
+        "version": 2,
+        "type": "hello",
+        "service": "agent",
+        "protocol": 2,
+        "pairingAvailable": true,
+        "deviceId": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ExternalAgentBridgeHello",
+      "zodExport": "ExternalAgentBridgeHelloSchema",
+      "why": "a host hello on a bridge version this contract does not speak",
+      "payload": {
+        "version": 3,
+        "type": "hello",
+        "service": "agent",
+        "protocol": 2,
+        "pairingAvailable": true,
+        "deviceId": null
+      },
+      "zod": false,
+      "vel": false
     }
   ]
 }

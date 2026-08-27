@@ -583,6 +583,54 @@ test("a plain z.object is an equivalence, not a widening", async () => {
   assert.match(refusal[0].reason, /keeps its surplus keys in the parsed value/u);
 });
 
+test("an integer literal is an enum member carrying its number", async () => {
+  const result = await lowerFixture("contracts.mjs");
+  const byName = new Map(result.declarations.map((declaration) => [declaration.name, declaration]));
+
+  // A standalone integer literal is a one-member enum; the number is never the
+  // member name, so it is always written out.
+  assert.deepEqual(byName.get("RegistryVersion").members, [{ name: "value1", wire: 1 }]);
+  assert.deepEqual(byName.get("Priority").members, [{ name: "value1", wire: 1 }, { name: "value2", wire: 2 }]);
+  assert.equal(renderType(byName.get("RegistrySnapshot").fields[0].type), "RegistrySnapshotVersion");
+
+  // An integer discriminator is a member of the union's tag enum, and each case
+  // narrows through it.
+  assert.deepEqual(
+    byName.get("ProtocolFrameTag").members,
+    [{ name: "value1", wire: 1 }, { name: "value2", wire: 2 }],
+  );
+  assert.equal(renderType(byName.get("ProtocolFrame").type), "ProtocolFrameValue1 | ProtocolFrameValue2");
+  assert.equal(renderType(byName.get("ProtocolFrameValue2").fields[0].type), "ProtocolFrameTag.value2");
+
+  // One enum carries both wire kinds: they are unique by value identity, and
+  // the string "7" is not the number 7.
+  assert.deepEqual(byName.get("MixedTagTag").members, [{ name: "named", wire: null }, { name: "value7", wire: 7 }]);
+  const mixed = lowerInline({
+    BothSchema: z.literal(["2", 2]),
+  });
+  assert.deepEqual(
+    mixed.declarations.find((declaration) => declaration.name === "Both").members,
+    [{ name: "value2", wire: "2" }, { name: "value22", wire: 2 }],
+  );
+
+  // A negative wire value keeps its own name: routing it through the string
+  // spelling would land -1 and 1 on one member and lose one of them.
+  const signed = lowerInline({ SignedSchema: z.literal([-1, 0, 1]) });
+  assert.deepEqual(
+    signed.declarations.find((declaration) => declaration.name === "Signed").members,
+    [{ name: "valueMinus1", wire: -1 }, { name: "value0", wire: 0 }, { name: "value1", wire: 1 }],
+  );
+
+  // Two cases behind one integer tag is the same fault as two behind one string.
+  const collided = refusalOf(() => lowerInline({
+    ClashSchema: z.discriminatedUnion("v", [
+      z.strictObject({ v: z.literal(1), a: z.string() }),
+      z.strictObject({ v: z.literal(1), b: z.string() }),
+    ]),
+  }));
+  assert.match(collided[0].reason, /discriminator value 1 is declared by more than one case/u);
+});
+
 test("a shape outside the table is refused with its schema path and reason", async () => {
   const cases = [
     ["LooseSchema", /keeps its surplus keys/u],
@@ -590,7 +638,13 @@ test("a shape outside the table is refused with its schema path and reason", asy
     ["TransformedSchema", /transform and effect schemas/u],
     ["DefaultedSchema", /default value changes the parsed result/u],
     ["CaughtSchema", /catch fallback/u],
-    ["NumericLiteralSchema", /no numeric or boolean singleton type/u],
+    // D102 ruling 1 stops at a string or a safe integer, so each of these says
+    // which side of that line it fell on.
+    ["BooleanLiteralSchema", /the boolean true cannot back a VelarScript enum member/u],
+    ["FractionalLiteralSchema", /1\.5, which is not a whole number/u],
+    ["UnsafeIntegerLiteralSchema", /outside the safe integer range/u],
+    ["NullLiteralSchema", /null cannot back a VelarScript enum member/u],
+    ["BooleanTagSchema", /a discriminator names one enum member, and the boolean true/u],
     ["DatedSchema", /host Date instance/u],
     ["UndiscriminatedSchema", /without a discriminator/u],
     ["EmptySchema", /zero-field record/u],
@@ -677,7 +731,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   // Both modes answer the same question about the tree, so a committed report
   // does not depend on whether the run that made it had to write.
   assert.deepEqual(checked.files, report.files);
-  assert.equal(checked.modules[0].exportedSchemas, 24);
+  assert.equal(checked.modules[0].exportedSchemas, 29);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);

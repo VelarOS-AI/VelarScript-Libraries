@@ -21,6 +21,16 @@ enforced: **zod 4** (developed against `zod@4.4.3`). A contract package that
 resolves another major is refused with both versions named, and nothing is
 written.
 
+### Which VelarScript the output needs
+
+A contract that pins an integer wire value — `z.literal(1)`, `z.literal(2)` —
+generates an enum member carrying that number, which is D102 ruling 1 and landed
+in the language **after `v0.20.1`**. No published release carries it yet, so the
+package's own `check` and `test` scripts run against a sibling VelarScript
+checkout through a `file:` devDependency; the catalog states the range as
+`>0.20.1`, which is the truthful answer until the next release ships. Output
+that contains no integer literal is unaffected and still checks on `0.19.x`.
+
 ## Install
 
 ```sh
@@ -101,7 +111,7 @@ it unformatted — so `"velarFormat": false` in a project without a toolchain on
 | `nonoptional` | the optionality it wraps is taken back: the key is required again |
 | `array` | `List<T>` |
 | `record(string, V)` | `Record<V>` |
-| `enum`, string `literal`, string literal union | `enum`, with a wire value for any member no identifier can spell |
+| `enum`, `literal`, literal union | `enum`, with a wire value for any member no identifier can spell. A wire value is a string or a safe integer (D102 ruling 1); an integer member reads `value2 = 2`, a negative one `valueMinus2 = -2` |
 | `object` | record `type`. Both strip a surplus key, so the two agree on every payload |
 | `strictObject` | record `type`, plus one counted `strict-unknown-keys` widening |
 | `lazy` and other self-references | a record that names itself; VelarScript records are recursive |
@@ -112,9 +122,11 @@ Anything else is **fail-closed**: generation stops and names the schema path and
 the reason. That covers catchall objects (`z.looseObject`, `.catchall(T)`: they
 keep a surplus key in the parsed value, which a fixed record shape cannot
 carry), `transform`/`pipe`/effects, `default`, `catch`, `z.date`, `z.any`,
-tuples, intersections, boolean literals, zero-field records, non-string record
-keys, record unions with no discriminator, and field names that are not
-VelarScript identifiers.
+tuples, intersections, zero-field records, non-string record keys, record unions
+with no discriminator, field names that are not VelarScript identifiers, and any
+literal whose value is not a string or a safe integer — a boolean, `null`, a
+fraction, a bigint, or an integer past `Number.MAX_SAFE_INTEGER`, each named for
+what it is.
 
 ### Surplus keys, and why `z.object` is the exact one
 
@@ -209,8 +221,14 @@ equivalence samples over real payloads.
 
 | Target | Exported schemas | Declarations | Degrades | Refinements reported |
 | --- | --- | --- | --- | --- |
-| `@velaros-ai/agent` `./protocol` | 92 | 102 | 73 | 48 |
-| `@velaros-ai/kernel` `./contracts/protocol` | 56 | 61 | 28 | 77 |
+| `@velaros-ai/agent` `./protocol` | 92 | 108 | 52 | 48 |
+| `@velaros-ai/kernel` `./contracts/protocol` | 56 | 76 | 13 | 77 |
+
+D102 ruling 1 took 21 exemptions off the agent's list and 15 off the kernel's:
+every one of them was an integer protocol-version literal, and each is now a
+pinned enum member the generated type checks. Version pinning is the anti-drift
+mechanism of these protocols, so it is the part that most needed to survive the
+crossing.
 
 Every degrade names a path and a reason; the reports list them in full. The
 committed reports carry no machine path and no record of whether the run that

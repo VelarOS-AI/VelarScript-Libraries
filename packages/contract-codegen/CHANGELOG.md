@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- Map an integer literal to an enum member carrying that number, which is D102
+  ruling 1 §4. `z.literal(1)` becomes a single-member enum; an integer
+  discriminator becomes a member of its union's tag enum; `z.enum({Low: 1})`
+  reads the same way; and one enum may carry both wire kinds, unique by value
+  identity, because the string `"2"` and the number `2` do not parse as each
+  other. A negative value keeps its own member name (`valueMinus2`) so `-2` and
+  `2` cannot collapse onto one. Boolean and `null` literals stay refused — no
+  ruling covers them — and the stale "VelarScript enums are string-backed"
+  wording is gone from every diagnostic, replaced by one that names the value
+  and the rule it fell outside of.
+- The two real targets lost 36 exemptions to that mapping: the agent's 73
+  degrades become 52 and the kernel's 28 become 13, every dropped one an integer
+  protocol-version literal that is now a pinned enum member.
+- Output containing an integer wire value needs a VelarScript newer than
+  `v0.20.1`, which no published release is yet; the package's own checks run
+  against a sibling checkout through a `file:` devDependency, and the catalog
+  states the range as `>0.20.1` rather than a version that cannot compile it.
 - Accept a plain `z.object`. D102 ruling 2 makes surplus-field stripping the
   permanent semantics of a VelarScript record, which is exactly what `z.object`
   does — the two agree on every payload — while `z.strictObject` is the spelling

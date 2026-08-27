@@ -62,6 +62,27 @@ export function enumMemberName(wire: string): string | null {
   return isVelarIdentifier(name) ? name : null;
 }
 
+/**
+ * D102 ruling 1 lets an enum member carry a safe integer wire value. A number
+ * is not an identifier, so the member reads `value2`, and a negative one reads
+ * `valueMinus2`: `-2` and `2` are two distinct wire values, and running the
+ * magnitude through the string spelling would land both on one name and lose
+ * one of them to the collision counter.
+ *
+ * `-0` and `0` are one wire value — they serialize identically and `===` cannot
+ * tell them apart — so they share the one name, as the language does.
+ */
+export function enumMemberNameForInteger(wire: number): string | null {
+  if (!Number.isSafeInteger(wire)) return null;
+  const magnitude = Math.abs(wire).toString(10);
+  return wire < 0 ? `valueMinus${magnitude}` : `value${magnitude}`;
+}
+
+/** The member name for either wire kind, so one caller handles a mixed enum. */
+export function wireMemberName(wire: string | number): string | null {
+  return typeof wire === "string" ? enumMemberName(wire) : enumMemberNameForInteger(wire);
+}
+
 /** Deterministic collision resolution: the second claimant gets `2`, the third `3`. */
 export class NameRegistry {
   readonly #taken = new Map<string, number>();

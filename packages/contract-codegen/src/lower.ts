@@ -17,7 +17,7 @@ import {
   type VelType,
 } from "./ir.js";
 import type { DegradeEntry } from "./manifest.js";
-import { NameRegistry, enumMemberName, isVelarIdentifier, pascalCase, stripSuffix } from "./naming.js";
+import { NameRegistry, isVelarIdentifier, pascalCase, stripSuffix, wireMemberName } from "./naming.js";
 import { isZodSchema, type ZodSchema } from "./zod-runtime.js";
 
 export interface UnmappedShape {
@@ -133,6 +133,37 @@ function enumWireValues(schema: ZodSchema): readonly unknown[] {
   const entries = def(schema)["entries"];
   if (typeof entries !== "object" || entries === null) return [];
   return Object.values(entries as Record<string, unknown>);
+}
+
+/**
+ * D102 ruling 1: an enum member's wire value is a string or a safe integer.
+ * Nothing else backs a member — a boolean, a fractional number, a bigint, and
+ * `null` all have to be named rather than guessed at.
+ */
+type WireValue = string | number;
+
+function isWireValue(value: unknown): value is WireValue {
+  return typeof value === "string" || (typeof value === "number" && Number.isSafeInteger(value));
+}
+
+/** Says what a value is, without `JSON.stringify`, which throws on a bigint. */
+function describeValue(value: unknown): string {
+  if (typeof value === "bigint") return `the bigint ${value.toString(10)}n`;
+  if (typeof value === "boolean") return `the boolean ${String(value)}`;
+  if (value === null) return "null";
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) return `${String(value)}, which is not a finite number`;
+    if (!Number.isInteger(value)) return `${String(value)}, which is not a whole number`;
+    return `${String(value)}, which is outside the safe integer range`;
+  }
+  if (typeof value === "undefined") return "undefined";
+  return `a ${typeof value}`;
+}
+
+/** Names the one rule every wire value has to satisfy, in one wording. */
+function wireValueRefusal(value: unknown): string {
+  return `${describeValue(value)} cannot back a VelarScript enum member: a member's wire value is a string or a `
+    + "safe integer (D102 ruling 1), and the language has no boolean or null singleton type";
 }
 
 /**
@@ -328,7 +359,7 @@ export function lowerModule(
     }
     switch (type) {
       case "literal":
-        if (literalValues(schema).every((value) => typeof value === "string")) {
+        if (literalValues(schema).every(isWireValue)) {
           declare(schema, canonical, `${options.prefix}${hint}`);
         }
         return;
@@ -405,7 +436,9 @@ export function lowerModule(
     const enumName = registry.claim(`${unionName}Tag`);
     const members: EnumMember[] = [];
     const memberNames = new NameRegistry();
-    const wires = new Set<string>();
+    // Keyed on the value itself, so `"2"` and `2` stay two wire values — which
+    // is the language's own rule: neither parses as the other.
+    const wires = new Set<WireValue>();
     let usable = true;
     cases.forEach((option, index) => {
       const casePath = `${path}|${index}`;
@@ -418,33 +451,39 @@ export function lowerModule(
       }
       const tagSchema = shapeOf(option)[discriminator];
       if (tagSchema === undefined || zodType(tagSchema) !== "literal") {
-        refuse(canonical, option, `case declares no string literal '${discriminator}' discriminator`);
+        refuse(canonical, option, `case declares no literal '${discriminator}' discriminator`);
         usable = false;
         return;
       }
       const values = literalValues(tagSchema);
-      if (values.length !== 1 || typeof values[0] !== "string") {
-        refuse(`${canonical}.${discriminator}`, tagSchema, "a discriminator must be exactly one string literal");
+      if (values.length !== 1) {
+        refuse(`${canonical}.${discriminator}`, tagSchema, "a discriminator must be exactly one literal value");
+        usable = false;
+        return;
+      }
+      if (!isWireValue(values[0])) {
+        refuse(`${canonical}.${discriminator}`, tagSchema, `a discriminator names one enum member, and ${wireValueRefusal(values[0])}`);
         usable = false;
         return;
       }
       const wire = values[0];
       // zod defers this to the first parse, where it throws. Two cases behind
-      // one tag would emit two enum members carrying the same runtime string,
+      // one tag would emit two enum members carrying the same runtime value,
       // and neither the tag nor the union would narrow.
       if (wires.has(wire)) {
         refuse(
           `${canonical}.${discriminator}`,
           tagSchema,
-          `discriminator value '${wire}' is declared by more than one case of this union, so the tag names no single case`,
+          `discriminator value ${JSON.stringify(wire)} is declared by more than one case of this union, `
+            + "so the tag names no single case",
         );
         usable = false;
         return;
       }
       wires.add(wire);
-      const base = enumMemberName(wire);
+      const base = wireMemberName(wire);
       if (base === null) {
-        refuse(`${canonical}.${discriminator}`, tagSchema, `tag '${wire}' has no VelarScript identifier form`);
+        refuse(`${canonical}.${discriminator}`, tagSchema, `tag ${JSON.stringify(wire)} has no VelarScript identifier form`);
         usable = false;
         return;
       }
@@ -461,7 +500,11 @@ export function lowerModule(
       const member = memberNames.claim(base);
       members.push({ name: member, wire: member === wire ? null : wire });
       caseTags.set(option, { enumName, member, discriminator });
-      const caseName = declare(option, canonical, `${options.prefix}${caseHint}${pascalCase(wire)}`);
+      // A string tag names its case after the wire spelling; an integer has no
+      // readable spelling of its own, so the case reads under the member name
+      // the reader will actually see (`FrameValue2`, not `Frame2`).
+      const caseSuffix = typeof wire === "string" ? pascalCase(wire) : pascalCase(base);
+      const caseName = declare(option, canonical, `${options.prefix}${caseHint}${caseSuffix}`);
       discovered.add(option);
       discoverFields(option, canonical, childHint(caseName), depth + 1);
     });
@@ -630,14 +673,13 @@ export function lowerModule(
       case "object":
         refuse(path, schema, "object shape was not registered during naming");
         return PRIMITIVE_UNKNOWN;
-      case "literal":
-        refuse(
-          path,
-          schema,
-          `literal values ${JSON.stringify(literalValues(schema))} are not all strings; VelarScript enums are `
-            + "string-backed and the language has no numeric or boolean singleton type",
-        );
+      case "literal": {
+        // Naming declared every literal whose values are all wire values, so a
+        // literal that reaches here carries at least one that is not.
+        const offending = literalValues(schema).find((value) => !isWireValue(value));
+        refuse(path, schema, wireValueRefusal(offending));
         return PRIMITIVE_UNKNOWN;
+      }
       case "any":
         refuse(path, schema, "z.any() opts out of validation; declare z.unknown() or degrade this path explicitly");
         return PRIMITIVE_UNKNOWN;
@@ -715,17 +757,20 @@ export function lowerModule(
     const wires = zodType(schema) === "enum" ? enumWireValues(schema) : literalValues(schema);
     const members: EnumMember[] = [];
     const memberNames = new NameRegistry();
-    const seen = new Set<string>();
+    // Value identity across the two wire kinds, which is the language's rule:
+    // a `Set` separates the string `"2"` from the number `2`, and both may
+    // stand in one enum because neither parses as the other.
+    const seen = new Set<WireValue>();
     for (const wire of wires) {
-      if (typeof wire !== "string") {
-        refuse(path, schema, `value ${JSON.stringify(wire)} is not a string; VelarScript enums are string-backed`);
+      if (!isWireValue(wire)) {
+        refuse(path, schema, wireValueRefusal(wire));
         return null;
       }
       if (seen.has(wire)) continue;
       seen.add(wire);
-      const base = enumMemberName(wire);
+      const base = wireMemberName(wire);
       if (base === null) {
-        refuse(path, schema, `value '${wire}' has no VelarScript identifier form`);
+        refuse(path, schema, `value ${JSON.stringify(wire)} has no VelarScript identifier form`);
         return null;
       }
       const member = memberNames.claim(base);

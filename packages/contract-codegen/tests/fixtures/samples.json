@@ -1107,6 +1107,232 @@
       },
       "zod": false,
       "vel": false
+    },
+    {
+      "schema": "RegistryVersion",
+      "zodExport": "RegistryVersionSchema",
+      "why": "the pinned protocol version",
+      "payload": 1,
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "RegistryVersion",
+      "zodExport": "RegistryVersionSchema",
+      "why": "a version the contract does not pin",
+      "payload": 2,
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "RegistryVersion",
+      "zodExport": "RegistryVersionSchema",
+      "why": "the version written as a string, which is a different wire value",
+      "payload": "1",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "RegistrySnapshot",
+      "zodExport": "RegistrySnapshotSchema",
+      "why": "a pinned snapshot",
+      "payload": {
+        "version": 1,
+        "folders": [
+          "inbox"
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "RegistrySnapshot",
+      "zodExport": "RegistrySnapshotSchema",
+      "why": "a surplus key, which the plain object and the record both strip",
+      "payload": {
+        "version": 1,
+        "folders": [],
+        "extra": 1
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "RegistrySnapshot",
+      "zodExport": "RegistrySnapshotSchema",
+      "why": "the next protocol version, which this contract does not accept",
+      "payload": {
+        "version": 2,
+        "folders": []
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "RegistrySnapshot",
+      "zodExport": "RegistrySnapshotSchema",
+      "why": "the version as a string",
+      "payload": {
+        "version": "1",
+        "folders": []
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "RegistrySnapshot",
+      "zodExport": "RegistrySnapshotSchema",
+      "why": "the version key left out",
+      "payload": {
+        "folders": []
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "the version 1 case",
+      "payload": {
+        "version": 1,
+        "payload": "p"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "the version 2 case with its optional field",
+      "payload": {
+        "version": 2,
+        "payload": "p",
+        "trace": "t"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "the version 2 case without it",
+      "payload": {
+        "version": 2,
+        "payload": "p"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "a version no case declares",
+      "payload": {
+        "version": 3,
+        "payload": "p"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "the version 1 field on the version 2 case",
+      "payload": {
+        "version": 1,
+        "payload": "p",
+        "trace": "t"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "strict-unknown-keys"
+    },
+    {
+      "schema": "ProtocolFrame",
+      "zodExport": "ProtocolFrameSchema",
+      "why": "an integer tag written as a string",
+      "payload": {
+        "version": "1",
+        "payload": "p"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "MixedTag",
+      "zodExport": "MixedTagSchema",
+      "why": "the string-tagged case",
+      "payload": {
+        "kind": "named",
+        "name": "n"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MixedTag",
+      "zodExport": "MixedTagSchema",
+      "why": "the integer-tagged case",
+      "payload": {
+        "kind": 7,
+        "code": 3
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MixedTag",
+      "zodExport": "MixedTagSchema",
+      "why": "the integer tag written as a string, which is not the same wire value",
+      "payload": {
+        "kind": "7",
+        "code": 3
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "MixedTag",
+      "zodExport": "MixedTagSchema",
+      "why": "the wrong payload behind the integer tag",
+      "payload": {
+        "kind": 7,
+        "name": "n"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Priority",
+      "zodExport": "PrioritySchema",
+      "why": "the low member",
+      "payload": 1,
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Priority",
+      "zodExport": "PrioritySchema",
+      "why": "the high member",
+      "payload": 2,
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Priority",
+      "zodExport": "PrioritySchema",
+      "why": "a value between the two members",
+      "payload": 3,
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Priority",
+      "zodExport": "PrioritySchema",
+      "why": "a member spelled as a string",
+      "payload": "1",
+      "zod": false,
+      "vel": false
     }
   ]
 }

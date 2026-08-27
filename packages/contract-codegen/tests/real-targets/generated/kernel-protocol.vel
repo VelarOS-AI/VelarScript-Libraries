@@ -12,20 +12,28 @@ export type CapabilityCallError:
 
 // Record shape of CapabilityCallFailureSchema.
 export type CapabilityCallFailure:
-    protocolVersion: unknown
+    protocolVersion: CapabilityCallFailureProtocolVersion
     callId: string
     status: CapabilityCallResponseTag.error
     error: CapabilityCallError
 
+// Wire values of CapabilityCallFailureSchema.protocolVersion.
+export enum CapabilityCallFailureProtocolVersion:
+    value2 = 2
+
 // Record shape of CapabilityCallRequestSchema.
 export type CapabilityCallRequest:
-    protocolVersion: unknown
+    protocolVersion: CapabilityCallRequestProtocolVersion
     callId: string
     sessionId: string
     capabilityId: string
     operation: string
     scope: ScopeRef?
     input: unknown
+
+// Wire values of CapabilityCallRequestSchema.protocolVersion.
+export enum CapabilityCallRequestProtocolVersion:
+    value2 = 2
 
 // Discriminated union of CapabilityCallResponseSchema on 'status'.
 export type CapabilityCallResponse = CapabilityCallSuccess | CapabilityCallFailure
@@ -37,10 +45,14 @@ export enum CapabilityCallResponseTag:
 
 // Record shape of CapabilityCallSuccessSchema.
 export type CapabilityCallSuccess:
-    protocolVersion: unknown
+    protocolVersion: CapabilityCallSuccessProtocolVersion
     callId: string
     status: CapabilityCallResponseTag.ok
     output: unknown
+
+// Wire values of CapabilityCallSuccessSchema.protocolVersion.
+export enum CapabilityCallSuccessProtocolVersion:
+    value2 = 2
 
 // Wire values of CapabilityIsolationSchema.
 export enum CapabilityIsolation:
@@ -62,24 +74,40 @@ export type CapabilityRequirement:
 
 // Record shape of CapabilitySessionCloseRequestSchema.
 export type CapabilitySessionCloseRequest:
-    protocolVersion: unknown
+    protocolVersion: CapabilitySessionCloseRequestProtocolVersion
     sessionId: string
+
+// Wire values of CapabilitySessionCloseRequestSchema.protocolVersion.
+export enum CapabilitySessionCloseRequestProtocolVersion:
+    value2 = 2
 
 // Record shape of CapabilitySessionCloseResponseSchema.
 export type CapabilitySessionCloseResponse:
-    protocolVersion: unknown
+    protocolVersion: CapabilitySessionCloseResponseProtocolVersion
     closed: bool
+
+// Wire values of CapabilitySessionCloseResponseSchema.protocolVersion.
+export enum CapabilitySessionCloseResponseProtocolVersion:
+    value2 = 2
 
 // Record shape of CapabilitySessionOpenFailureSchema.
 export type CapabilitySessionOpenFailure:
-    protocolVersion: unknown
+    protocolVersion: CapabilitySessionOpenFailureProtocolVersion
     status: CapabilitySessionOpenResponseTag.error
     error: CapabilityCallError
 
+// Wire values of CapabilitySessionOpenFailureSchema.protocolVersion.
+export enum CapabilitySessionOpenFailureProtocolVersion:
+    value2 = 2
+
 // Record shape of CapabilitySessionOpenRequestSchema.
 export type CapabilitySessionOpenRequest:
-    protocolVersion: unknown
+    protocolVersion: CapabilitySessionOpenRequestProtocolVersion
     requires: List<CapabilityRequireItem>
+
+// Wire values of CapabilitySessionOpenRequestSchema.protocolVersion.
+export enum CapabilitySessionOpenRequestProtocolVersion:
+    value2 = 2
 
 // Discriminated union of CapabilitySessionOpenResponseSchema on 'status'.
 export type CapabilitySessionOpenResponse = CapabilitySessionOpenSuccess | CapabilitySessionOpenFailure
@@ -91,10 +119,14 @@ export enum CapabilitySessionOpenResponseTag:
 
 // Record shape of CapabilitySessionOpenSuccessSchema.
 export type CapabilitySessionOpenSuccess:
-    protocolVersion: unknown
+    protocolVersion: CapabilitySessionOpenSuccessProtocolVersion
     status: CapabilitySessionOpenResponseTag.ok
     sessionId: string
     requires: List<CapabilityRequireItem>
+
+// Wire values of CapabilitySessionOpenSuccessSchema.protocolVersion.
+export enum CapabilitySessionOpenSuccessProtocolVersion:
+    value2 = 2
 
 // Record shape of CapabilityTokenSchema.
 export type CapabilityToken:
@@ -151,35 +183,59 @@ export type KernelSessionIdentity:
 
 // Record shape of ModsInstallFromDirectoryRequestSchema.
 export type ModsInstallFromDirectoryRequest:
-    protocolVersion: unknown
+    protocolVersion: ModsInstallFromDirectoryRequestProtocolVersion
     directory: string
+
+// Wire values of ModsInstallFromDirectoryRequestSchema.protocolVersion.
+export enum ModsInstallFromDirectoryRequestProtocolVersion:
+    value2 = 2
 
 // Record shape of ModsInstallFromDirectoryResponseSchema.
 export type ModsInstallFromDirectoryResponse:
-    protocolVersion: unknown
+    protocolVersion: ModsInstallFromDirectoryResponseProtocolVersion
     pack: KernelModPackDescriptor
     reloadRequired: bool
 
+// Wire values of ModsInstallFromDirectoryResponseSchema.protocolVersion.
+export enum ModsInstallFromDirectoryResponseProtocolVersion:
+    value2 = 2
+
 // Record shape of ModsListRequestSchema.
 export type ModsListRequest:
-    protocolVersion: unknown
+    protocolVersion: ModsListRequestProtocolVersion
+
+// Wire values of ModsListRequestSchema.protocolVersion.
+export enum ModsListRequestProtocolVersion:
+    value2 = 2
 
 // Record shape of ModsListResponseSchema.
 export type ModsListResponse:
-    protocolVersion: unknown
+    protocolVersion: ModsListResponseProtocolVersion
     packs: List<KernelModPackDescriptor>
+
+// Wire values of ModsListResponseSchema.protocolVersion.
+export enum ModsListResponseProtocolVersion:
+    value2 = 2
 
 // Record shape of ModsSetEnabledRequestSchema.
 export type ModsSetEnabledRequest:
-    protocolVersion: unknown
+    protocolVersion: ModsSetEnabledRequestProtocolVersion
     id: string
     enabled: bool
 
+// Wire values of ModsSetEnabledRequestSchema.protocolVersion.
+export enum ModsSetEnabledRequestProtocolVersion:
+    value2 = 2
+
 // Record shape of ModsSetEnabledResponseSchema.
 export type ModsSetEnabledResponse:
-    protocolVersion: unknown
+    protocolVersion: ModsSetEnabledResponseProtocolVersion
     ok: bool
     reloadRequired: bool
+
+// Wire values of ModsSetEnabledResponseSchema.protocolVersion.
+export enum ModsSetEnabledResponseProtocolVersion:
+    value2 = 2
 
 // Record shape of RemoteNodeAuthenticateSchema.
 export type RemoteNodeAuthenticate:
@@ -233,10 +289,14 @@ export type RemoteNodeFatal:
 // Record shape of RemoteNodeHelloSchema.
 export type RemoteNodeHello:
     type: RemoteNodeClientFrameTag.hello
-    protocolVersion: unknown
+    protocolVersion: RemoteNodeHelloProtocolVersion
     clientId: string
     clientName: string
     platform: RemoteNodePlatform
+
+// Wire values of RemoteNodeHelloSchema.protocolVersion.
+export enum RemoteNodeHelloProtocolVersion:
+    value1 = 1
 
 // Record shape of RemoteNodeIdentitySchema.
 export type RemoteNodeIdentity:

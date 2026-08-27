@@ -16,8 +16,13 @@ export interface RecordField {
 
 export interface EnumMember {
   readonly name: string;
-  /** Wire string when it differs from the member name, otherwise `null`. */
-  readonly wire: string | null;
+  /**
+   * The runtime wire value when it differs from the member name, otherwise
+   * `null`. D102 ruling 1 extends it from a string to a string or a safe
+   * integer; an integer is never spelled by the member name, so it is always
+   * written out.
+   */
+  readonly wire: string | number | null;
 }
 
 export type Declaration =

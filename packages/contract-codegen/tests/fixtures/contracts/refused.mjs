@@ -18,8 +18,25 @@ export const DefaultedSchema = z.strictObject({ mode: z.string().default("blocki
 // catch fallback
 export const CaughtSchema = z.strictObject({ mode: z.string().catch("blocking") });
 
-// numeric literal: VelarScript enums are string-backed
-export const NumericLiteralSchema = z.strictObject({ protocolVersion: z.literal(2) });
+// D102 ruling 1 extends a wire value to a string or a safe integer and no
+// further: a boolean singleton is not a shape the language has, and no ruling
+// covers one.
+export const BooleanLiteralSchema = z.strictObject({ enabled: z.literal(true) });
+
+// a fractional literal is not an integer wire value
+export const FractionalLiteralSchema = z.strictObject({ ratio: z.literal(1.5) });
+
+// beyond Number.MAX_SAFE_INTEGER, where equality stops distinguishing values
+export const UnsafeIntegerLiteralSchema = z.strictObject({ id: z.literal(9007199254740993) });
+
+// a null singleton is not an enum member either
+export const NullLiteralSchema = z.strictObject({ nothing: z.literal(null) });
+
+// a boolean discriminator names no enum member
+export const BooleanTagSchema = z.discriminatedUnion("ok", [
+  z.strictObject({ ok: z.literal(true), value: z.string() }),
+  z.strictObject({ ok: z.literal(false), message: z.string() }),
+]);
 
 // host Date
 export const DatedSchema = z.strictObject({ at: z.date() });

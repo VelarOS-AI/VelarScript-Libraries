@@ -6,6 +6,11 @@ This directory holds the acceptance run against real, shipped wire contracts:
 output, so the acceptance keeps its value on a machine with no platform
 checkout.
 
+The generated declarations carry integer enum wire values (D102 ruling 1), so
+`velar check` and `velar test` over this directory need a VelarScript newer than
+`v0.20.1` — the package's `file:` devDependency on a sibling checkout is what
+supplies it until the next release.
+
 | File | What it is |
 | --- | --- |
 | `agent.manifest.json`, `kernel.manifest.json` | The generator input, including every `unknownDegrade` exemption with its reason. |

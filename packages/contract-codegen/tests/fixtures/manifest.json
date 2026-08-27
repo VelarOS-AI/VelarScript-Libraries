@@ -15,7 +15,7 @@
       "unknownDegrade": [
         {
           "path": "DegradedSchema.protocolVersion",
-          "reason": "numeric protocol-version literal: VelarScript enums are string-backed, so the consumer compares the version itself"
+          "reason": "the consumer forwards this envelope to another process without reading its version, so the position is opaque data here even though the table now maps an integer literal"
         }
       ]
     }
