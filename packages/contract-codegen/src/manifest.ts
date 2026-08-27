@@ -134,7 +134,11 @@ function readDegrades(value: unknown, path: string): DegradeEntry[] {
 }
 
 function readChannels(value: unknown, path: string): ChannelBinding[] {
-  return array(value, path).map((entry, index) => {
+  const entries = array(value, path);
+  // A table with no channels emits an enum with no members, which is not
+  // VelarScript. The manifest is where that is still a sentence to correct.
+  if (entries.length === 0) fail(path, "must declare at least one channel");
+  return entries.map((entry, index) => {
     const item = object(entry, `${path}[${index}]`);
     const binding: ChannelBinding = {
       name: string(item["name"], `${path}[${index}].name`),

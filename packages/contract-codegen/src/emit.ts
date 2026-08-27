@@ -74,6 +74,11 @@ export function renderChannelTable(
   constants: readonly ChannelConstant[],
   bindings: readonly ChannelTypeBinding[],
 ): string {
+  // A member-less enum is not a VelarScript declaration. Emitting one would put
+  // the failure in the consuming project's `velar check` instead of here.
+  if (constants.length === 0) {
+    throw new Error(`channel table '${enumName}' has no channels; a VelarScript enum needs at least one member`);
+  }
   const imported = [...new Set(bindings.map((binding) => binding.type))].sort();
   const blocks: string[] = [renderHeader(header)];
   if (imported.length > 0) blocks.push(`import {${imported.join(", ")}} from "${typesImport}"`);
