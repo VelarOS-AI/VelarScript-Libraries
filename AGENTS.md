@@ -32,5 +32,11 @@ frameworks, or `velar lsp` server.
 - Run the narrow package checks first, then `npm run validate`. Validation must
   exercise packed tarballs in an isolated consumer before a package is ready
   for release.
+- A package whose boundary is a browser capability owns a runnable application
+  under `examples/`, driven by that package's own `test:browser` script in
+  Chromium and WebKit, and reached from the repository by `npm run test:browser`.
+  The example lives beside `packages/` rather than inside the package because a
+  Core project's `velar check` walks its whole directory tree for test roots and
+  does not stop at a nested `velar.json`.
 - Preserve unrelated work. Commit, push, tag, npm publication, removal, and
   deprecation are separate authorization boundaries.

@@ -76,6 +76,18 @@ runs its real dependency tests, packs all public artifacts, installs those
 tarballs into a clean consumer, compiles and runs a consumer program without
 compiling package source, and imports the packed editor tooling.
 
+A package whose boundary is a browser capability is checked in a browser as
+well. That gate is separate because it needs engines installed:
+
+```sh
+npx playwright install chromium webkit
+npm run test:browser
+```
+
+It builds the applications under [`examples/`](examples) and drives them in
+Chromium and WebKit. Each example belongs to the package it exercises and is
+run by that package's `test:browser` script.
+
 Package publication is intentionally not part of `validate`. Commit, push,
 tag, npm publication, removal of the legacy `@velarscript/*` packages, and
 deprecation remain separately auditable operations.
