@@ -1,0 +1,159 @@
+/// The adapter's real gate: the whole chain running in Chromium and WebKit
+/// against the deterministic frame fixtures.
+///
+/// The page reports two lines the assertions are built from.
+///   `[data-geometry]` is `x y width height scale pixelRatio` in backing-store
+///   pixels. No two fixtures share an aspect ratio, so this line names the frame
+///   that is on screen.
+///   `[data-stats]` is `submitted drawn dropped failed lastDrawnSequence`.
+///
+/// The page polls the surface, so every assertion is written against a settled
+/// state, and `waitForText` is what waits for it.
+import {expect} from "velar/test"
+import {browser} from "velar/web-test"
+
+test "a submitted frame is decoded, drawn, and reported as a proportional letterbox":
+    await browser.open("/")
+    // The surface owns the backing store from the moment it attaches: 320x180
+    // CSS pixels at ratio 1.
+    await browser.waitForText("[data-backing]", "320x180")
+    await browser.waitForText("[data-geometry]", "0 0 0 0 0 1")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+
+    // Frame 1 is 80x60 on a 320x180 surface: 4:3 inside 16:9 is bounded by
+    // height, so it is scaled 3x to 240x180 and centred with 40px bars.
+    await browser.click("[data-frame-1]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+    expect(await browser.text("[data-geometry]")).toBe("40 0 240 180 3 1")
+
+test "two frames submitted in one turn are both drawn":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    // Frames 3 (40x45) and 4 (80x30) land in the same turn of the event loop.
+    // The first one starts decoding immediately and the second one is the single
+    // waiting frame, so nothing is dropped — the keep-latest rule discards a
+    // *waiting* frame, not every frame in a burst.
+    await browser.click("[data-pair]")
+    await browser.waitForText("[data-stats]", "2 2 0 0 2")
+    // 80x30 is bounded by width: 4x to 320x120, centred with 30px bars.
+    expect(await browser.text("[data-geometry]")).toBe("0 30 320 120 4 1")
+
+test "keep-latest drops exactly the frames that never reached the decoder":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-frame-1]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+
+    // Frames 2, 3, 4 and 5 arrive as sequences 2..5 inside one turn of the event
+    // loop, each behind a 20ms stall that holds the main thread so the decode
+    // already running cannot finish inside the burst.
+    await browser.click("[data-burst]")
+    await browser.waitForText("[data-stats]", "5 3 2 0 5")
+
+    // Which two were dropped follows from those counters and the fixed order.
+    // Sequence 2 started decoding the moment it arrived, because the surface was
+    // idle; 3 and 4 were each replaced while waiting; 5 was the replacement the
+    // decoder picked up. Any other history gives different counters: had the
+    // decode of 2 finished before 3 arrived, 3 would have started decoding and
+    // only one frame would have been dropped.
+    // Frame 5 is 160x45 — bounded by width, 2x to 320x90 with 45px bars — and
+    // that is what the geometry says is on screen.
+    expect(await browser.text("[data-geometry]")).toBe("0 45 320 90 2 1")
+
+test "the letterbox follows the element across a resize":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    // Frame 2 is 80x45, exactly 16:9, so it fills a 320x180 surface.
+    await browser.click("[data-frame-2]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+    expect(await browser.text("[data-geometry]")).toBe("0 0 320 180 4 1")
+
+    // 480x180 CSS pixels: the frame is now bounded by height, drawn 4x at
+    // 320x180 with 80px bars, and the backing store follows the element.
+    await browser.click("[data-wide]")
+    await browser.waitForText("[data-backing]", "480x180")
+    await browser.waitForText("[data-geometry]", "80 0 320 180 4 1")
+
+    await browser.click("[data-wide]")
+    await browser.waitForText("[data-backing]", "320x180")
+    await browser.waitForText("[data-geometry]", "0 0 320 180 4 1")
+
+test "a JPEG frame decodes through the same path as a PNG frame":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    // 16x12 is 4:3 like frame 1, so it lands in the same box at 15x instead of
+    // 3x — the scale is what says which of the two is on screen.
+    await browser.click("[data-jpeg]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+    expect(await browser.text("[data-geometry]")).toBe("40 0 240 180 15 1")
+
+test "a decode failure enters the bounded error stream without stopping the surface":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-frame-1]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+
+    // Six undecodable frames, one at a time, become sequences 2..7. Nothing is
+    // pulling the error stream yet and its capacity is 4, so the two oldest
+    // records are evicted.
+    await browser.click("[data-broken]")
+    await browser.waitForText("[data-stats]", "7 1 0 6 1")
+    // The surface still shows frame 1: a failure is not a reason to blank it.
+    expect(await browser.text("[data-geometry]")).toBe("40 0 240 180 3 1")
+
+    // The first record the reader sees is sequence 4, and it says the two before
+    // it were discarded. The rest arrive with nothing missing between them.
+    await browser.click("[data-watch]")
+    await browser.waitForText("[data-errors]", "4:2 5:0 6:0 7:0")
+    expect((await browser.text("[data-error-reason]")).size > 0).toBe(true)
+    expect(await browser.text("[data-stream]")).toBe("watching")
+
+    // Frames after the failures are decoded and drawn as usual.
+    await browser.click("[data-frame-2]")
+    await browser.waitForText("[data-stats]", "8 2 0 6 8")
+    expect(await browser.text("[data-geometry]")).toBe("0 0 320 180 4 1")
+
+test "a frame whose metadata disagrees with its pixels is refused by name":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-watch]")
+    await browser.waitForText("[data-stream]", "watching")
+    // A perfectly good 80x60 PNG announced as 80x45.
+    await browser.click("[data-mismatch]")
+    await browser.waitForText("[data-stats]", "1 0 0 1 0")
+    await browser.waitForText("[data-errors]", "1:0")
+    expect(await browser.text("[data-error-reason]")).toBe("the decoded image is 80x60 and the frame declared 80x45")
+
+test "releasing stops the surface, closes the stream, and fails a later frame":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-watch]")
+    await browser.waitForText("[data-stream]", "watching")
+    await browser.click("[data-frame-1]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+
+    await browser.click("[data-release]")
+    // The parked reader is answered with the end of the stream rather than left
+    // waiting, and the surface reports nothing on screen.
+    await browser.waitForText("[data-stream]", "closed")
+    await browser.waitForText("[data-geometry]", "0 0 0 0 0 1")
+    expect(await browser.text("[data-stats]")).toBe("1 1 0 0 1")
+
+    await browser.click("[data-submit-after-release]")
+    await browser.waitForText("[data-failure]", "This screencast surface is released")
+
+test "a released surface can be replaced by one at a different pixel ratio":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-release]")
+    // Reattaching releases again first, which a released surface must tolerate.
+    await browser.click("[data-reattach]")
+    await browser.waitForText("[data-ratio]", "2")
+    await browser.waitForText("[data-stream]", "watching")
+
+    // 320x180 CSS pixels at ratio 2 is a 640x360 backing store, and frame 1 is
+    // drawn 6x at 480x360 inside it.
+    await browser.click("[data-frame-1]")
+    await browser.waitForText("[data-stats]", "1 1 0 0 1")
+    await browser.waitForText("[data-backing]", "640x360")
+    expect(await browser.text("[data-geometry]")).toBe("80 0 480 360 6 2")

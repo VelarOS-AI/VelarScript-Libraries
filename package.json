@@ -5,12 +5,14 @@
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "build": "node scripts/run-workspaces.mjs build",
     "check": "node scripts/check-repository.mjs && node scripts/run-workspaces.mjs check",
     "test": "node scripts/run-workspaces.mjs test",
+    "test:browser": "node scripts/run-workspaces.mjs test:browser",
     "pack:check": "npm run build && node scripts/verify-packed-consumers.mjs",
     "publish:npm": "node scripts/publish-npm.mjs",
     "validate": "npm run check && npm test && npm run pack:check"
