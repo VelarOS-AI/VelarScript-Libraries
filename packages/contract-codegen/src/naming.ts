@@ -73,9 +73,13 @@ export class NameRegistry {
       this.#taken.set(requested, 1);
       return requested;
     }
-    const next = existing + 1;
-    this.#taken.set(requested, next);
+    // The counter is per requested name, but the answer has to be free of every
+    // name already handed out: with `Event2` claimed first, a second `Event`
+    // must not be answered with `Event2` and collapse the two declarations.
+    let next = existing + 1;
+    while (this.#taken.has(`${requested}${next}`)) next += 1;
     const name = `${requested}${next}`;
+    this.#taken.set(requested, next);
     this.#taken.set(name, 1);
     this.#collisions.push({ name, requested });
     return name;
