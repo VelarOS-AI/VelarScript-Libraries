@@ -142,6 +142,15 @@ test "releasing stops the surface, closes the stream, and fails a later frame":
     await browser.click("[data-submit-after-release]")
     await browser.waitForText("[data-failure]", "This screencast surface is released")
 
+test "a surface owned with using is released on the way out of its scope":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    // The page runs the same owning scope twice over its second canvas. The
+    // second one could not have attached at all unless the first one's release
+    // contract had already run.
+    await browser.click("[data-owned-scope]")
+    await browser.waitForText("[data-owned]", "released")
+
 test "a canvas has one owner and the error stream has one reader":
     await browser.open("/")
     await browser.waitForText("[data-stats]", "0 0 0 0 0")

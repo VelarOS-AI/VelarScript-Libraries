@@ -29,9 +29,11 @@ component Screencast:
     state streamState = "unwatched"
     state failureLine = ""
     state pullFailureLine = ""
+    state ownedLine = ""
     state wide = false
     state ratio = 1
     let canvas: CanvasElement? = null
+    let scratch: CanvasElement? = null
     let surface: ScreencastSurface? = null
     let stopReporting: (() -> null)? = null
 
@@ -157,6 +159,24 @@ component Screencast:
         try: await live.watchErrors().next()
         catch error: pullFailureLine = error.message
 
+    // A scope that ends owns the surface with `using`, and the release contract
+    // runs on the way out. The component above cannot: a component body is not an
+    // owning scope, so it holds the surface and releases it in `@cleanup:`.
+    def ownScratch():
+        const element = scratch
+        if element == null: return
+        using owned = attach(element, {pixelRatio: 1})
+        owned.submitFrame(frameBytes(0), frameSequence[0])
+
+    def ownScratchTwice():
+        try:
+            ownScratch()
+            // The same canvas again — which only attaches if the scope above
+            // really did release it.
+            ownScratch()
+            ownedLine = "released"
+        catch error: ownedLine = error.message
+
     def toggleWidth(): wide = not wide
 
     def reattachDoubled():
@@ -194,6 +214,8 @@ component Screencast:
         <p data-stream>{streamState}</p>
         <p data-failure>{failureLine}</p>
         <p data-pull-failure>{pullFailureLine}</p>
+        <p data-owned>{ownedLine}</p>
+        <canvas ref={scratch} data-scratch style:display={"block"} style:width={160px} style:height={90px}></canvas>
         <p data-ratio>{ratio}</p>
         <button type="button" data-frame-1 on:click={() => submit(0)}>Frame 1</button>
         <button type="button" data-frame-2 on:click={() => submit(1)}>Frame 2</button>
@@ -208,6 +230,7 @@ component Screencast:
         <button type="button" data-submit-after-release on:click={submitAfterRelease}>Submit after release</button>
         <button type="button" data-attach-twice on:click={attachTwice}>Attach twice</button>
         <button type="button" data-pull-twice on:click={pullTwice}>Pull twice</button>
+        <button type="button" data-owned-scope on:click={ownScratchTwice}>Own a surface with using</button>
         <button type="button" data-reattach on:click={reattachDoubled}>Reattach at ratio 2</button>
     </main>
 
