@@ -85,6 +85,13 @@ interface NamedNode {
 
 const TRANSPARENT: ReadonlySet<string> = new Set(["optional", "nullable", "readonly", "nonoptional"]);
 
+/**
+ * A self-referential schema reaches a fixed point through object identity, but
+ * a shape getter that rebuilds its schemas on every read never does. The cap
+ * turns that into a diagnostic instead of a stack overflow.
+ */
+const MAX_SCHEMA_DEPTH = 200;
+
 function def(schema: ZodSchema): Record<string, unknown> {
   return schema._def as unknown as Record<string, unknown>;
 }
@@ -138,6 +145,18 @@ function describeType(schema: ZodSchema): string {
 function innerOf(schema: ZodSchema): ZodSchema | null {
   const inner = def(schema)["innerType"];
   return isZodSchema(inner) ? inner : null;
+}
+
+/** `z.lazy` and getter-backed shapes are how zod writes a self-referential type. */
+function resolveLazy(schema: ZodSchema): ZodSchema | null {
+  const getter = def(schema)["getter"];
+  if (typeof getter !== "function") return null;
+  try {
+    const resolved = (getter as () => unknown)();
+    return isZodSchema(resolved) ? resolved : null;
+  } catch {
+    return null;
+  }
 }
 
 function optionsOf(schema: ZodSchema): readonly ZodSchema[] | null {
@@ -214,16 +233,20 @@ export function lowerModule(
     exportNames.set(entry.name, declare(entry.schema, entry.name, name));
   }
 
-  function discover(schema: ZodSchema, path: string, hint: string): void {
+  function discover(schema: ZodSchema, path: string, hint: string, depth = 0): void {
     remember(schema, path);
     if (discovered.has(schema)) return;
     discovered.add(schema);
     const canonical = canonicalPath.get(schema) ?? path;
     if (degradeByPath.has(canonical)) return;
+    if (depth > MAX_SCHEMA_DEPTH) {
+      refuse(canonical, schema, `nesting exceeds ${MAX_SCHEMA_DEPTH} levels; a shape schema that rebuilds itself on every read cannot be walked`);
+      return;
+    }
     const type = zodType(schema);
     if (TRANSPARENT.has(type)) {
       const inner = innerOf(schema);
-      if (inner !== null) discover(inner, canonical, hint);
+      if (inner !== null) discover(inner, canonical, hint, depth + 1);
       return;
     }
     switch (type) {
@@ -237,17 +260,17 @@ export function lowerModule(
         return;
       case "object": {
         const name = declare(schema, canonical, `${options.prefix}${hint}`);
-        discoverFields(schema, canonical, childHint(name));
+        discoverFields(schema, canonical, childHint(name), depth);
         return;
       }
       case "array": {
         const element = def(schema)["element"];
-        if (isZodSchema(element)) discover(element, `${canonical}[]`, `${hint}Item`);
+        if (isZodSchema(element)) discover(element, `${canonical}[]`, `${hint}Item`, depth + 1);
         return;
       }
       case "record": {
         const value = def(schema)["valueType"];
-        if (isZodSchema(value)) discover(value, `${canonical}{}`, `${hint}Value`);
+        if (isZodSchema(value)) discover(value, `${canonical}{}`, `${hint}Value`, depth + 1);
         return;
       }
       case "union": {
@@ -255,10 +278,19 @@ export function lowerModule(
         if (arms === null) return;
         const discriminator = def(schema)["discriminator"];
         if (typeof discriminator === "string") {
-          discoverDiscriminated(schema, canonical, hint, discriminator, arms);
+          discoverDiscriminated(schema, canonical, hint, discriminator, arms, depth);
           return;
         }
-        arms.forEach((option, index) => discover(option, `${canonical}|${index}`, `${hint}Option${index}`));
+        arms.forEach((option, index) => discover(option, `${canonical}|${index}`, `${hint}Option${index}`, depth + 1));
+        return;
+      }
+      case "lazy": {
+        const resolved = resolveLazy(schema);
+        if (resolved === null) {
+          refuse(canonical, schema, "z.lazy() did not resolve to a schema");
+          return;
+        }
+        discover(resolved, canonical, hint, depth + 1);
         return;
       }
       default:
@@ -275,11 +307,11 @@ export function lowerModule(
     return options.prefix.length > 0 && name.startsWith(options.prefix) ? name.slice(options.prefix.length) : name;
   }
 
-  function discoverFields(schema: ZodSchema, path: string, hint: string): void {
+  function discoverFields(schema: ZodSchema, path: string, hint: string, depth: number): void {
     const tag = caseTags.get(schema);
     for (const [key, value] of Object.entries(shapeOf(schema))) {
       if (tag !== undefined && key === tag.discriminator) continue;
-      discover(value, `${path}.${key}`, `${hint}${pascalCase(key)}`);
+      discover(value, `${path}.${key}`, `${hint}${pascalCase(key)}`, depth + 1);
     }
   }
 
@@ -289,6 +321,7 @@ export function lowerModule(
     hint: string,
     discriminator: string,
     cases: readonly ZodSchema[],
+    depth: number,
   ): void {
     const unionName = declare(schema, path, `${options.prefix}${hint}`);
     const caseHint = childHint(unionName);
@@ -339,7 +372,7 @@ export function lowerModule(
       caseTags.set(option, { enumName, member, discriminator });
       const caseName = declare(option, canonical, `${options.prefix}${caseHint}${pascalCase(wire)}`);
       discovered.add(option);
-      discoverFields(option, canonical, childHint(caseName));
+      discoverFields(option, canonical, childHint(caseName), depth + 1);
     });
     if (!usable) return;
     tagEnums.push({
@@ -378,17 +411,29 @@ export function lowerModule(
       const lowered = reference(inner, path);
       return type === "optional" || type === "nullable" ? optional(lowered) : lowered;
     }
+    if (type === "lazy") {
+      const resolved = resolveLazy(schema);
+      if (resolved === null) {
+        refuse(path, schema, "z.lazy() did not resolve to a schema");
+        return PRIMITIVE_UNKNOWN;
+      }
+      return reference(resolved, path);
+    }
     const name = declaredName.get(schema);
     if (name !== undefined) return { kind: "named", name };
     return structure(schema, path);
   }
 
+  function recordChecks(schema: ZodSchema, path: string): void {
+    const checks = checkNames(schema);
+    if (checks.length === 0) return;
+    if (constraints.some((entry) => entry.path === path)) return;
+    constraints.push({ path, zodType: zodType(schema), checks });
+  }
+
   function structure(schema: ZodSchema, path: string): VelType {
     const type = zodType(schema);
-    const checks = checkNames(schema);
-    if (checks.length > 0 && !constraints.some((entry) => entry.path === path)) {
-      constraints.push({ path, zodType: type, checks });
-    }
+    recordChecks(schema, path);
     switch (type) {
       case "string":
         return PRIMITIVE_STRING;
@@ -477,9 +522,6 @@ export function lowerModule(
       case "date":
         refuse(path, schema, "z.date() is a host Date instance, not JSON wire data");
         return PRIMITIVE_UNKNOWN;
-      case "lazy":
-        refuse(path, schema, "self-referential schemas are not lowered by this generator");
-        return PRIMITIVE_UNKNOWN;
       default:
         refuse(path, schema, "no entry in the closed type-mapping table");
         return PRIMITIVE_UNKNOWN;
@@ -555,6 +597,9 @@ export function lowerModule(
 
   function bodyOf(node: NamedNode): Declaration | null {
     const { schema, name, path } = node;
+    // A refinement on a record or an enum is as much the consumer's business as
+    // one on a string, and a named node never reaches `structure`.
+    recordChecks(schema, path);
     const degrade = degradeByPath.get(path);
     if (degrade !== undefined) {
       // An exported schema the table refuses outright still keeps its name, so

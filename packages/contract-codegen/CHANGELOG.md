@@ -18,6 +18,8 @@
   alias; map non-identifier enum values through the member wire-value mechanism.
 - Fail closed outside the mapping table with the schema path and the reason;
   report refinements and the three boundary widenings instead of dropping them.
+- Lower `z.lazy` and other self-referential schemas to a record that names
+  itself, which VelarScript records support.
 - Add the channel-table artifact: channel-name constants plus `Type<T>`
   bindings, and no transport stub.
 - Add golden equivalence fixtures asserting that the generated `Type.parse`

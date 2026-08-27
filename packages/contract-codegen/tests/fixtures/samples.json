@@ -763,6 +763,76 @@
       },
       "zod": false,
       "vel": false
+    },
+    {
+      "schema": "Tree",
+      "zodExport": "TreeSchema",
+      "why": "a two-level self-referential tree",
+      "payload": {
+        "label": "root",
+        "children": [
+          {
+            "label": "leaf",
+            "children": []
+          }
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Tree",
+      "zodExport": "TreeSchema",
+      "why": "a wrong type three levels down",
+      "payload": {
+        "label": "root",
+        "children": [
+          {
+            "label": "a",
+            "children": [
+              {
+                "label": 1,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "RefinedRange",
+      "zodExport": "RefinedRangeSchema",
+      "why": "an ordered range",
+      "payload": {
+        "from": 1,
+        "to": 2
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "RefinedRange",
+      "zodExport": "RefinedRangeSchema",
+      "why": "an inverted range the record refinement rejects",
+      "payload": {
+        "from": 3,
+        "to": 2
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "refinement-not-carried"
+    },
+    {
+      "schema": "RefinedRange",
+      "zodExport": "RefinedRangeSchema",
+      "why": "a missing bound",
+      "payload": {
+        "from": 1
+      },
+      "zod": false,
+      "vel": false
     }
   ]
 }

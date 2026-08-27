@@ -284,6 +284,13 @@
           ]
         },
         {
+          "path": "AgentModToolContributionSchema",
+          "zodType": "object",
+          "checks": [
+            "custom"
+          ]
+        },
+        {
           "path": "AgentModTurnContextSourceContributionSchema.priority",
           "zodType": "number",
           "checks": [

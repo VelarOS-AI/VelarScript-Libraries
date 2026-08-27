@@ -209,6 +209,12 @@ test("every row of the closed mapping table lowers to its declared VelarScript s
   assert.equal(renderType(byName.get("StreamToolCall").fields[0].type), "StreamEventTag.toolCall");
   assert.equal(renderType(byName.get("StreamEventEnd").fields[0].type), "StreamEventTag.end");
 
+  // A record may name itself, so `z.lazy` is lowered rather than refused.
+  assert.deepEqual(
+    byName.get("Tree").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
+    ["label: string", "children: List<Tree>"],
+  );
+
   // The manifest exemption keeps the export and opens exactly one field.
   assert.deepEqual(
     byName.get("Degraded").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
@@ -228,7 +234,6 @@ test("a shape outside the table is refused with its schema path and reason", asy
     ["DatedSchema", /host Date instance/u],
     ["UndiscriminatedSchema", /without a discriminator/u],
     ["EmptySchema", /zero-field record/u],
-    ["RecursiveSchema", /self-referential/u],
     ["NumericKeySchema", /plain string keys/u],
     ["OddFieldSchema", /not a VelarScript identifier/u],
     ["AnySchema", /z\.any\(\) opts out/u],
@@ -273,9 +278,10 @@ test("boundary widenings are counted rather than left silent", async () => {
   assert.ok(byKind.get("nullable-accepts-absent").count >= 3);
   assert.equal(byKind.get("undefined-normalized-to-null").count, 1);
   for (const note of result.boundaryNotes) assert.ok(note.detail.length > 40, note.kind);
+  // A refinement on a record is reported too, not only one on a primitive.
   assert.deepEqual(
     result.constraints.map((constraint) => `${constraint.path}:${constraint.checks.join(",")}`),
-    ["AuthorSchema.displayName:min_length"],
+    ["AuthorSchema.displayName:min_length", "RefinedRangeSchema:custom"],
   );
 });
 
@@ -300,7 +306,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   const checked = await run({ manifestPath: MANIFEST, mode: "check", toolVersion: "0.1.0" });
   assert.ok(checked.ok);
   assert.equal(checked.mode, "check");
-  assert.equal(checked.modules[0].exportedSchemas, 17);
+  assert.equal(checked.modules[0].exportedSchemas, 19);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);

@@ -103,6 +103,18 @@ export const EnvelopeSchema = z.strictObject({
 // a top-level alias over a wrapper
 export const MaybeAuthorSchema = AuthorSchema.nullish();
 
+// self-referential: VelarScript records may name themselves, so `z.lazy` is
+// lowered rather than refused
+export const TreeSchema = z.strictObject({
+  label: z.string(),
+  children: z.array(z.lazy(() => TreeSchema)),
+});
+
+// a refinement on a record, which no VelarScript type carries
+export const RefinedRangeSchema = z
+  .strictObject({ from: z.number(), to: z.number() })
+  .refine((value) => value.from <= value.to, "from must not exceed to");
+
 // Outside the closed table on purpose: the fixture manifest degrades this
 // path, so the golden output carries an `unknown` field with a recorded reason.
 export const DegradedSchema = z.strictObject({

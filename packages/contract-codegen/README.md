@@ -97,6 +97,7 @@ version, the source package and version, and a digest of the source schemas.
 | `record(string, V)` | `Record<V>` |
 | `enum`, string `literal`, string literal union | `enum`, with a wire value for any member no identifier can spell |
 | `strictObject` | record `type` |
+| `lazy` and other self-references | a record that names itself; VelarScript records are recursive |
 | `discriminatedUnion` | tag `enum` + one record per case + a union alias |
 | union of primitives, lists, and aliases | VelarScript union |
 
@@ -104,9 +105,8 @@ Anything else is **fail-closed**: generation stops and names the schema path and
 the reason. That covers non-strict `z.object` (it strips unknown keys rather than
 rejecting them), catchall objects, `transform`/`pipe`/effects, `default`,
 `catch`, `z.date`, `z.any`, tuples, intersections, numeric and boolean literals,
-`z.lazy` and other self-referential shapes, zero-field records, non-string record
-keys, record unions with no discriminator, and field names that are not
-VelarScript identifiers.
+zero-field records, non-string record keys, record unions with no discriminator,
+and field names that are not VelarScript identifiers.
 
 To accept one of those as opaque data, exempt its path:
 
@@ -123,8 +123,9 @@ reported, so an exemption cannot outlive the schema that needed it.
 Two kinds of information cannot cross into a VelarScript type, so both are
 reported rather than silently dropped:
 
-- **zod refinements.** `min_length`, `regex`, `int`, and friends are predicates on
-  a value, not a shape. They are listed per path; the consumer owns them.
+- **zod refinements.** `min_length`, `regex`, `int`, and a `.refine()` on a whole
+  record are predicates on a value, not a shape. They are listed per path; the
+  consumer owns them.
 - **Boundary widenings.** Three are inherent to the mapping:
   - `strict-unknown-keys` — `z.strictObject` rejects a surplus key; a
     VelarScript record accepts the value and drops the key.
@@ -170,7 +171,7 @@ equivalence samples over real payloads.
 
 | Target | Exported schemas | Declarations | Degrades | Refinements reported |
 | --- | --- | --- | --- | --- |
-| `@velaros-ai/agent` `./protocol` | 92 | 102 | 44 | 47 |
+| `@velaros-ai/agent` `./protocol` | 92 | 102 | 44 | 48 |
 | `@velaros-ai/kernel` `./contracts/protocol` | 56 | 61 | 24 | 77 |
 
 Every degrade names a path and a reason; the reports list them in full. See

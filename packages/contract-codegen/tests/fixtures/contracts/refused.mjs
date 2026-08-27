@@ -33,12 +33,6 @@ export const UndiscriminatedSchema = z.union([
 // zero-field record
 export const EmptySchema = z.strictObject({});
 
-// self-referential schema
-export const RecursiveSchema = z.strictObject({
-  label: z.string(),
-  children: z.array(z.lazy(() => RecursiveSchema)),
-});
-
 // non-string record key
 export const NumericKeySchema = z.record(z.number(), z.string());
 
