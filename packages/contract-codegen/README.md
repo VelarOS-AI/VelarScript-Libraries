@@ -7,7 +7,8 @@ a TypeScript service's protocol through `Type.parse` instead of `unknown`.
 This is a Node tooling package. It contains no compiler semantics, claims no
 `velar/*` module name, and takes no production dependency on the VelarScript
 toolchain: formatting is delegated to the consuming project's own
-`velar format`.
+`velar format`. Its one production dependency is `esbuild`, which only the
+[bundle loader](#reaching-a-bundler-compiled-package) uses.
 
 ## How it reads a contract
 
@@ -75,11 +76,46 @@ The only input is a JSON manifest in the consuming project.
 | `outputDirectory` | Where the `.vel` files are written. Relative to the manifest. |
 | `naming.stripSuffix` | Suffix removed from an exported schema name (`SendRequestSchema` → `SendRequest`). Defaults to `Schema`. |
 | `naming.prefix` | Prefix added to every generated declaration. |
+| `loader` | How the contract modules are reached: `{"kind": "node"}` (default) imports them as they sit, `{"kind": "bundle"}` bundles them first. See below. |
 | `velarFormat` | Run the emitted source through `velar format`. Defaults to `true`. |
 | `velarCommand` | Executable name for that step. Defaults to `velar`, searched upward from the output directory, then on `PATH`. |
 | `modules[].exports` | `"all"` walks every exported zod schema; a list walks exactly those. |
 | `modules[].unknownDegrade` | Per-path exemptions, each with a reason. See below. |
 | `channelTables[]` | The second artifact. Either inline `channels`, or a runtime `source` export shaped `{channel: {request?, response?, event?}}`. |
+
+## Reaching a bundler-compiled package
+
+The generator imports the contract package's compiled JavaScript. A package
+compiled for Node ESM imports cleanly. A package compiled under TypeScript's
+`moduleResolution: "bundler"` does not: its emitted relative specifiers carry no
+extension (`from "./channels"`), and Node's ESM resolver does not complete them,
+so a bare import answers `ERR_MODULE_NOT_FOUND` for a file that is sitting right
+there. Bundler resolution is the majority form in a real TypeScript monorepo, so
+this is the tool's own answer rather than a recipe each consumer re-derives:
+
+```json
+"loader": { "kind": "bundle", "external": ["@scope/native-addon"] }
+```
+
+The declared modules are bundled — together, in one build — to self-contained
+ESM in a temporary directory, imported from there, and the temporary tree is
+removed. Nothing is written near the contract package.
+
+- **`zod` is always external**, whether or not `external` names it. This
+  generator introspects the schema objects the *target's own zod* built; a
+  second copy inside the bundle would build objects it cannot recognize. An
+  external module is not omitted but pinned: the bundle imports it by the
+  absolute path the target resolves it to.
+- **One build, not one per module.** The channel table matches a runtime schema
+  to a generated declaration by object identity, so a schema shared by two
+  entry points has to stay one object.
+- **The header still names the real package.** The bundle is a copy in a
+  temporary directory; the owning-package walk is given the target's own path.
+- Add a name to `external` for anything that must not be bundled — a native
+  addon, or a dependency the consumer wants resolved at run time.
+
+Without the option, the failure is named rather than raw: the diagnostic says
+what bundler-emitted specifiers are, and points at this loader.
 
 ## Commands
 
@@ -256,4 +292,6 @@ schemas are reached without installing the authenticated packages.
   calling `run()` repeatedly in a long-lived process will not see a contract file
   edited in the meantime.
 - The generator reads the compiled JavaScript of the contract package, so that
-  package has to be built or installed first.
+  package has to be built or installed first — and has to be *importable*: for
+  a package compiled under bundler resolution, see the bundle loader above.
+- One production dependency, `esbuild`, and only the bundle loader loads it.

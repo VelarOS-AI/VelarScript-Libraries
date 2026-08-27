@@ -11,6 +11,8 @@ export { formatFile, FormatError, resolveVelarExecutable, velarSpawnPlan } from 
 export type { FormatOptions, SpawnPlan } from "./format.js";
 export { DriftError, run, TOOL_NAME } from "./generate.js";
 export type { RunOptions } from "./generate.js";
+export { createLoader } from "./loader.js";
+export type { ModuleLoader } from "./loader.js";
 export { optional, renderType } from "./ir.js";
 export type { Declaration, EnumMember, RecordField, VelType } from "./ir.js";
 export { boundaryDetail, lowerModule, MappingError } from "./lower.js";
@@ -22,11 +24,12 @@ export type {
   LowerResult,
   UnmappedShape,
 } from "./lower.js";
-export { ManifestError, parseManifest } from "./manifest.js";
+export { ALWAYS_EXTERNAL, ManifestError, parseManifest } from "./manifest.js";
 export type {
   ChannelBinding,
   ChannelTableEntry,
   DegradeEntry,
+  LoaderOptions,
   Manifest,
   ModuleEntry,
   NamingRules,
@@ -39,10 +42,18 @@ export {
   collectExports,
   isZodSchema,
   looksLikeLegacyZod,
+  ModuleLoadError,
   owningPackage,
   REFERENCE_ZOD_VERSION,
+  resolveModule,
   resolveZod,
   SUPPORTED_ZOD_MAJOR,
   ZodVersionError,
 } from "./zod-runtime.js";
-export type { ExportedSchema, LoadedModule, ZodResolution, ZodSchema } from "./zod-runtime.js";
+export type {
+  ExportedSchema,
+  LoadedModule,
+  PackageIdentity,
+  ZodResolution,
+  ZodSchema,
+} from "./zod-runtime.js";

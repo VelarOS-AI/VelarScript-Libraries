@@ -14,7 +14,7 @@ import { DriftError, run } from "./generate.js";
 import { MappingError } from "./lower.js";
 import { ManifestError } from "./manifest.js";
 import { renderReportText, type GenerationReport } from "./report.js";
-import { ZodVersionError } from "./zod-runtime.js";
+import { ModuleLoadError, ZodVersionError } from "./zod-runtime.js";
 
 const USAGE = `Usage:
   velar-contract-codegen generate <manifest.json> [--check] [--json] [--report <file>]
@@ -97,7 +97,8 @@ export async function main(argv: readonly string[]): Promise<number> {
       process.stderr.write(`${error.message}\nRun without --check to regenerate.\n`);
       return 1;
     }
-    if (error instanceof MappingError || error instanceof ManifestError || error instanceof ZodVersionError) {
+    if (error instanceof MappingError || error instanceof ManifestError || error instanceof ZodVersionError
+      || error instanceof ModuleLoadError) {
       process.stderr.write(`${error.message}\n`);
       return 1;
     }

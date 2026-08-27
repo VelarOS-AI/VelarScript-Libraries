@@ -39,6 +39,9 @@
       "default": "./dist/cli.js"
     }
   },
+  "dependencies": {
+    "esbuild": "^0.28.2"
+  },
   "devDependencies": {
     "@velarscript/cli": "file:../../../VelarScript/packages/cli",
     "zod": "4.4.3"

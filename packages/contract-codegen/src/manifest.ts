@@ -43,6 +43,30 @@ export interface ChannelTableEntry {
   readonly source?: { readonly specifier: string; readonly export: string };
 }
 
+/**
+ * How the contract package's compiled JavaScript is reached.
+ *
+ * `"node"` imports it as it sits, which is what a package compiled for Node
+ * ESM supports. A package compiled under TypeScript's `moduleResolution:
+ * "bundler"` emits extensionless relative specifiers (`from "./channels"`) that
+ * Node's resolver does not complete, and bundler resolution is the majority
+ * form in a real TypeScript monorepo — so `"bundle"` is the tool's own answer
+ * rather than a recipe every consumer re-derives: the one target module is
+ * bundled to self-contained ESM first, with `zod` left external.
+ */
+export interface LoaderOptions {
+  readonly kind: "node" | "bundle";
+  /**
+   * Module names kept out of the bundle and imported from the target's own
+   * install. `zod` is always one of them: this generator introspects the
+   * schema objects the target built, and a second copy of zod inside the
+   * bundle would be a different set of them.
+   */
+  readonly external: readonly string[];
+}
+
+export const ALWAYS_EXTERNAL = "zod";
+
 export interface NamingRules {
   /** Suffix stripped from an exported schema name. */
   readonly stripSuffix: string;
@@ -57,6 +81,8 @@ export interface Manifest {
   /** Output directory, relative to the manifest. */
   readonly outputDirectory: string;
   readonly naming: NamingRules;
+  /** How the contract modules are loaded. Defaults to bare Node ESM. */
+  readonly loader: LoaderOptions;
   /** Run `velar format` over each emitted file. */
   readonly velarFormat: boolean;
   /** Executable used for formatting. Resolved from the output project, then `PATH`. */
@@ -153,6 +179,22 @@ function readChannels(value: unknown, path: string): ChannelBinding[] {
   });
 }
 
+function readLoader(value: unknown, path: string): LoaderOptions {
+  if (value === undefined) return { kind: "node", external: [ALWAYS_EXTERNAL] };
+  const item = object(value, path);
+  const kind = optionalString(item["kind"], `${path}.kind`, "node");
+  if (kind !== "node" && kind !== "bundle") fail(`${path}.kind`, 'must be "node" or "bundle"');
+  const declared = item["external"] === undefined
+    ? []
+    : array(item["external"], `${path}.external`).map((name, at) => string(name, `${path}.external[${at}]`));
+  // Naming externals for a loader that bundles nothing would read as a
+  // configured fact that changes nothing.
+  if (kind === "node" && declared.length > 0) {
+    fail(`${path}.external`, 'only applies to the "bundle" loader, which is what leaves a module out');
+  }
+  return { kind, external: [...new Set([ALWAYS_EXTERNAL, ...declared])] };
+}
+
 export function parseManifest(raw: unknown): Manifest {
   const root = object(raw, "manifest");
   if (root["formatVersion"] !== 1) fail("manifest.formatVersion", "must be 1");
@@ -226,6 +268,7 @@ export function parseManifest(raw: unknown): Manifest {
     resolveFrom: relativePath(root["resolveFrom"] ?? ".", "manifest.resolveFrom"),
     outputDirectory: relativePath(root["outputDirectory"], "manifest.outputDirectory"),
     naming,
+    loader: readLoader(root["loader"], "manifest.loader"),
     velarFormat: boolean(root["velarFormat"], "manifest.velarFormat", true),
     velarCommand: optionalString(root["velarCommand"], "manifest.velarCommand", "velar"),
     modules,

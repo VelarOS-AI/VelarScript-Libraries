@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- Load a bundler-compiled contract package, with a new manifest-level
+  `"loader": {"kind": "bundle"}`. A package compiled under TypeScript's
+  `moduleResolution: "bundler"` emits extensionless relative specifiers that
+  Node's ESM resolver does not complete, and bundler resolution is the majority
+  form in a real TypeScript monorepo — every consumer was hand-rolling a
+  pre-bundle outside the tool. The loader bundles the declared modules to
+  self-contained ESM in a temporary directory and imports them from there:
+  `zod` is always external and pinned to the path the target resolves it to,
+  because this generator introspects the objects the target's own zod built;
+  all entries are built together so a schema shared by two of them stays one
+  object for the channel table to recognize; and the generated header still
+  names the real package rather than the temporary copy. `esbuild` becomes the
+  package's one production dependency, loaded only by this loader.
+- Name the failure the bundle loader answers, when it is not in use: a bare
+  `ERR_MODULE_NOT_FOUND` sent the reader looking for a file that was sitting
+  right there. The refusal now says what a bundler-emitted specifier is and
+  points at the loader.
 - Stop the owning-package walk inside the contract's own tree. It climbed past
   every directory without a manifest until it found one, which for a contract
   bundled into the consuming project reached that project's `package.json` and

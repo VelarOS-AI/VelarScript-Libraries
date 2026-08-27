@@ -18,6 +18,7 @@ import {
   type HeaderFields,
 } from "./emit.js";
 import { formatFile } from "./format.js";
+import { createLoader, type ModuleLoader } from "./loader.js";
 import { lowerModule } from "./lower.js";
 import { parseManifest, type ChannelTableEntry, type Manifest } from "./manifest.js";
 import { camelCase, enumMemberName, NameRegistry } from "./naming.js";
@@ -26,7 +27,6 @@ import {
   assertSupportedZod,
   collectExports,
   isZodSchema,
-  loadModule,
   packageOf,
   owningPackage,
   readPackageVersion,
@@ -96,8 +96,18 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
   const exportNamesByOutput = new Map<string, ReadonlyMap<string, string>>();
   const schemaNamesByOutput = new Map<string, ReadonlyMap<ZodSchema, string>>();
 
+  // Every module the run will load is named before the first one is: a loader
+  // that bundles has to build them together, or a schema object shared by two
+  // of them arrives as two objects and the channel table stops recognizing it.
+  const loader = createLoader(manifest.loader, resolveFrom);
+  try {
+  await loader.prepare([
+    ...manifest.modules.map((entry) => entry.specifier),
+    ...manifest.channelTables.flatMap((table) => (table.source === undefined ? [] : [table.source.specifier])),
+  ]);
+
   for (const entry of manifest.modules) {
-    const module = await loadModule(entry.specifier, resolveFrom);
+    const module = await loader.load(entry.specifier);
     const exports = collectExports(module.exports, entry.exports, entry.specifier);
     const lowered = lowerModule(
       exports,
@@ -152,6 +162,7 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
 
   for (const table of manifest.channelTables) {
     const built = await buildChannelTable(table, {
+      loader,
       resolveFrom,
       manifestPath,
       outputDirectory,
@@ -163,6 +174,11 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
     });
     rendered.push(built.file);
     channelReports.push(built.report);
+  }
+  } finally {
+    // The bundle loader's temporary tree has done its work: every module is
+    // imported and its schema objects are in memory.
+    loader.dispose();
   }
 
   // Formatting is a step that can fail, and it fails per file. Rendering and
@@ -245,6 +261,7 @@ function formatThroughToolchain(
 }
 
 interface ChannelContext {
+  readonly loader: ModuleLoader;
   readonly resolveFrom: string;
   readonly manifestPath: string;
   readonly manifestLabel: string;
@@ -336,7 +353,7 @@ function resolveTypeName(exportName: string, context: ChannelContext, table: Cha
 
 async function readRuntimeChannels(table: ChannelTableEntry, context: ChannelContext): Promise<ChannelRow[]> {
   const source = table.source!;
-  const module = await loadModule(source.specifier, context.resolveFrom);
+  const module = await context.loader.load(source.specifier);
   const value = module.exports[source.export];
   if (typeof value !== "object" || value === null) {
     throw new Error(`'${source.specifier}' export '${source.export}' is not a channel map object`);

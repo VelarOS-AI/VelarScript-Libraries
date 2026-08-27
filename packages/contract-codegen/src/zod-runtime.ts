@@ -95,21 +95,58 @@ export function looksLikeLegacyZod(value: unknown): boolean {
 
 export interface LoadedModule {
   readonly exports: Record<string, unknown>;
-  /** Absolute path of the file that was loaded. */
+  /**
+   * Absolute path of the contract file, as the target package holds it. A
+   * bundled load imports a copy, and the copy is not what the header names.
+   */
   readonly file: string;
 }
 
-export async function loadModule(specifier: string, resolveFrom: string): Promise<LoadedModule> {
+export class ModuleLoadError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ModuleLoadError";
+  }
+}
+
+/** Where a specifier lands, without loading it. */
+export function resolveModule(specifier: string, resolveFrom: string): string {
   const require = createRequire(join(resolveFrom, "noop.js"));
-  let resolved: string;
   try {
-    resolved = require.resolve(specifier);
+    return require.resolve(specifier);
   } catch (error) {
-    throw new Error(
+    throw new ModuleLoadError(
       `cannot resolve module '${specifier}' from ${resolveFrom}: ${(error as Error).message}`,
     );
   }
-  return { exports: (await import(pathToFileURL(resolved).href)) as Record<string, unknown>, file: resolved };
+}
+
+/**
+ * Imports a resolved file as bare Node ESM, and turns the one failure this
+ * reliably produces into a sentence that names its cause. A package compiled
+ * under TypeScript's `moduleResolution: "bundler"` emits extensionless relative
+ * specifiers, which Node's ESM resolver does not complete; `ERR_MODULE_NOT_FOUND`
+ * on its own sends the reader looking for a missing file that is right there.
+ */
+export async function importModule(file: string, specifier: string): Promise<Record<string, unknown>> {
+  try {
+    return (await import(pathToFileURL(file).href)) as Record<string, unknown>;
+  } catch (error) {
+    const failure = error as NodeJS.ErrnoException;
+    if (failure.code !== "ERR_MODULE_NOT_FOUND") throw error;
+    throw new ModuleLoadError(
+      `'${specifier}' resolved to ${file}, and importing it as Node ESM failed: ${failure.message}\n`
+        + "A package compiled with TypeScript's `moduleResolution: \"bundler\"` emits extensionless relative "
+        + "specifiers (`from \"./channels\"`), which Node's ESM resolver does not complete — the file it names "
+        + "exists, but only a bundler will find it. Declare `\"loader\": {\"kind\": \"bundle\"}` in the manifest "
+        + "to bundle this module to self-contained ESM first, with zod left external.",
+    );
+  }
+}
+
+export async function loadModule(specifier: string, resolveFrom: string): Promise<LoadedModule> {
+  const resolved = resolveModule(specifier, resolveFrom);
+  return { exports: await importModule(resolved, specifier), file: resolved };
 }
 
 export interface PackageIdentity {

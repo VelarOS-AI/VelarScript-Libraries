@@ -1,6 +1,16 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -8,14 +18,17 @@ import test from "node:test";
 import { z } from "zod";
 
 import {
+  ALWAYS_EXTERNAL,
   DriftError,
   MappingError,
   ManifestError,
   NameRegistry,
   REFERENCE_ZOD_VERSION,
   SUPPORTED_ZOD_MAJOR,
+  ModuleLoadError,
   ZodVersionError,
   assertSupportedZod,
+  createLoader,
   enumMemberName,
   isVelarIdentifier,
   lowerModule,
@@ -140,6 +153,29 @@ test("the manifest fills in its documented defaults", () => {
   assert.equal(manifest.velarCommand, "velar");
   assert.equal(manifest.modules[0].exports, "all");
   assert.deepEqual(manifest.modules[0].unknownDegrade, []);
+  // Bare Node ESM by default, and zod is external whatever the loader is.
+  assert.deepEqual(manifest.loader, { kind: "node", external: [ALWAYS_EXTERNAL] });
+});
+
+test("the loader option says what it does and refuses what it cannot", () => {
+  const withLoader = (loader) => parseManifest({
+    formatVersion: 1,
+    outputDirectory: "generated",
+    loader,
+    modules: [{ specifier: "@scope/pkg/protocol", output: "protocol.vel" }],
+  }).loader;
+  assert.deepEqual(withLoader({ kind: "bundle" }), { kind: "bundle", external: ["zod"] });
+  // zod stays external even when the manifest forgets to say so, and naming it
+  // twice is one entry.
+  assert.deepEqual(
+    withLoader({ kind: "bundle", external: ["zod", "@scope/native"] }),
+    { kind: "bundle", external: ["zod", "@scope/native"] },
+  );
+  assert.throws(() => withLoader({ kind: "esbuild" }), /must be "node" or "bundle"/u);
+  // An external list under a loader that bundles nothing would read as a
+  // configured fact that changes nothing.
+  assert.throws(() => withLoader({ external: ["zod"] }), /only applies to the "bundle" loader/u);
+  assert.throws(() => withLoader({ kind: "bundle", external: "zod" }), /must be an array/u);
 });
 
 test("the supported zod major is stated and a mismatch names both versions", () => {
@@ -830,6 +866,91 @@ test("the owning package is the one that holds the file, not the one that asked"
     assert.equal(owningPackage(orphan, consumer), null);
   } finally {
     rmSync(consumer, { recursive: true, force: true });
+  }
+});
+
+/** The bundler-compiled contract package, with the manifest that reaches it. */
+function bundlerProject(loader) {
+  const temporary = copyFixtures("bundler");
+  const manifestPath = join(temporary, "bundler.manifest.json");
+  writeFileSync(manifestPath, `${JSON.stringify({
+    formatVersion: 1,
+    resolveFrom: "./bundler",
+    outputDirectory: "./bundler-out",
+    naming: { stripSuffix: "Schema", prefix: "" },
+    velarFormat: false,
+    ...(loader === null ? {} : { loader }),
+    modules: [{ specifier: "./index.js", output: "sidecar.vel", exports: "all", unknownDegrade: [] }],
+    channelTables: [{
+      output: "sidecar-channels.vel",
+      enumName: "SidecarChannel",
+      typesOutput: "sidecar.vel",
+      source: { specifier: "./table.js", export: "SidecarChannels" },
+    }],
+  }, null, 2)}\n`, "utf8");
+  return { directory: temporary, manifestPath, dispose: () => rmSync(temporary, { recursive: true, force: true }) };
+}
+
+test("a bundler-compiled contract package names its own problem", async () => {
+  // TypeScript's `moduleResolution: "bundler"` emits `from "./channels"`, which
+  // Node's ESM resolver does not complete. The raw ERR_MODULE_NOT_FOUND sends
+  // the reader looking for a file that is sitting right there.
+  const project = bundlerProject(null);
+  try {
+    await assert.rejects(
+      () => run({ manifestPath: project.manifestPath, mode: "generate", toolVersion: "0.1.0" }),
+      (error) => {
+        assert.ok(error instanceof ModuleLoadError, String(error));
+        assert.match(error.message, /moduleResolution/u);
+        assert.match(error.message, /extensionless relative/u);
+        assert.match(error.message, /"loader": \{"kind": "bundle"\}/u);
+        return true;
+      },
+    );
+    assert.equal(existsSync(join(project.directory, "bundler-out")), false, "a failed load wrote output");
+  } finally {
+    project.dispose();
+  }
+});
+
+test("the bundle loader reads a bundler-compiled contract package", async () => {
+  const project = bundlerProject({ kind: "bundle" });
+  try {
+    const report = await run({ manifestPath: project.manifestPath, mode: "generate", toolVersion: "0.1.0" });
+    assert.ok(report.ok);
+    // The header names the package that wrote the contract, not the temporary
+    // copy the loader built: `file` stays the target's own path.
+    assert.equal(report.modules[0].sourcePackage, "@fixture/bundler-target");
+    assert.equal(report.modules[0].sourceVersion, "3.1.0");
+    assert.equal(report.modules[0].exportedSchemas, 2);
+
+    const types = readFileSync(join(project.directory, "bundler-out", "sidecar.vel"), "utf8");
+    assert.match(types, /export type SidecarPing:\n {4}sessionId: string\n {4}attempt: number/u);
+    assert.match(types, /export type SidecarPong:/u);
+    // The channel table's source is a second entry point that imports the
+    // first. One shared build keeps those schema objects identical; two
+    // separate bundles would make the table fail to recognize them.
+    const table = readFileSync(join(project.directory, "bundler-out", "sidecar-channels.vel"), "utf8");
+    assert.match(table, /export const sidecarPingRequest: Type<SidecarPing> = SidecarPing/u);
+    assert.match(table, /export const sidecarPingResponse: Type<SidecarPong> = SidecarPong/u);
+  } finally {
+    project.dispose();
+  }
+});
+
+test("the bundle loader leaves zod to the target's own install", async () => {
+  const project = bundlerProject({ kind: "bundle" });
+  const loader = createLoader({ kind: "bundle", external: ["zod"] }, join(project.directory, "bundler"));
+  try {
+    await loader.prepare(["./index.js"]);
+    const loaded = await loader.load("./index.js");
+    // A second copy of zod inside the bundle would build schema objects this
+    // process cannot recognize, and the generator introspects those objects.
+    assert.ok(loaded.exports.SidecarPongSchema instanceof z.ZodObject);
+    assert.equal(loaded.file, realpathSync(join(project.directory, "bundler", "index.js")));
+  } finally {
+    loader.dispose();
+    project.dispose();
   }
 });
 
