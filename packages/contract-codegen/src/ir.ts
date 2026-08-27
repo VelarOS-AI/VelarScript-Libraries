@@ -69,8 +69,3 @@ function renderInner(type: VelType): string {
   // is written with parentheses.
   return type.kind === "union" ? `(${renderType(type)})` : renderType(type);
 }
-
-/** Stable ordering key so a declaration list never depends on walk order. */
-export function declarationSortKey(declaration: Declaration): string {
-  return declaration.name;
-}
