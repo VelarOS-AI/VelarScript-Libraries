@@ -7,7 +7,8 @@
 
 export { renderChannelTable, renderHeader, renderModule } from "./emit.js";
 export type { ChannelConstant, ChannelTypeBinding, HeaderFields } from "./emit.js";
-export { formatFile, FormatError, resolveVelarExecutable } from "./format.js";
+export { formatFile, FormatError, resolveVelarExecutable, velarSpawnPlan } from "./format.js";
+export type { FormatOptions, SpawnPlan } from "./format.js";
 export { DriftError, run, TOOL_NAME } from "./generate.js";
 export type { RunOptions } from "./generate.js";
 export { optional, renderType } from "./ir.js";
