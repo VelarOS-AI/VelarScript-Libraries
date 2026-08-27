@@ -28,6 +28,7 @@ component Screencast:
     state errorReason = ""
     state streamState = "unwatched"
     state failureLine = ""
+    state pullFailureLine = ""
     state wide = false
     state ratio = 1
     let canvas: CanvasElement? = null
@@ -138,6 +139,24 @@ component Screencast:
         try: live.submitFrame(frameBytes(0), frameSequence[0])
         catch error: failureLine = error.message
 
+    // A canvas has one owner: the surface owns its backing store, so a second
+    // attachment to the same element is refused rather than silently fighting
+    // the first over what is drawn.
+    def attachTwice():
+        const element = canvas
+        if element == null: return
+        try: attach(element)
+        catch error: failureLine = error.message
+
+    // The error stream permits one pull at a time. The page's own reader is
+    // parked on `next()` here, so this second pull is refused instead of
+    // quietly taking the record the reader was waiting for.
+    action pullTwice():
+        const live = surface
+        if live == null: return
+        try: await live.watchErrors().next()
+        catch error: pullFailureLine = error.message
+
     def toggleWidth(): wide = not wide
 
     def reattachDoubled():
@@ -174,6 +193,7 @@ component Screencast:
         <p data-error-reason>{errorReason}</p>
         <p data-stream>{streamState}</p>
         <p data-failure>{failureLine}</p>
+        <p data-pull-failure>{pullFailureLine}</p>
         <p data-ratio>{ratio}</p>
         <button type="button" data-frame-1 on:click={() => submit(0)}>Frame 1</button>
         <button type="button" data-frame-2 on:click={() => submit(1)}>Frame 2</button>
@@ -186,6 +206,8 @@ component Screencast:
         <button type="button" data-wide on:click={toggleWidth}>Toggle width</button>
         <button type="button" data-release on:click={releaseSurface}>Release</button>
         <button type="button" data-submit-after-release on:click={submitAfterRelease}>Submit after release</button>
+        <button type="button" data-attach-twice on:click={attachTwice}>Attach twice</button>
+        <button type="button" data-pull-twice on:click={pullTwice}>Pull twice</button>
         <button type="button" data-reattach on:click={reattachDoubled}>Reattach at ratio 2</button>
     </main>
 

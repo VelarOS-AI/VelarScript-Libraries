@@ -142,6 +142,22 @@ test "releasing stops the surface, closes the stream, and fails a later frame":
     await browser.click("[data-submit-after-release]")
     await browser.waitForText("[data-failure]", "This screencast surface is released")
 
+test "a canvas has one owner and the error stream has one reader":
+    await browser.open("/")
+    await browser.waitForText("[data-stats]", "0 0 0 0 0")
+    await browser.click("[data-attach-twice]")
+    await browser.waitForText("[data-failure]", "This canvas already has a screencast surface; release that one before attaching another")
+
+    // The page's own reader is parked on an empty stream, so a second pull is
+    // refused rather than racing it for the next record.
+    await browser.click("[data-watch]")
+    await browser.waitForText("[data-stream]", "watching")
+    await browser.click("[data-pull-twice]")
+    await browser.waitForText("[data-pull-failure]", "A screencast error stream permits one active pull")
+    // The refusal did not disturb the reader: the next failure still reaches it.
+    await browser.click("[data-mismatch]")
+    await browser.waitForText("[data-errors]", "1:0")
+
 test "a released surface can be replaced by one at a different pixel ratio":
     await browser.open("/")
     await browser.waitForText("[data-stats]", "0 0 0 0 0")

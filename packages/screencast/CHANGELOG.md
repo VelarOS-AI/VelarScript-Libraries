@@ -16,4 +16,6 @@
 - Decode failures and frames whose real size disagrees with their declared size
   enter a bounded pull error stream instead of stopping the surface. A reader
   that falls behind loses the oldest records and is told how many.
+- A canvas has one surface and the error stream has one reader; a second
+  attachment and a second concurrent pull are both refused by name.
 - Built against the VelarScript 0.19 language generation.

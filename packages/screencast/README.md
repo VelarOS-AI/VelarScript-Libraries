@@ -120,7 +120,12 @@ async def report(surface: ScreencastSurface):
 | Decoded images held | 1, for redrawing across a resize |
 | `errorCapacity` | 1 through 1024, default 32 |
 | `pixelRatio` | 0.25 through 8, default the host's `devicePixelRatio` |
+| Surfaces per canvas element | 1 |
 | Active pulls on the error stream | 1 |
+
+A surface owns its canvas's backing store, so attaching a second surface to a
+canvas that already has one is refused rather than letting two owners fight
+over what is drawn. Releasing the first one frees the element again.
 
 ## Release
 

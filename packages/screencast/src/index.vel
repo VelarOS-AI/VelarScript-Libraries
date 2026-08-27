@@ -113,6 +113,8 @@ extern js(maxFrameBytes: number, defaultErrorCapacity: number)`
 
     const TOKEN = Object.freeze({});
     const states = new WeakMap();
+    // A surface owns its canvas's backing store, so a canvas has one owner.
+    const attached = new WeakSet();
     const mediaTypes = { jpeg: "image/jpeg", png: "image/png" };
     const emptyBounds = () => ({ x: 0, y: 0, width: 0, height: 0 });
 
@@ -243,6 +245,7 @@ extern js(maxFrameBytes: number, defaultErrorCapacity: number)`
       state.frameHeight = 0;
       apply(setTransform, state.context, [1, 0, 0, 1, 0, 0]);
       apply(clearRect, state.context, [0, 0, apply(readWidth, state.canvas, []), apply(readHeight, state.canvas, [])]);
+      attached.delete(state.canvas);
       state.canvas = null;
       state.context = null;
       const waiting = state.waiter;
@@ -307,7 +310,8 @@ extern js(maxFrameBytes: number, defaultErrorCapacity: number)`
     export function attachNativeScreencast(canvas, options) {
       if (!hostReady) throw new Error("A screencast surface requires a browser document with canvas and createImageBitmap support");
       if (!(canvas instanceof G.HTMLCanvasElement)) throw new TypeError("A screencast surface requires a canvas element");
-      const context = apply(getContext, canvas, ["2d", { alpha: true, desynchronized: true }]);
+      if (attached.has(canvas)) throw new Error("This canvas already has a screencast surface; release that one before attaching another");
+      const context = apply(getContext, canvas, ["2d"]);
       if (context === null) throw new Error("The canvas element did not provide a 2d rendering context");
       const state = {
         canvas,
@@ -342,6 +346,7 @@ extern js(maxFrameBytes: number, defaultErrorCapacity: number)`
         // The CSS content box alone.
       }
       apply(observe, state.observer, [canvas, { box: "content-box" }]);
+      attached.add(canvas);
       return new NativeScreencastSurface(TOKEN, state);
     }
 `:
