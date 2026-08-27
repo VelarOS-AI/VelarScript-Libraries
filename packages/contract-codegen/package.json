@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "check": "tsc -p tsconfig.build.json --noEmit && velar format --check tests/fixtures/vel && velar check tests/fixtures/vel",
+    "check": "tsc -p tsconfig.build.json --noEmit && velar format --check tests/fixtures/vel && velar check tests/fixtures/vel && velar format --check tests/real-targets && velar check tests/real-targets",
     "test": "npm run build && node --test tests/*.test.mjs"
   },
   "engines": {

@@ -1,0 +1,63 @@
+// Real platform payloads through the generated declarations. These assertions
+// are about the contracts VelarOS actually ships, not about a fixture shape.
+import {expect} from "velar/test"
+
+import {AgentChannel, agentAdmitRequest, agentSessionEventEvent} from "../generated/agent-channels.vel"
+import {
+    ExecutionSpan,
+    ExecutionSpanTag,
+    ModelMessagePart,
+    ModelMessagePartTag,
+    SessionEntry,
+    SessionEntryTag,
+} from "../generated/agent-protocol.vel"
+import {KernelChannel, kernelCapabilityCallResponse} from "../generated/kernel-channels.vel"
+import {CapabilityCallResponseTag, RemoteNodeClientFrame, RemoteNodeClientFrameTag} from "../generated/kernel-protocol.vel"
+
+test "a session entry narrows to the payload its tag promises":
+    const entry = SessionEntry.parse(Json.parse(
+        `{"id":"e-1","parentId":null,"createdAt":1,"type":"model-change","fromModelId":null,"toModelId":"m-2"}`,
+    ))
+    expect(entry.type == SessionEntryTag.modelChange).toBeTruthy()
+    if entry.type == SessionEntryTag.modelChange: expect(entry.toModelId).toBe("m-2")
+    expect(str(SessionEntryTag.sessionInfo)).toBe("session-info")
+    expect(str(SessionEntryTag.customMessage)).toBe("custom-message")
+
+test "an execution span narrows through its category tag":
+    const span = ExecutionSpan.parse(Json.parse(
+        `{"spanId":"sp-1","parentSpanId":null,"runId":null,"sessionId":"s-1","name":"read_file","startedAt":1,"endedAt":2,"status":"ok","metrics":{"latencyMs":12,"tokensIn":null,"tokensOut":null,"costUsd":null},"category":"tool","toolCallId":"t-1","toolName":"read_file","toolCategoryId":null,"toolEffectKind":null,"errorCode":null}`,
+    ))
+    if span.category == ExecutionSpanTag.tool: expect(span.toolName).toBe("read_file")
+    expect(ExecutionSpan.is(Json.parse(`{"spanId":"sp-1","category":"network"}`))).toBeFalsy()
+
+test "a model message part keeps its hyphenated wire tags":
+    expect(str(ModelMessagePartTag.toolCall)).toBe("tool-call")
+    expect(str(ModelMessagePartTag.toolResult)).toBe("tool-result")
+    const part = ModelMessagePart.parse(Json.parse(`{"type":"tool-call","toolCallId":"t-1","toolName":"n","input":{}}`))
+    if part.type == ModelMessagePartTag.toolCall: expect(part.toolName).toBe("n")
+    expect(ModelMessagePart.is(Json.parse(`{"type":"toolCall","toolCallId":"t-1"}`))).toBeFalsy()
+
+test "a kernel capability response narrows to ok or error":
+    const failure = kernelCapabilityCallResponse.parse(Json.parse(
+        `{"protocolVersion":2,"callId":"c-1","status":"error","error":{"code":"denied","message":"no","retryable":false,"details":null}}`,
+    ))
+    if failure.status == CapabilityCallResponseTag.error: expect(failure.error.code).toBe("denied")
+    expect(str(KernelChannel.kernelCapabilityCall)).toBe("kernel:capability-call")
+
+test "a remote node frame refuses a server tag on the client side":
+    expect(RemoteNodeClientFrame.is(Json.parse(`{"type":"ready","manifestRevision":"r-1"}`))).toBeFalsy()
+    const hello = RemoteNodeClientFrame.parse(Json.parse(
+        `{"type":"hello","protocolVersion":1,"clientId":"n-1","clientName":"laptop","platform":"darwin"}`,
+    ))
+    if hello.type == RemoteNodeClientFrameTag.hello: expect(hello.clientName).toBe("laptop")
+
+test "the channel table binds the platform's own request and event types":
+    expect(str(AgentChannel.agentAdmit)).toBe("agent:admit")
+    const admit = agentAdmitRequest.parse(Json.parse(
+        `{"sessionId":"s-1","inputId":"i-1","role":null,"content":"hello","delivery":null,"metadata":null}`,
+    ))
+    expect(admit.content).toBe("hello")
+    const event = agentSessionEventEvent.parse(Json.parse(
+        `{"sessionId":"s-1","sequence":1,"event":{"kind":"lifecycle","phase":"started"}}`,
+    ))
+    expect(event.sequence).toBe(1)

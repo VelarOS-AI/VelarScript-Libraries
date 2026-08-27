@@ -102,3 +102,10 @@ export const EnvelopeSchema = z.strictObject({
 
 // a top-level alias over a wrapper
 export const MaybeAuthorSchema = AuthorSchema.nullish();
+
+// Outside the closed table on purpose: the fixture manifest degrades this
+// path, so the golden output carries an `unknown` field with a recorded reason.
+export const DegradedSchema = z.strictObject({
+  protocolVersion: z.literal(2),
+  payload: z.string(),
+});

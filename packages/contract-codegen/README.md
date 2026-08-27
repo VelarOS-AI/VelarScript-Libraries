@@ -159,6 +159,24 @@ export const chatSendResponse: Type<SendResult> = SendResult
 It deliberately generates **no transport stub**. The envelope shape, retries, and
 timeouts are the product's protocol, not a labs package's business.
 
+## Real-target acceptance
+
+The package is accepted against real shipped contracts, not only its own
+fixtures. `tests/real-targets/` holds the committed run over
+`@velaros-ai/agent`'s `./protocol` and `@velaros-ai/kernel`'s
+`./contracts/protocol`, with the manifests, the generated `.vel`, the
+generation reports, a minimal Vel project that `velar check` passes on, and
+equivalence samples over real payloads.
+
+| Target | Exported schemas | Declarations | Degrades | Refinements reported |
+| --- | --- | --- | --- | --- |
+| `@velaros-ai/agent` `./protocol` | 92 | 102 | 44 | 47 |
+| `@velaros-ai/kernel` `./contracts/protocol` | 56 | 61 | 24 | 77 |
+
+Every degrade names a path and a reason; the reports list them in full. See
+[`tests/real-targets/README.md`](tests/real-targets/README.md) for how the
+schemas are reached without installing the authenticated packages.
+
 ## Limits
 
 - Schemas are read from a module loaded once per process. The CLI is one-shot;

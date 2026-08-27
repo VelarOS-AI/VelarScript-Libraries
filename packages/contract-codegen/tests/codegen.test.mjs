@@ -26,14 +26,16 @@ import { FIXTURES, PACKAGE_ROOT, copyFixtures } from "./support/equivalence.mjs"
 
 const MANIFEST = join(FIXTURES, "manifest.json");
 const GENERATED = join(FIXTURES, "vel", "generated");
+const FIXTURE_DEGRADES = JSON.parse(readFileSync(MANIFEST, "utf8")).modules[0].unknownDegrade;
 
 async function lowerFixture(moduleFile, options = {}) {
   const module = await import(join(FIXTURES, "contracts", moduleFile));
   const names = options.exports ?? Object.keys(module).filter((name) => module[name]?._def).sort();
   const exports = names.map((name) => ({ name, schema: module[name] }));
+  const degrades = options.degrades ?? (moduleFile === "contracts.mjs" ? FIXTURE_DEGRADES : []);
   return lowerModule(
     exports,
-    { stripSuffix: "Schema", prefix: options.prefix ?? "", degrades: options.degrades ?? [] },
+    { stripSuffix: "Schema", prefix: options.prefix ?? "", degrades },
     moduleFile,
   );
 }
@@ -206,6 +208,13 @@ test("every row of the closed mapping table lowers to its declared VelarScript s
   assert.equal(renderType(byName.get("StreamReasoning").fields[0].type), "StreamEventTag.reasoning");
   assert.equal(renderType(byName.get("StreamToolCall").fields[0].type), "StreamEventTag.toolCall");
   assert.equal(renderType(byName.get("StreamEventEnd").fields[0].type), "StreamEventTag.end");
+
+  // The manifest exemption keeps the export and opens exactly one field.
+  assert.deepEqual(
+    byName.get("Degraded").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
+    ["protocolVersion: unknown", "payload: string"],
+  );
+  assert.deepEqual(result.degrades.map((degrade) => degrade.path), ["DegradedSchema.protocolVersion"]);
 });
 
 test("a shape outside the table is refused with its schema path and reason", async () => {
@@ -291,7 +300,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   const checked = await run({ manifestPath: MANIFEST, mode: "check", toolVersion: "0.1.0" });
   assert.ok(checked.ok);
   assert.equal(checked.mode, "check");
-  assert.equal(checked.modules[0].exportedSchemas, 16);
+  assert.equal(checked.modules[0].exportedSchemas, 17);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);

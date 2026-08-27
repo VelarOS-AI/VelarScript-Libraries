@@ -1,0 +1,759 @@
+{
+  "note": "Equivalence samples over the platform's own wire contracts. 'zod' is recomputed from the real schemas when a VelarOS-Platform checkout is present; 'vel' is recomputed from the committed generated declarations on every run.",
+  "samples": [
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "every nullable key written as an explicit null and the optional key omitted",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": null,
+        "content": "hello",
+        "delivery": null,
+        "metadata": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "a fully populated admit request",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": "user",
+        "content": "hello",
+        "delivery": "steer",
+        "metadata": {
+          "origin": "shell"
+        },
+        "parts": [
+          {
+            "type": "text",
+            "text": "hello"
+          }
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "a role outside the enum",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": "operator",
+        "content": "hello",
+        "delivery": null,
+        "metadata": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "a missing content field",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": null,
+        "delivery": null,
+        "metadata": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "a surplus key",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": null,
+        "content": "hello",
+        "delivery": null,
+        "metadata": null,
+        "extra": true
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "strict-unknown-keys"
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "the nullable keys left out entirely",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "content": "hello"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "nullable-accepts-absent"
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitRequest",
+      "zodExport": "AdmitRequestSchema",
+      "why": "an explicit null for the one optional key",
+      "payload": {
+        "sessionId": "s-1",
+        "inputId": "i-1",
+        "role": null,
+        "content": "hello",
+        "delivery": null,
+        "metadata": null,
+        "parts": null
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "optional-accepts-null"
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitReceipt",
+      "zodExport": "AdmitReceiptSchema",
+      "why": "a receipt",
+      "payload": {
+        "inputId": "i-1",
+        "sessionId": "s-1",
+        "seq": 4
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "AdmitReceipt",
+      "zodExport": "AdmitReceiptSchema",
+      "why": "a fractional sequence the zod int check rejects",
+      "payload": {
+        "inputId": "i-1",
+        "sessionId": "s-1",
+        "seq": 1.5
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "refinement-not-carried"
+    },
+    {
+      "module": "agent",
+      "schema": "ModelMessagePart",
+      "zodExport": "ModelMessagePartSchema",
+      "why": "the text case",
+      "payload": {
+        "type": "text",
+        "text": "hi"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ModelMessagePart",
+      "zodExport": "ModelMessagePartSchema",
+      "why": "the hyphenated tool-call tag",
+      "payload": {
+        "type": "tool-call",
+        "toolCallId": "t-1",
+        "toolName": "read_file",
+        "input": {}
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ModelMessagePart",
+      "zodExport": "ModelMessagePartSchema",
+      "why": "the hyphenated tool-result tag",
+      "payload": {
+        "type": "tool-result",
+        "toolCallId": "t-1",
+        "toolName": "read_file",
+        "output": {
+          "ok": true
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ModelMessagePart",
+      "zodExport": "ModelMessagePartSchema",
+      "why": "a tag outside the union",
+      "payload": {
+        "type": "image",
+        "url": "x"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "ModelMessagePart",
+      "zodExport": "ModelMessagePartSchema",
+      "why": "the text payload under the tool-call tag",
+      "payload": {
+        "type": "tool-call",
+        "text": "hi"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "the hyphenated session-info tag",
+      "payload": {
+        "id": "e-1",
+        "createdAt": 1,
+        "type": "session-info",
+        "spaceId": "sp-1",
+        "parentId": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "a message entry carrying a part list",
+      "payload": {
+        "id": "e-2",
+        "createdAt": 2,
+        "type": "message",
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "hi"
+            }
+          ]
+        },
+        "parentId": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "a message entry carrying plain text",
+      "payload": {
+        "id": "e-3",
+        "createdAt": 3,
+        "type": "message",
+        "message": {
+          "role": "user",
+          "content": "hi"
+        },
+        "parentId": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "the hyphenated model-change tag",
+      "payload": {
+        "id": "e-4",
+        "createdAt": 4,
+        "type": "model-change",
+        "toModelId": "m-2",
+        "parentId": null,
+        "fromModelId": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "a compaction entry missing its summary",
+      "payload": {
+        "id": "e-5",
+        "createdAt": 5,
+        "type": "compaction",
+        "replacedEntryIds": [],
+        "parentId": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEntry",
+      "zodExport": "SessionEntrySchema",
+      "why": "a tag outside the union",
+      "payload": {
+        "id": "e-6",
+        "createdAt": 6,
+        "type": "checkpoint",
+        "parentId": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "ExecutionSpan",
+      "zodExport": "ExecutionSpanSchema",
+      "why": "a tool span",
+      "payload": {
+        "spanId": "sp-1",
+        "sessionId": "s-1",
+        "name": "read_file",
+        "startedAt": 1,
+        "endedAt": 2,
+        "status": "ok",
+        "metrics": {
+          "latencyMs": 12,
+          "tokensIn": null,
+          "tokensOut": null,
+          "costUsd": null
+        },
+        "category": "tool",
+        "toolCallId": "t-1",
+        "toolName": "read_file",
+        "parentSpanId": null,
+        "runId": null,
+        "toolCategoryId": null,
+        "toolEffectKind": null,
+        "errorCode": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ExecutionSpan",
+      "zodExport": "ExecutionSpanSchema",
+      "why": "a model span",
+      "payload": {
+        "spanId": "sp-2",
+        "sessionId": "s-1",
+        "name": "generate",
+        "startedAt": 1,
+        "endedAt": 2,
+        "status": "error",
+        "metrics": {
+          "latencyMs": 30,
+          "tokensIn": 10,
+          "tokensOut": 4,
+          "costUsd": null
+        },
+        "category": "model",
+        "provider": "anthropic",
+        "model": "m-1",
+        "parentSpanId": null,
+        "runId": null,
+        "requestFingerprint": null,
+        "finishReason": null,
+        "errorCode": null,
+        "errorMessage": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ExecutionSpan",
+      "zodExport": "ExecutionSpanSchema",
+      "why": "a status outside the enum",
+      "payload": {
+        "spanId": "sp-3",
+        "sessionId": "s-1",
+        "name": "n",
+        "startedAt": 1,
+        "endedAt": 2,
+        "status": "cancelled",
+        "metrics": {
+          "latencyMs": 12,
+          "tokensIn": null,
+          "tokensOut": null,
+          "costUsd": null
+        },
+        "category": "tool",
+        "toolCallId": "t-1",
+        "toolName": "n",
+        "parentSpanId": null,
+        "runId": null,
+        "toolCategoryId": null,
+        "toolEffectKind": null,
+        "errorCode": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "ExecutionSpan",
+      "zodExport": "ExecutionSpanSchema",
+      "why": "a category outside the union",
+      "payload": {
+        "spanId": "sp-4",
+        "sessionId": "s-1",
+        "name": "n",
+        "startedAt": 1,
+        "endedAt": 2,
+        "status": "ok",
+        "metrics": {
+          "latencyMs": 12,
+          "tokensIn": null,
+          "tokensOut": null,
+          "costUsd": null
+        },
+        "category": "network",
+        "parentSpanId": null,
+        "runId": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "ExecuteToolRequest",
+      "zodExport": "ExecuteToolRequestSchema",
+      "why": "the declared protocol version",
+      "payload": {
+        "protocolVersion": 1,
+        "contractId": "c-1",
+        "catalogRevision": "r-1",
+        "toolCallId": "t-1",
+        "toolName": "read_file",
+        "input": {}
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "ExecuteToolRequest",
+      "zodExport": "ExecuteToolRequestSchema",
+      "why": "a protocol version the degraded field no longer pins",
+      "payload": {
+        "protocolVersion": 99,
+        "contractId": "c-1",
+        "catalogRevision": "r-1",
+        "toolCallId": "t-1",
+        "toolName": "read_file",
+        "input": {}
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "module": "agent",
+      "schema": "ExecuteToolRequest",
+      "zodExport": "ExecuteToolRequestSchema",
+      "why": "a missing tool name",
+      "payload": {
+        "protocolVersion": 1,
+        "contractId": "c-1",
+        "catalogRevision": "r-1",
+        "toolCallId": "t-1",
+        "input": {}
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEventEnvelope",
+      "zodExport": "SessionEventEnvelopeSchema",
+      "why": "a lifecycle event",
+      "payload": {
+        "sessionId": "s-1",
+        "sequence": 1,
+        "event": {
+          "kind": "lifecycle",
+          "phase": "started"
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEventEnvelope",
+      "zodExport": "SessionEventEnvelopeSchema",
+      "why": "a custom event",
+      "payload": {
+        "sessionId": "s-1",
+        "sequence": 2,
+        "event": {
+          "kind": "custom",
+          "customType": "note",
+          "data": {
+            "text": "x"
+          }
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "SessionEventEnvelope",
+      "zodExport": "SessionEventEnvelopeSchema",
+      "why": "an event kind outside the union",
+      "payload": {
+        "sessionId": "s-1",
+        "sequence": 3,
+        "event": {
+          "kind": "telemetry"
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "KernelHandshake",
+      "zodExport": "KernelHandshakeSchema",
+      "why": "a handshake with one module",
+      "payload": {
+        "protocolVersion": 2,
+        "kernelVersion": "0.2.1",
+        "modules": [
+          {
+            "id": "fs",
+            "version": "1.0.0",
+            "apiVersion": 1,
+            "provides": [],
+            "requires": [],
+            "optionalRequires": [],
+            "permissions": [],
+            "isolation": "in-process",
+            "catalogRevision": "r-1"
+          }
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "KernelHandshake",
+      "zodExport": "KernelHandshakeSchema",
+      "why": "a module list of the wrong shape",
+      "payload": {
+        "protocolVersion": 2,
+        "kernelVersion": "0.2.1",
+        "modules": [
+          {
+            "id": "fs"
+          }
+        ]
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "the ok case",
+      "payload": {
+        "protocolVersion": 2,
+        "callId": "c-1",
+        "status": "ok",
+        "output": {
+          "bytes": 3
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "the error case",
+      "payload": {
+        "protocolVersion": 2,
+        "callId": "c-1",
+        "status": "error",
+        "error": {
+          "code": "denied",
+          "message": "no",
+          "retryable": false,
+          "details": null
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "an ok payload under the error status",
+      "payload": {
+        "protocolVersion": 2,
+        "callId": "c-1",
+        "status": "error",
+        "output": {}
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityCallResponse",
+      "zodExport": "CapabilityCallResponseSchema",
+      "why": "a status outside the union",
+      "payload": {
+        "protocolVersion": 2,
+        "callId": "c-1",
+        "status": "pending"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "RemoteNodeClientFrame",
+      "zodExport": "RemoteNodeClientFrameSchema",
+      "why": "the hello frame",
+      "payload": {
+        "type": "hello",
+        "protocolVersion": 1,
+        "clientId": "n-1",
+        "clientName": "laptop",
+        "platform": "darwin"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "RemoteNodeClientFrame",
+      "zodExport": "RemoteNodeClientFrameSchema",
+      "why": "an invoke frame",
+      "payload": {
+        "type": "invoke",
+        "callId": "c-1",
+        "manifestRevision": "r-1",
+        "capabilityId": "fs",
+        "operation": "read",
+        "input": {},
+        "deadlineMs": 1000,
+        "scope": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "RemoteNodeClientFrame",
+      "zodExport": "RemoteNodeClientFrameSchema",
+      "why": "a platform outside the enum",
+      "payload": {
+        "type": "hello",
+        "protocolVersion": 1,
+        "clientId": "n-1",
+        "clientName": "laptop",
+        "platform": "freebsd"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "RemoteNodeClientFrame",
+      "zodExport": "RemoteNodeClientFrameSchema",
+      "why": "a server frame tag on the client side",
+      "payload": {
+        "type": "ready",
+        "manifestRevision": "r-1"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityRequirement",
+      "zodExport": "CapabilityRequirementSchema",
+      "why": "a requirement with a range",
+      "payload": {
+        "id": "fs",
+        "versionRange": "^1.0.0"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityRequirement",
+      "zodExport": "CapabilityRequirementSchema",
+      "why": "the nullable range left out entirely",
+      "payload": {
+        "id": "fs"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "nullable-accepts-absent"
+    },
+    {
+      "module": "kernel",
+      "schema": "CapabilityRequirement",
+      "zodExport": "CapabilityRequirementSchema",
+      "why": "an explicit null range",
+      "payload": {
+        "id": "fs",
+        "versionRange": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "ScopeRef",
+      "zodExport": "ScopeRefSchema",
+      "why": "a scope reference",
+      "payload": {
+        "id": "sc-1",
+        "ownerModuleId": "fs",
+        "kind": "directory"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "ScopeRef",
+      "zodExport": "ScopeRefSchema",
+      "why": "a missing owner",
+      "payload": {
+        "id": "sc-1",
+        "kind": null
+      },
+      "zod": false,
+      "vel": false
+    }
+  ]
+}

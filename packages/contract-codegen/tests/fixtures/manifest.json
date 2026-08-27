@@ -11,7 +11,13 @@
     {
       "specifier": "./contracts.mjs",
       "output": "contracts.vel",
-      "exports": "all"
+      "exports": "all",
+      "unknownDegrade": [
+        {
+          "path": "DegradedSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed, so the consumer compares the version itself"
+        }
+      ]
     }
   ],
   "channelTables": [
@@ -20,9 +26,19 @@
       "enumName": "FixtureChannel",
       "typesOutput": "contracts.vel",
       "channels": [
-        { "name": "chat:stream-event", "event": "EnvelopeSchema" },
-        { "name": "chat:describe-article", "request": "ArticleSchema", "response": "AuthorSchema" },
-        { "name": "mod:kind", "request": "KindSchema" }
+        {
+          "name": "chat:stream-event",
+          "event": "EnvelopeSchema"
+        },
+        {
+          "name": "chat:describe-article",
+          "request": "ArticleSchema",
+          "response": "AuthorSchema"
+        },
+        {
+          "name": "mod:kind",
+          "request": "KindSchema"
+        }
       ]
     }
   ]

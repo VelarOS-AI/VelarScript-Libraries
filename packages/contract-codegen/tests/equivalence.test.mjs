@@ -68,7 +68,7 @@ test("zod answers exactly what each sample records", async () => {
 test("generated Type.parse answers exactly what each sample records", () => {
   const sweep = runVelSweep({
     projectDirectory: PROJECT,
-    moduleImport: "../generated/contracts.vel",
+    imports: { default: "../generated/contracts.vel" },
     samples,
   });
   assert.equal(sweep.status, 0, `${sweep.output}\n---- driver ----\n${sweep.driver}`);

@@ -1,0 +1,154 @@
+{
+  "formatVersion": 1,
+  "resolveFrom": "./platform/kernel",
+  "outputDirectory": "./generated",
+  "naming": {
+    "stripSuffix": "Schema",
+    "prefix": ""
+  },
+  "velarFormat": true,
+  "modules": [
+    {
+      "specifier": "./dist/contracts/protocol/index.js",
+      "output": "kernel-protocol.vel",
+      "exports": "all",
+      "unknownDegrade": [
+        {
+          "path": "CapabilityCallFailureSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilityCallRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilityCallSuccessSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilitySessionCloseRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilitySessionCloseResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilitySessionOpenFailureSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilitySessionOpenRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "CapabilitySessionOpenSuccessSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsInstallFromDirectoryRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsInstallFromDirectoryResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsListRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsListResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsSetEnabledRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ModsSetEnabledResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "RemoteNodeHelloSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "VelarosModCapabilityRequirementSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "VelarosModCapabilityRequirementSchema.versionRange",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "VelarosModCapabilityTokenSchema.version",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.isolation",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.optionalRequires",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.permissions",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.provides",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.requires",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.version",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        }
+      ]
+    }
+  ],
+  "channelTables": [
+    {
+      "output": "kernel-channels.vel",
+      "enumName": "KernelChannel",
+      "typesOutput": "kernel-protocol.vel",
+      "channels": [
+        {
+          "name": "kernel:capability-call",
+          "request": "CapabilityCallRequestSchema",
+          "response": "CapabilityCallResponseSchema"
+        },
+        {
+          "name": "kernel:capability-session-open",
+          "request": "CapabilitySessionOpenRequestSchema",
+          "response": "CapabilitySessionOpenResponseSchema"
+        },
+        {
+          "name": "kernel:capability-session-close",
+          "request": "CapabilitySessionCloseRequestSchema",
+          "response": "CapabilitySessionCloseResponseSchema"
+        },
+        {
+          "name": "kernel:mods-list",
+          "request": "ModsListRequestSchema",
+          "response": "ModsListResponseSchema"
+        },
+        {
+          "name": "kernel:mods-set-enabled",
+          "request": "ModsSetEnabledRequestSchema",
+          "response": "ModsSetEnabledResponseSchema"
+        },
+        {
+          "name": "kernel:mods-install-from-directory",
+          "request": "ModsInstallFromDirectoryRequestSchema",
+          "response": "ModsInstallFromDirectoryResponseSchema"
+        }
+      ]
+    }
+  ]
+}

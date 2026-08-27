@@ -1,0 +1,44 @@
+// The real-target acceptance: the shell consumes the platform's own wire
+// contracts through generated types, narrowing each discriminated union the
+// way a transport boundary has to.
+import {AgentChannel, agentExecuteToolRequest, agentSessionEventEvent} from "./generated/agent-channels.vel"
+import {ExecutionSpan, ExecutionSpanTag, SessionEntry, SessionEntryTag} from "./generated/agent-protocol.vel"
+import {kernelCapabilityCallRequest, KernelChannel} from "./generated/kernel-channels.vel"
+import {CapabilityCallResponse, RemoteNodeClientFrame, RemoteNodeClientFrameTag} from "./generated/kernel-protocol.vel"
+
+def describeEntry(entry: SessionEntry) -> string:
+    if entry.type == SessionEntryTag.message: return entry.id
+    if entry.type == SessionEntryTag.compaction: return entry.summary
+    if entry.type == SessionEntryTag.modelChange: return entry.toModelId
+    return entry.id
+
+def spanLabel(span: ExecutionSpan) -> string:
+    if span.category == ExecutionSpanTag.tool: return span.toolName
+    if span.category == ExecutionSpanTag.model: return span.model
+    return span.name
+
+def frameKind(frame: RemoteNodeClientFrame) -> string:
+    if frame.type == RemoteNodeClientFrameTag.hello: return "hello"
+    if frame.type == RemoteNodeClientFrameTag.invoke: return frame.callId
+    return "other"
+
+const call = agentExecuteToolRequest.parse({
+    protocolVersion: 1,
+    sessionId: "s-1",
+    toolCallId: "t-1",
+    toolName: "read_file",
+    args: {},
+})
+const envelope = agentSessionEventEvent.parse({
+    sessionId: "s-1",
+    seq: 1,
+    payload: {kind: "input-admitted", inputId: "i-1"},
+})
+const kernelCall = kernelCapabilityCallRequest.parse({
+    protocolVersion: 2,
+    callId: "c-1",
+    capability: {capabilityId: "fs", operation: "read"},
+    input: {},
+})
+print(f"{str(AgentChannel.agentExecuteTool)}:{call.toolName}:{envelope.sessionId}")
+print(f"{str(KernelChannel.kernelCapabilityCall)}:{kernelCall.callId}")

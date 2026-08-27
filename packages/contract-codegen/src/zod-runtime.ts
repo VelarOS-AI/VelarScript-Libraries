@@ -7,7 +7,7 @@
 import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 /**
  * The zod major version this generator understands, matching the VelarOS
@@ -93,7 +93,13 @@ export function looksLikeLegacyZod(value: unknown): boolean {
     && typeof (def as { type?: unknown }).type !== "string";
 }
 
-export async function loadModule(specifier: string, resolveFrom: string): Promise<Record<string, unknown>> {
+export interface LoadedModule {
+  readonly exports: Record<string, unknown>;
+  /** Absolute path of the file that was loaded. */
+  readonly file: string;
+}
+
+export async function loadModule(specifier: string, resolveFrom: string): Promise<LoadedModule> {
   const require = createRequire(join(resolveFrom, "noop.js"));
   let resolved: string;
   try {
@@ -103,7 +109,32 @@ export async function loadModule(specifier: string, resolveFrom: string): Promis
       `cannot resolve module '${specifier}' from ${resolveFrom}: ${(error as Error).message}`,
     );
   }
-  return (await import(pathToFileURL(resolved).href)) as Record<string, unknown>;
+  return { exports: (await import(pathToFileURL(resolved).href)) as Record<string, unknown>, file: resolved };
+}
+
+/**
+ * Walks up from a loaded file to the package that owns it. A relative
+ * specifier has no package name to look up, and guessing one would put a
+ * fiction in the generated header.
+ */
+export function owningPackage(file: string): { readonly name: string; readonly version: string | null } | null {
+  let directory = dirname(file);
+  for (;;) {
+    try {
+      const manifest = JSON.parse(readFileSync(join(directory, "package.json"), "utf8")) as {
+        name?: unknown;
+        version?: unknown;
+      };
+      if (typeof manifest.name === "string") {
+        return { name: manifest.name, version: typeof manifest.version === "string" ? manifest.version : null };
+      }
+    } catch {
+      // Keep walking: a directory without a manifest is not an answer.
+    }
+    const parent = dirname(directory);
+    if (parent === directory) return null;
+    directory = parent;
+  }
 }
 
 export interface ExportedSchema {

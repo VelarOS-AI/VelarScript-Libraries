@@ -38,9 +38,10 @@ export {
   collectExports,
   isZodSchema,
   looksLikeLegacyZod,
+  owningPackage,
   REFERENCE_ZOD_VERSION,
   resolveZod,
   SUPPORTED_ZOD_MAJOR,
   ZodVersionError,
 } from "./zod-runtime.js";
-export type { ExportedSchema, ZodResolution, ZodSchema } from "./zod-runtime.js";
+export type { ExportedSchema, LoadedModule, ZodResolution, ZodSchema } from "./zod-runtime.js";

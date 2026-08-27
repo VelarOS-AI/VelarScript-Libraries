@@ -1,0 +1,752 @@
+{
+  "tool": "@velarscript-labs/contract-codegen",
+  "toolVersion": "0.1.0",
+  "mode": "generate",
+  "zod": {
+    "supportedMajor": 4,
+    "resolved": "4.4.3",
+    "path": "/Users/mac/Desktop/VelarOS/projects/VelarOS-Platform/node_modules/.bun/zod@4.4.3/node_modules/zod/package.json"
+  },
+  "formatted": true,
+  "modules": [
+    {
+      "specifier": "./dist/contracts/protocol/index.js",
+      "output": "kernel-protocol.vel",
+      "sourcePackage": "@velaros-ai/kernel",
+      "sourceVersion": "0.2.1",
+      "schemaDigest": "sha256-196b0cfa4e216fa96a97d562a07158676f50316920c9583c0d10823a8dc745c5",
+      "exportedSchemas": 56,
+      "declarations": 61,
+      "degrades": [
+        {
+          "path": "CapabilityCallFailureSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilityCallRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilityCallSuccessSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilitySessionCloseRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilitySessionCloseResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilitySessionOpenFailureSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilitySessionOpenRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "CapabilitySessionOpenSuccessSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsInstallFromDirectoryRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsInstallFromDirectoryResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsListRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsListResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsSetEnabledRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ModsSetEnabledResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "RemoteNodeHelloSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "VelarosModCapabilityRequirementSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
+          "path": "VelarosModCapabilityRequirementSchema.versionRange",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "VelarosModCapabilityTokenSchema.version",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.isolation",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.optionalRequires",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.permissions",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.provides",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.requires",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
+          "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.version",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        }
+      ],
+      "constraints": [
+        {
+          "path": "CapabilityCallErrorSchema.code",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallFailureSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallRequestSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallRequestSchema.capabilityId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallRequestSchema.operation",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallRequestSchema.sessionId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityCallSuccessSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityRequireItemSchema.capabilityId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityRequireItemSchema.operations[]",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityRequirementSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityRequirementSchema.versionRange",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilitySessionCloseRequestSchema.sessionId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilitySessionOpenRequestSchema.requires",
+          "zodType": "array",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilitySessionOpenSuccessSchema.sessionId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityTokenSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "CapabilityTokenSchema.version",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelHandshakeSchema.protocolVersion",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "KernelModPackDescriptorSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModPackDescriptorSchema.provides[]",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModPackDescriptorSchema.specifier",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModPackDescriptorSchema.version",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModuleDescriptorSchema.apiVersion",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "KernelModuleDescriptorSchema.catalogRevision",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModuleDescriptorSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModuleDescriptorSchema.permissions[]",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelModuleDescriptorSchema.version",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelRunIdentitySchema.generation",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "KernelRunIdentitySchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelRunIdentitySchema.ownerModuleId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelRunIdentitySchema.sessionId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelRunIdentitySchema.startedAt",
+          "zodType": "number",
+          "checks": [
+            "number_format"
+          ]
+        },
+        {
+          "path": "KernelSessionIdentitySchema.createdAt",
+          "zodType": "number",
+          "checks": [
+            "number_format"
+          ]
+        },
+        {
+          "path": "KernelSessionIdentitySchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "KernelSessionIdentitySchema.ownerModuleId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ModsInstallFromDirectoryRequestSchema.directory",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ModsSetEnabledRequestSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeAuthenticateSchema.signature",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeCancelSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeCapabilityDescriptorSchema.capabilityId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeCapabilityDescriptorSchema.moduleId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeCapabilityDescriptorSchema.operations",
+          "zodType": "array",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeCapabilityDescriptorSchema.version",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeChallengeSchema.challenge",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeChallengeSchema.protocolVersion",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "RemoteNodeErrorSchema.code",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeHelloSchema.clientId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeHelloSchema.clientName",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeIdentitySchema.arch",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeIdentitySchema.epoch",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeIdentitySchema.nodeId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeIdentitySchema.nodeName",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeIdentitySchema.nodeVersion",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeInvokeSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeInvokeSchema.capabilityId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeInvokeSchema.deadlineMs",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "RemoteNodeInvokeSchema.manifestRevision",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeInvokeSchema.operation",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeManifestSchema.revision",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeOperationDescriptorSchema.name",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeOperationDescriptorSchema.permissions[]",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodePairSchema.pairingCode",
+          "zodType": "string",
+          "checks": [
+            "string_format"
+          ]
+        },
+        {
+          "path": "RemoteNodePairSchema.publicKey",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodePingSchema.at",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "RemoteNodePongSchema.at",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        },
+        {
+          "path": "RemoteNodeProgressSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeResultSchema.callId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeToolDescriptorSchema.capabilityId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeToolDescriptorSchema.category",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeToolDescriptorSchema.name",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "RemoteNodeToolDescriptorSchema.operation",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ResourceRefSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ResourceRefSchema.mediaType",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ResourceRefSchema.ownerModuleId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ScopeRefSchema.id",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ScopeRefSchema.kind",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "ScopeRefSchema.ownerModuleId",
+          "zodType": "string",
+          "checks": [
+            "min_length"
+          ]
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.apiVersion",
+          "zodType": "number",
+          "checks": [
+            "number_format",
+            "greater_than"
+          ]
+        }
+      ],
+      "boundaryNotes": [
+        {
+          "kind": "nullable-accepts-absent",
+          "detail": "z.nullable(), and any union carrying z.null(), rejects an absent key; a `T?` field accepts it. This is the declared undefined-to-null interop normalization.",
+          "count": 13,
+          "samplePaths": [
+            "CapabilityCallErrorSchema.details",
+            "CapabilityCallRequestSchema.scope",
+            "CapabilityRequireItemSchema.operations",
+            "CapabilityRequireItemSchema.scope",
+            "CapabilityRequirementSchema.versionRange"
+          ]
+        },
+        {
+          "kind": "optional-accepts-null",
+          "detail": "z.optional() rejects an explicit null; `T?` accepts it. This is the declared undefined-to-null interop normalization.",
+          "count": 5,
+          "samplePaths": [
+            "RemoteNodeResultSchema.output",
+            "VelarosModEnvelopeSchema.agent",
+            "VelarosModEnvelopeSchema.ui",
+            "VelarosModModuleSectionSchema.entry",
+            "VelarosModModuleSectionSchema.exportName"
+          ]
+        },
+        {
+          "kind": "strict-unknown-keys",
+          "detail": "z.strictObject rejects an unknown key; a VelarScript record accepts the value and drops the key. The generated type is wider than the zod schema for surplus fields.",
+          "count": 49,
+          "samplePaths": [
+            "CapabilityCallErrorSchema",
+            "CapabilityCallFailureSchema",
+            "CapabilityCallRequestSchema",
+            "CapabilityCallSuccessSchema",
+            "CapabilityRequireItemSchema"
+          ]
+        }
+      ],
+      "renamed": [],
+      "unusedDegrades": []
+    }
+  ],
+  "channelTables": [
+    {
+      "output": "kernel-channels.vel",
+      "enumName": "KernelChannel",
+      "channels": 6,
+      "bindings": 12
+    }
+  ],
+  "files": [
+    {
+      "output": "kernel-protocol.vel",
+      "status": "written"
+    },
+    {
+      "output": "kernel-channels.vel",
+      "status": "written"
+    }
+  ],
+  "ok": true
+}

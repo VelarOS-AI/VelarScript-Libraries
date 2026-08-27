@@ -123,6 +123,18 @@ function checkNames(schema: ZodSchema): string[] {
   });
 }
 
+/** Names the shape a degrade actually covers: `optional pipe`, not just `optional`. */
+function describeType(schema: ZodSchema): string {
+  const parts: string[] = [];
+  let current: ZodSchema | null = schema;
+  while (current !== null && TRANSPARENT.has(zodType(current))) {
+    parts.push(zodType(current));
+    current = innerOf(current);
+  }
+  if (current !== null) parts.push(zodType(current));
+  return parts.join(" ");
+}
+
 function innerOf(schema: ZodSchema): ZodSchema | null {
   const inner = def(schema)["innerType"];
   return isZodSchema(inner) ? inner : null;
@@ -350,7 +362,7 @@ export function lowerModule(
     if (degrade !== undefined) {
       usedDegrades.add(path);
       if (!applied.some((entry) => entry.path === path)) {
-        applied.push({ path, reason: degrade.reason, zodType: zodType(schema) });
+        applied.push({ path, reason: degrade.reason, zodType: describeType(schema) });
       }
       return PRIMITIVE_UNKNOWN;
     }
@@ -543,6 +555,16 @@ export function lowerModule(
 
   function bodyOf(node: NamedNode): Declaration | null {
     const { schema, name, path } = node;
+    const degrade = degradeByPath.get(path);
+    if (degrade !== undefined) {
+      // An exported schema the table refuses outright still keeps its name, so
+      // the consuming module's import list does not silently lose an export.
+      usedDegrades.add(path);
+      if (!applied.some((entry) => entry.path === path)) {
+        applied.push({ path, reason: degrade.reason, zodType: describeType(schema) });
+      }
+      return { kind: "alias", name, type: PRIMITIVE_UNKNOWN, doc: [`Degraded to unknown: ${path}.`] };
+    }
     const type = zodType(schema);
     if (TRANSPARENT.has(type)) {
       const inner = innerOf(schema);

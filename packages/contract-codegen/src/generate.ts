@@ -28,6 +28,7 @@ import {
   isZodSchema,
   loadModule,
   packageOf,
+  owningPackage,
   readPackageVersion,
   resolveZod,
   SUPPORTED_ZOD_MAJOR,
@@ -86,18 +87,24 @@ export async function run(options: RunOptions): Promise<GenerationReport> {
 
   for (const entry of manifest.modules) {
     const module = await loadModule(entry.specifier, resolveFrom);
-    const exports = collectExports(module, entry.exports, entry.specifier);
+    const exports = collectExports(module.exports, entry.exports, entry.specifier);
     const lowered = lowerModule(
       exports,
       { stripSuffix: manifest.naming.stripSuffix, prefix: manifest.naming.prefix, degrades: entry.unknownDegrade },
       entry.specifier,
     );
-    const sourcePackage = entry.versionFrom ?? packageOf(entry.specifier) ?? entry.specifier;
+    // A relative specifier names no package, so the owning manifest beside the
+    // loaded file is what the header records.
+    const owner = owningPackage(module.file);
+    const declared = entry.versionFrom ?? packageOf(entry.specifier);
+    const sourcePackage = declared ?? owner?.name ?? entry.specifier;
     const header: HeaderFields = {
       toolName: TOOL_NAME,
       toolVersion: options.toolVersion,
       sourcePackage,
-      sourceVersion: readPackageVersion(sourcePackage, resolveFrom),
+      sourceVersion: declared === null || declared === undefined
+        ? owner?.version ?? null
+        : readPackageVersion(declared, resolveFrom) ?? (owner?.name === declared ? owner.version : null),
       specifier: entry.specifier,
       schemaDigest: schemaDigest(exports),
       manifestPath: manifestLabel,
@@ -308,7 +315,7 @@ function resolveTypeName(exportName: string, context: ChannelContext, table: Cha
 async function readRuntimeChannels(table: ChannelTableEntry, context: ChannelContext): Promise<ChannelRow[]> {
   const source = table.source!;
   const module = await loadModule(source.specifier, context.resolveFrom);
-  const value = module[source.export];
+  const value = module.exports[source.export];
   if (typeof value !== "object" || value === null) {
     throw new Error(`'${source.specifier}' export '${source.export}' is not a channel map object`);
   }

@@ -1,80 +1,768 @@
 {
   "note": "Golden equivalence samples. 'zod' is what the zod schema answers, 'vel' is what the generated Type.parse answers. They must agree unless 'divergence' names one of the declared mapping-table widenings.",
   "samples": [
-    { "schema": "Primitives", "zodExport": "PrimitivesSchema", "why": "a complete payload", "payload": { "name": "n", "count": 1, "enabled": true, "nothing": null }, "zod": true, "vel": true },
-    { "schema": "Primitives", "zodExport": "PrimitivesSchema", "why": "non-ASCII text and a negative fraction", "payload": { "name": "café", "count": -0.5, "enabled": false, "nothing": null }, "zod": true, "vel": true },
-    { "schema": "Primitives", "zodExport": "PrimitivesSchema", "why": "a number written as text", "payload": { "name": "n", "count": "1", "enabled": true, "nothing": null }, "zod": false, "vel": false },
-    { "schema": "Primitives", "zodExport": "PrimitivesSchema", "why": "a missing null field", "payload": { "name": "n", "count": 1, "enabled": true }, "zod": false, "vel": false },
-    { "schema": "Primitives", "zodExport": "PrimitivesSchema", "why": "a surplus key", "payload": { "name": "n", "count": 1, "enabled": true, "nothing": null, "extra": 1 }, "zod": false, "vel": true, "divergence": "strict-unknown-keys" },
-
-    { "schema": "UndefinedField", "zodExport": "UndefinedFieldSchema", "why": "a JSON null where zod wants undefined", "payload": { "present": "p", "absent": null }, "zod": false, "vel": true, "divergence": "undefined-normalized-to-null" },
-    { "schema": "UndefinedField", "zodExport": "UndefinedFieldSchema", "why": "an absent key", "payload": { "present": "p" }, "zod": false, "vel": false },
-
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "every optional key absent", "payload": { "required": "r" }, "zod": false, "vel": true, "divergence": "nullable-accepts-absent" },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "an explicit null for the nullable key", "payload": { "required": "r", "nullable": null }, "zod": true, "vel": true },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "every key present", "payload": { "required": "r", "optional": "o", "nullable": "n", "nullish": "x" }, "zod": true, "vel": true },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "an explicit null for the optional key", "payload": { "required": "r", "optional": null, "nullable": null }, "zod": false, "vel": true, "divergence": "optional-accepts-null" },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "an explicit null for the nullish key", "payload": { "required": "r", "nullable": null, "nullish": null }, "zod": true, "vel": true },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "a missing required key", "payload": { "optional": "o", "nullable": null }, "zod": false, "vel": false },
-    { "schema": "Optionality", "zodExport": "OptionalitySchema", "why": "a number in a text key", "payload": { "required": 1, "nullable": null }, "zod": false, "vel": false },
-
-    { "schema": "HookEvent", "zodExport": "HookEventSchema", "why": "a colon-separated wire value", "payload": "session:start", "zod": true, "vel": true },
-    { "schema": "HookEvent", "zodExport": "HookEventSchema", "why": "a hyphenated wire value", "payload": "sub-agent:dispatch", "zod": true, "vel": true },
-    { "schema": "HookEvent", "zodExport": "HookEventSchema", "why": "the readable member name instead of the wire value", "payload": "sessionStart", "zod": false, "vel": false },
-    { "schema": "HookEvent", "zodExport": "HookEventSchema", "why": "a value outside the enum", "payload": "unknown", "zod": false, "vel": false },
-
-    { "schema": "ReservedWords", "zodExport": "ReservedWordsSchema", "why": "a wire value that is a VelarScript keyword", "payload": "type", "zod": true, "vel": true },
-    { "schema": "ReservedWords", "zodExport": "ReservedWordsSchema", "why": "a wire value the enum reserves", "payload": "parse", "zod": true, "vel": true },
-    { "schema": "ReservedWords", "zodExport": "ReservedWordsSchema", "why": "a wire value starting with a digit", "payload": "1st", "zod": true, "vel": true },
-    { "schema": "ReservedWords", "zodExport": "ReservedWordsSchema", "why": "the mangled member name instead of the wire value", "payload": "typeValue", "zod": false, "vel": false },
-
-    { "schema": "TrustLevel", "zodExport": "TrustLevelSchema", "why": "one arm of the literal union", "payload": "local-dev", "zod": true, "vel": true },
-    { "schema": "TrustLevel", "zodExport": "TrustLevelSchema", "why": "a value outside the literal union", "payload": "official", "zod": false, "vel": false },
-
-    { "schema": "Kind", "zodExport": "KindSchema", "why": "the single literal", "payload": "velaros-mod", "zod": true, "vel": true },
-    { "schema": "Kind", "zodExport": "KindSchema", "why": "a prefix of the single literal", "payload": "velaros", "zod": false, "vel": false },
-
-    { "schema": "Collections", "zodExport": "CollectionsSchema", "why": "populated collections", "payload": { "tags": ["a"], "headers": { "x": "y" }, "metadata": { "k": 1 }, "opaque": null }, "zod": true, "vel": true },
-    { "schema": "Collections", "zodExport": "CollectionsSchema", "why": "empty collections and a nested unknown", "payload": { "tags": [], "headers": {}, "metadata": {}, "opaque": { "deep": [1, 2] } }, "zod": true, "vel": true },
-    { "schema": "Collections", "zodExport": "CollectionsSchema", "why": "a number in a string-valued record", "payload": { "tags": ["a"], "headers": { "x": 1 }, "metadata": {}, "opaque": 1 }, "zod": false, "vel": false },
-    { "schema": "Collections", "zodExport": "CollectionsSchema", "why": "a missing unknown key", "payload": { "tags": ["a"], "headers": {}, "metadata": {} }, "zod": false, "vel": false },
-    { "schema": "Collections", "zodExport": "CollectionsSchema", "why": "text where a list belongs", "payload": { "tags": "a", "headers": {}, "metadata": {}, "opaque": 1 }, "zod": false, "vel": false },
-
-    { "schema": "Unions", "zodExport": "UnionsSchema", "why": "the text arm of every union", "payload": { "scalar": "s", "maybeScalar": 1, "listOrText": "t" }, "zod": true, "vel": true },
-    { "schema": "Unions", "zodExport": "UnionsSchema", "why": "the number, null, and list arms", "payload": { "scalar": 1, "maybeScalar": null, "listOrText": ["a", "b"] }, "zod": true, "vel": true },
-    { "schema": "Unions", "zodExport": "UnionsSchema", "why": "a boolean in a string-or-number union", "payload": { "scalar": true, "maybeScalar": null, "listOrText": "t" }, "zod": false, "vel": false },
-    { "schema": "Unions", "zodExport": "UnionsSchema", "why": "an absent key whose union carries null", "payload": { "scalar": "s", "listOrText": "t" }, "zod": false, "vel": true, "divergence": "nullable-accepts-absent" },
-
-    { "schema": "Author", "zodExport": "AuthorSchema", "why": "a named author", "payload": { "id": "a", "displayName": "Ada" }, "zod": true, "vel": true },
-    { "schema": "Author", "zodExport": "AuthorSchema", "why": "an empty name the zod refinement rejects", "payload": { "id": "a", "displayName": "" }, "zod": false, "vel": true, "divergence": "refinement-not-carried" },
-    { "schema": "Author", "zodExport": "AuthorSchema", "why": "a missing name", "payload": { "id": "a" }, "zod": false, "vel": false },
-
-    { "schema": "Article", "zodExport": "ArticleSchema", "why": "the minimum article", "payload": { "slug": "s", "author": { "id": "a", "displayName": "Ada" }, "reviewers": [], "nested": { "depth": 1 } }, "zod": true, "vel": true },
-    { "schema": "Article", "zodExport": "ArticleSchema", "why": "a populated reviewer list and optional label", "payload": { "slug": "s", "author": { "id": "a", "displayName": "Ada" }, "reviewers": [{ "id": "b", "displayName": "Lin" }], "nested": { "depth": 1, "label": "L" } }, "zod": true, "vel": true },
-    { "schema": "Article", "zodExport": "ArticleSchema", "why": "an incomplete nested author", "payload": { "slug": "s", "author": { "id": "a" }, "reviewers": [], "nested": { "depth": 1 } }, "zod": false, "vel": false },
-    { "schema": "Article", "zodExport": "ArticleSchema", "why": "an empty object in the reviewer list", "payload": { "slug": "s", "author": { "id": "a", "displayName": "Ada" }, "reviewers": [{}], "nested": { "depth": 1 } }, "zod": false, "vel": false },
-
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "the reasoning case", "payload": { "type": "reasoning", "id": "r", "text": "t" }, "zod": true, "vel": true },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "the hyphenated tool-call tag", "payload": { "type": "tool-call", "toolCallId": "t", "args": {} }, "zod": true, "vel": true },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "the payload-free end case", "payload": { "type": "end" }, "zod": true, "vel": true },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "the error case", "payload": { "type": "error", "message": "m" }, "zod": true, "vel": true },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "a reasoning case missing its text", "payload": { "type": "reasoning", "id": "r" }, "zod": false, "vel": false },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "a tool-call case missing its args", "payload": { "type": "tool-call", "toolCallId": "t" }, "zod": false, "vel": false },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "a tag outside the union", "payload": { "type": "nope" }, "zod": false, "vel": false },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "a payload with no tag at all", "payload": { "id": "r", "text": "t" }, "zod": false, "vel": false },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "the reasoning payload under the tool-call tag", "payload": { "type": "tool-call", "id": "r", "text": "t" }, "zod": false, "vel": false },
-    { "schema": "StreamEvent", "zodExport": "StreamEventSchema", "why": "a surplus key on a union case", "payload": { "type": "end", "extra": 1 }, "zod": false, "vel": true, "divergence": "strict-unknown-keys" },
-
-    { "schema": "StreamReasoning", "zodExport": "StreamReasoningSchema", "why": "the case record on its own", "payload": { "type": "reasoning", "id": "r", "text": "t" }, "zod": true, "vel": true },
-    { "schema": "StreamReasoning", "zodExport": "StreamReasoningSchema", "why": "another union member's tag", "payload": { "type": "tool-call", "id": "r", "text": "t" }, "zod": false, "vel": false },
-
-    { "schema": "Envelope", "zodExport": "EnvelopeSchema", "why": "an envelope without a sequence", "payload": { "sourceSessionId": "s", "event": { "type": "end" } }, "zod": true, "vel": true },
-    { "schema": "Envelope", "zodExport": "EnvelopeSchema", "why": "an envelope with a sequence", "payload": { "sourceSessionId": "s", "event": { "type": "end" }, "sequence": 3 }, "zod": true, "vel": true },
-    { "schema": "Envelope", "zodExport": "EnvelopeSchema", "why": "an inner event with an unknown tag", "payload": { "sourceSessionId": "s", "event": { "type": "bad" } }, "zod": false, "vel": false },
-    { "schema": "Envelope", "zodExport": "EnvelopeSchema", "why": "an explicit null sequence", "payload": { "sourceSessionId": "s", "event": { "type": "end" }, "sequence": null }, "zod": false, "vel": true, "divergence": "optional-accepts-null" },
-
-    { "schema": "MaybeAuthor", "zodExport": "MaybeAuthorSchema", "why": "a present author", "payload": { "id": "a", "displayName": "Ada" }, "zod": true, "vel": true },
-    { "schema": "MaybeAuthor", "zodExport": "MaybeAuthorSchema", "why": "an explicit null", "payload": null, "zod": true, "vel": true },
-    { "schema": "MaybeAuthor", "zodExport": "MaybeAuthorSchema", "why": "an incomplete author", "payload": { "id": "a" }, "zod": false, "vel": false }
+    {
+      "schema": "Primitives",
+      "zodExport": "PrimitivesSchema",
+      "why": "a complete payload",
+      "payload": {
+        "name": "n",
+        "count": 1,
+        "enabled": true,
+        "nothing": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Primitives",
+      "zodExport": "PrimitivesSchema",
+      "why": "non-ASCII text and a negative fraction",
+      "payload": {
+        "name": "caf\u00e9",
+        "count": -0.5,
+        "enabled": false,
+        "nothing": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Primitives",
+      "zodExport": "PrimitivesSchema",
+      "why": "a number written as text",
+      "payload": {
+        "name": "n",
+        "count": "1",
+        "enabled": true,
+        "nothing": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Primitives",
+      "zodExport": "PrimitivesSchema",
+      "why": "a missing null field",
+      "payload": {
+        "name": "n",
+        "count": 1,
+        "enabled": true
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Primitives",
+      "zodExport": "PrimitivesSchema",
+      "why": "a surplus key",
+      "payload": {
+        "name": "n",
+        "count": 1,
+        "enabled": true,
+        "nothing": null,
+        "extra": 1
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "strict-unknown-keys"
+    },
+    {
+      "schema": "UndefinedField",
+      "zodExport": "UndefinedFieldSchema",
+      "why": "a JSON null where zod wants undefined",
+      "payload": {
+        "present": "p",
+        "absent": null
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "undefined-normalized-to-null"
+    },
+    {
+      "schema": "UndefinedField",
+      "zodExport": "UndefinedFieldSchema",
+      "why": "an absent key",
+      "payload": {
+        "present": "p"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "every optional key absent",
+      "payload": {
+        "required": "r"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "nullable-accepts-absent"
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "an explicit null for the nullable key",
+      "payload": {
+        "required": "r",
+        "nullable": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "every key present",
+      "payload": {
+        "required": "r",
+        "optional": "o",
+        "nullable": "n",
+        "nullish": "x"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "an explicit null for the optional key",
+      "payload": {
+        "required": "r",
+        "optional": null,
+        "nullable": null
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "optional-accepts-null"
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "an explicit null for the nullish key",
+      "payload": {
+        "required": "r",
+        "nullable": null,
+        "nullish": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "a missing required key",
+      "payload": {
+        "optional": "o",
+        "nullable": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Optionality",
+      "zodExport": "OptionalitySchema",
+      "why": "a number in a text key",
+      "payload": {
+        "required": 1,
+        "nullable": null
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "HookEvent",
+      "zodExport": "HookEventSchema",
+      "why": "a colon-separated wire value",
+      "payload": "session:start",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "HookEvent",
+      "zodExport": "HookEventSchema",
+      "why": "a hyphenated wire value",
+      "payload": "sub-agent:dispatch",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "HookEvent",
+      "zodExport": "HookEventSchema",
+      "why": "the readable member name instead of the wire value",
+      "payload": "sessionStart",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "HookEvent",
+      "zodExport": "HookEventSchema",
+      "why": "a value outside the enum",
+      "payload": "unknown",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "ReservedWords",
+      "zodExport": "ReservedWordsSchema",
+      "why": "a wire value that is a VelarScript keyword",
+      "payload": "type",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ReservedWords",
+      "zodExport": "ReservedWordsSchema",
+      "why": "a wire value the enum reserves",
+      "payload": "parse",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ReservedWords",
+      "zodExport": "ReservedWordsSchema",
+      "why": "a wire value starting with a digit",
+      "payload": "1st",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ReservedWords",
+      "zodExport": "ReservedWordsSchema",
+      "why": "the mangled member name instead of the wire value",
+      "payload": "typeValue",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "TrustLevel",
+      "zodExport": "TrustLevelSchema",
+      "why": "one arm of the literal union",
+      "payload": "local-dev",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "TrustLevel",
+      "zodExport": "TrustLevelSchema",
+      "why": "a value outside the literal union",
+      "payload": "official",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Kind",
+      "zodExport": "KindSchema",
+      "why": "the single literal",
+      "payload": "velaros-mod",
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Kind",
+      "zodExport": "KindSchema",
+      "why": "a prefix of the single literal",
+      "payload": "velaros",
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Collections",
+      "zodExport": "CollectionsSchema",
+      "why": "populated collections",
+      "payload": {
+        "tags": [
+          "a"
+        ],
+        "headers": {
+          "x": "y"
+        },
+        "metadata": {
+          "k": 1
+        },
+        "opaque": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Collections",
+      "zodExport": "CollectionsSchema",
+      "why": "empty collections and a nested unknown",
+      "payload": {
+        "tags": [],
+        "headers": {},
+        "metadata": {},
+        "opaque": {
+          "deep": [
+            1,
+            2
+          ]
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Collections",
+      "zodExport": "CollectionsSchema",
+      "why": "a number in a string-valued record",
+      "payload": {
+        "tags": [
+          "a"
+        ],
+        "headers": {
+          "x": 1
+        },
+        "metadata": {},
+        "opaque": 1
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Collections",
+      "zodExport": "CollectionsSchema",
+      "why": "a missing unknown key",
+      "payload": {
+        "tags": [
+          "a"
+        ],
+        "headers": {},
+        "metadata": {}
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Collections",
+      "zodExport": "CollectionsSchema",
+      "why": "text where a list belongs",
+      "payload": {
+        "tags": "a",
+        "headers": {},
+        "metadata": {},
+        "opaque": 1
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Unions",
+      "zodExport": "UnionsSchema",
+      "why": "the text arm of every union",
+      "payload": {
+        "scalar": "s",
+        "maybeScalar": 1,
+        "listOrText": "t"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Unions",
+      "zodExport": "UnionsSchema",
+      "why": "the number, null, and list arms",
+      "payload": {
+        "scalar": 1,
+        "maybeScalar": null,
+        "listOrText": [
+          "a",
+          "b"
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Unions",
+      "zodExport": "UnionsSchema",
+      "why": "a boolean in a string-or-number union",
+      "payload": {
+        "scalar": true,
+        "maybeScalar": null,
+        "listOrText": "t"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Unions",
+      "zodExport": "UnionsSchema",
+      "why": "an absent key whose union carries null",
+      "payload": {
+        "scalar": "s",
+        "listOrText": "t"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "nullable-accepts-absent"
+    },
+    {
+      "schema": "Author",
+      "zodExport": "AuthorSchema",
+      "why": "a named author",
+      "payload": {
+        "id": "a",
+        "displayName": "Ada"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Author",
+      "zodExport": "AuthorSchema",
+      "why": "an empty name the zod refinement rejects",
+      "payload": {
+        "id": "a",
+        "displayName": ""
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "refinement-not-carried"
+    },
+    {
+      "schema": "Author",
+      "zodExport": "AuthorSchema",
+      "why": "a missing name",
+      "payload": {
+        "id": "a"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Article",
+      "zodExport": "ArticleSchema",
+      "why": "the minimum article",
+      "payload": {
+        "slug": "s",
+        "author": {
+          "id": "a",
+          "displayName": "Ada"
+        },
+        "reviewers": [],
+        "nested": {
+          "depth": 1
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Article",
+      "zodExport": "ArticleSchema",
+      "why": "a populated reviewer list and optional label",
+      "payload": {
+        "slug": "s",
+        "author": {
+          "id": "a",
+          "displayName": "Ada"
+        },
+        "reviewers": [
+          {
+            "id": "b",
+            "displayName": "Lin"
+          }
+        ],
+        "nested": {
+          "depth": 1,
+          "label": "L"
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Article",
+      "zodExport": "ArticleSchema",
+      "why": "an incomplete nested author",
+      "payload": {
+        "slug": "s",
+        "author": {
+          "id": "a"
+        },
+        "reviewers": [],
+        "nested": {
+          "depth": 1
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Article",
+      "zodExport": "ArticleSchema",
+      "why": "an empty object in the reviewer list",
+      "payload": {
+        "slug": "s",
+        "author": {
+          "id": "a",
+          "displayName": "Ada"
+        },
+        "reviewers": [
+          {}
+        ],
+        "nested": {
+          "depth": 1
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "the reasoning case",
+      "payload": {
+        "type": "reasoning",
+        "id": "r",
+        "text": "t"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "the hyphenated tool-call tag",
+      "payload": {
+        "type": "tool-call",
+        "toolCallId": "t",
+        "args": {}
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "the payload-free end case",
+      "payload": {
+        "type": "end"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "the error case",
+      "payload": {
+        "type": "error",
+        "message": "m"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "a reasoning case missing its text",
+      "payload": {
+        "type": "reasoning",
+        "id": "r"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "a tool-call case missing its args",
+      "payload": {
+        "type": "tool-call",
+        "toolCallId": "t"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "a tag outside the union",
+      "payload": {
+        "type": "nope"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "a payload with no tag at all",
+      "payload": {
+        "id": "r",
+        "text": "t"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "the reasoning payload under the tool-call tag",
+      "payload": {
+        "type": "tool-call",
+        "id": "r",
+        "text": "t"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "StreamEvent",
+      "zodExport": "StreamEventSchema",
+      "why": "a surplus key on a union case",
+      "payload": {
+        "type": "end",
+        "extra": 1
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "strict-unknown-keys"
+    },
+    {
+      "schema": "StreamReasoning",
+      "zodExport": "StreamReasoningSchema",
+      "why": "the case record on its own",
+      "payload": {
+        "type": "reasoning",
+        "id": "r",
+        "text": "t"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "StreamReasoning",
+      "zodExport": "StreamReasoningSchema",
+      "why": "another union member's tag",
+      "payload": {
+        "type": "tool-call",
+        "id": "r",
+        "text": "t"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Envelope",
+      "zodExport": "EnvelopeSchema",
+      "why": "an envelope without a sequence",
+      "payload": {
+        "sourceSessionId": "s",
+        "event": {
+          "type": "end"
+        }
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Envelope",
+      "zodExport": "EnvelopeSchema",
+      "why": "an envelope with a sequence",
+      "payload": {
+        "sourceSessionId": "s",
+        "event": {
+          "type": "end"
+        },
+        "sequence": 3
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Envelope",
+      "zodExport": "EnvelopeSchema",
+      "why": "an inner event with an unknown tag",
+      "payload": {
+        "sourceSessionId": "s",
+        "event": {
+          "type": "bad"
+        }
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Envelope",
+      "zodExport": "EnvelopeSchema",
+      "why": "an explicit null sequence",
+      "payload": {
+        "sourceSessionId": "s",
+        "event": {
+          "type": "end"
+        },
+        "sequence": null
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "optional-accepts-null"
+    },
+    {
+      "schema": "MaybeAuthor",
+      "zodExport": "MaybeAuthorSchema",
+      "why": "a present author",
+      "payload": {
+        "id": "a",
+        "displayName": "Ada"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MaybeAuthor",
+      "zodExport": "MaybeAuthorSchema",
+      "why": "an explicit null",
+      "payload": null,
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "MaybeAuthor",
+      "zodExport": "MaybeAuthorSchema",
+      "why": "an incomplete author",
+      "payload": {
+        "id": "a"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Degraded",
+      "zodExport": "DegradedSchema",
+      "why": "the pinned protocol version",
+      "payload": {
+        "protocolVersion": 2,
+        "payload": "p"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Degraded",
+      "zodExport": "DegradedSchema",
+      "why": "a version the degraded field no longer pins",
+      "payload": {
+        "protocolVersion": 99,
+        "payload": "p"
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "schema": "Degraded",
+      "zodExport": "DegradedSchema",
+      "why": "a missing degraded key",
+      "payload": {
+        "payload": "p"
+      },
+      "zod": false,
+      "vel": false
+    }
   ]
 }

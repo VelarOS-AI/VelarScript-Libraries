@@ -1,0 +1,238 @@
+{
+  "formatVersion": 1,
+  "resolveFrom": "./platform/agent",
+  "outputDirectory": "./generated",
+  "naming": {
+    "stripSuffix": "Schema",
+    "prefix": ""
+  },
+  "velarFormat": true,
+  "modules": [
+    {
+      "specifier": "./dist/protocol/index.js",
+      "output": "agent-protocol.vel",
+      "exports": "all",
+      "unknownDegrade": [
+        {
+          "path": "AgentModCommandHandlerSchema.entry",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModCommandHandlerSchema.permissions",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.executionModes",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.hooks",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.promptSegments",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.skills",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.spaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.subAgentTypes",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.toolCategories",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.tools",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModContributesSchema.turnContextSources",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModEnginesSchema.shell",
+          "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data"
+        },
+        {
+          "path": "AgentModEnginesSchema.velaros",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModHookContributionSchema",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModHookMatcherSchema.phases",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModHookMatcherSchema.statuses",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModHookMatcherSchema.toolNames",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModManifestSchema.contributes",
+          "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "AgentModManifestSchema.entitlements",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModManifestSchema.locale",
+          "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data"
+        },
+        {
+          "path": "AgentModManifestSchema.manifestSchemaVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "AgentModManifestSchema.permissions",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModManifestSchema.requiredAxes",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModManifestSchema.version",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSkillContributionSchema.spaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.boundCapabilityIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.inheritsSpaceIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.promptSegmentIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.residentToolNames",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.toolCategoryIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.turnContextSourceIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSubAgentTypeContributionSchema.toolCategoryIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSubAgentTypeContributionSchema.toolNames",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModToolContributionSchema.availableInSpaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModToolContributionSchema.name",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModToolContributionSchema.permissions",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModToolContributionSchema.residentInSpaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModTurnContextSourceContributionSchema.spaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "ExecuteToolRequestSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExecuteToolResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeAckSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeMessageSchema",
+          "reason": "a union of two discriminated unions carries no single discriminator; the shell consumes the two halves directly"
+        },
+        {
+          "path": "LeaseDeniedResponseSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ToolCatalogSnapshotSchema.protocolVersion",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        }
+      ]
+    }
+  ],
+  "channelTables": [
+    {
+      "output": "agent-channels.vel",
+      "enumName": "AgentChannel",
+      "typesOutput": "agent-protocol.vel",
+      "channels": [
+        {
+          "name": "agent:admit",
+          "request": "AdmitRequestSchema",
+          "response": "AdmitReceiptSchema"
+        },
+        {
+          "name": "agent:run-turn",
+          "request": "RunTurnRequestSchema",
+          "response": "RunTurnResponseSchema"
+        },
+        {
+          "name": "agent:execute-tool",
+          "request": "ExecuteToolRequestSchema",
+          "response": "ExecuteToolResponseSchema"
+        },
+        {
+          "name": "agent:describe-tool-schema",
+          "request": "DescribeToolSchemaRequestSchema",
+          "response": "DescribeToolSchemaResponseSchema"
+        },
+        {
+          "name": "agent:runtime-status",
+          "request": "RuntimeStatusRequestSchema",
+          "response": "RuntimeStatusResponseSchema"
+        },
+        {
+          "name": "agent:cancel",
+          "request": "CancelRequestSchema",
+          "response": "CancelResultSchema"
+        },
+        {
+          "name": "agent:session-event",
+          "event": "SessionEventEnvelopeSchema"
+        }
+      ]
+    }
+  ]
+}
