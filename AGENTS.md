@@ -23,6 +23,10 @@ frameworks, or `velar lsp` server.
 - `@velarscript-labs/editor-kit` owns only editor connection metadata and helpers.
   Grammar, types, diagnostics, formatting, completion, and Web semantics stay
   in the installed VelarScript toolchain reached through standard LSP.
+- `@velarscript-labs/contract-codegen` writes `.vel` source and hands it to the
+  consuming project's own `velar format`. It owns no grammar, no type rules, and
+  no transport protocol; a shape outside its closed mapping table fails closed
+  with the schema path named rather than being guessed.
 - Resolve every advisory printed by `velar check`: change the spelling or add
   one applicable `// velar-allow <CODE>: <reason>` suppression.
 - Run the narrow package checks first, then `npm run validate`. Validation must

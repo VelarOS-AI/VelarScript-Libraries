@@ -23,6 +23,12 @@ The repository starts with the small, already exercised package set listed in
   executor. It is not an ORM and will not grow entity tracking, relations,
   inferred schemas, a query builder, or a portable migration language without
   separate multi-consumer evidence.
+- `@velarscript-labs/contract-codegen` 0.1 generates VelarScript declarations
+  from a foreign package's zod wire contracts. It deliberately stops at types:
+  no transport stub, because the envelope shape, retries, and timeouts are the
+  consuming product's protocol. A template for those is a separate proposal that
+  needs a real consumer first. Its type-mapping table is closed on purpose — a
+  new row is admitted by a contract that needs it, not by symmetry with zod.
 - Deployment-provider packages: admit as integrations under the same package,
   compatibility, and release rules; never hide them in Core build behavior.
 - A standalone LSP client: extract only after two editor hosts duplicate the
