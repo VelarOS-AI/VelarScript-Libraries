@@ -1,0 +1,16 @@
+// The generated declarations only earn their keep if a program can consume
+// them, so this entry narrows a discriminated union and reads a channel name.
+import {chatStreamEventEvent, FixtureChannel} from "./generated/channels.vel"
+import {StreamEvent, StreamEventTag} from "./generated/contracts.vel"
+
+def describe(event: StreamEvent) -> string:
+    if event.type == StreamEventTag.reasoning: return event.text
+    if event.type == StreamEventTag.toolCall: return event.toolCallId
+    if event.type == StreamEventTag.error: return event.message
+    return "end"
+
+const envelope = chatStreamEventEvent.parse({
+    sourceSessionId: "s-1",
+    event: {type: "tool-call", toolCallId: "t-1", args: {}},
+})
+print(f"{str(FixtureChannel.chatStreamEvent)}:{describe(envelope.event)}")

@@ -19,6 +19,7 @@ repository does not depend on this repository.
 | `@velarscript-labs/msgpack` | adapter | experimental | Bounded MessagePack encoding and validation |
 | `@velarscript-labs/compression` | adapter | experimental | Bounded DEFLATE and gzip |
 | `@velarscript-labs/editor-kit` | tooling | experimental | Editor-neutral metadata for launching `velar lsp` |
+| `@velarscript-labs/contract-codegen` | tooling | experimental | Checked VelarScript declarations generated from a foreign package's zod wire contracts |
 | `@velarscript-labs/yaml` | adapter | experimental | Strict, bounded YAML parsing |
 | `@velarscript-labs/sqlite` | adapter | experimental | Worker-isolated SQLite capability for Node applications |
 
@@ -51,6 +52,9 @@ The exact machine-readable roster and compatibility status live in
 remain in the project-local VelarScript toolchain. `@velarscript-labs/editor-kit`
 contains connection metadata and compatibility checks only; editors continue
 to use standard LSP and do not receive a second language implementation.
+`@velarscript-labs/contract-codegen` writes `.vel` source and hands it to the
+consuming project's own `velar format`; it owns no grammar, no type rules, and
+no transport protocol.
 
 Project-specific models, UI, product policy, and deployment configuration stay
 with their owning application. A new package is admitted only after two real

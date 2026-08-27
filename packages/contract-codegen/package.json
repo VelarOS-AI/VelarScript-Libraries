@@ -1,0 +1,46 @@
+{
+  "name": "@velarscript-labs/contract-codegen",
+  "version": "0.1.0",
+  "description": "Generates checked VelarScript type declarations from a foreign package's zod wire contracts.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "velar-contract-codegen": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc -p tsconfig.build.json --noEmit && velar format --check tests/fixtures/vel && velar check tests/fixtures/vel",
+    "test": "npm run build && node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
+    "directory": "packages/contract-codegen"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "default": "./dist/cli.js"
+    }
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.19.1",
+    "zod": "4.4.3"
+  }
+}

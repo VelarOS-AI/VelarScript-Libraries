@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "resolveFrom": "./contracts",
+  "outputDirectory": "./vel/generated",
+  "naming": {
+    "stripSuffix": "Schema",
+    "prefix": ""
+  },
+  "velarFormat": true,
+  "modules": [
+    {
+      "specifier": "./contracts.mjs",
+      "output": "contracts.vel",
+      "exports": "all"
+    }
+  ],
+  "channelTables": [
+    {
+      "output": "channels.vel",
+      "enumName": "FixtureChannel",
+      "typesOutput": "contracts.vel",
+      "channels": [
+        { "name": "chat:stream-event", "event": "EnvelopeSchema" },
+        { "name": "chat:describe-article", "request": "ArticleSchema", "response": "AuthorSchema" },
+        { "name": "mod:kind", "request": "KindSchema" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+// Semantic assertions the equivalence sweep cannot make on its own: narrowing
+// through the tag enum, the wire value an enum member carries, and what the
+// generated optional fields do with an absent key.
+import {expect} from "velar/test"
+
+import {chatDescribeArticleRequest, FixtureChannel, modKindRequest} from "../generated/channels.vel"
+import {
+    Article,
+    HookEvent,
+    Kind,
+    Optionality,
+    Primitives,
+    ReservedWords,
+    StreamEvent,
+    StreamEventTag,
+    TrustLevel,
+    UndefinedField,
+    Unions,
+} from "../generated/contracts.vel"
+
+def describe(event: StreamEvent) -> string:
+    if event.type == StreamEventTag.reasoning: return f"reasoning:{event.text}"
+    if event.type == StreamEventTag.toolCall: return f"tool-call:{event.toolCallId}"
+    if event.type == StreamEventTag.error: return f"error:{event.message}"
+    return "end"
+
+test "a discriminated union narrows to the payload its tag promises":
+    const reasoning = StreamEvent.parse(Json.parse(`{"type":"reasoning","id":"r1","text":"why"}`))
+    expect(describe(reasoning)).toBe("reasoning:why")
+    const call = StreamEvent.parse(Json.parse(`{"type":"tool-call","toolCallId":"t1","args":{}}`))
+    expect(describe(call)).toBe("tool-call:t1")
+    const ended = StreamEvent.parse(Json.parse(`{"type":"end"}`))
+    expect(describe(ended)).toBe("end")
+
+test "a tag outside the union is refused":
+    expect(StreamEvent.is(Json.parse(`{"type":"unknown-tag"}`))).toBeFalsy()
+    expect(StreamEvent.is(Json.parse(`{"type":"reasoning","id":"r1"}`))).toBeFalsy()
+
+test "an enum member carries its wire value, not its readable name":
+    expect(str(HookEvent.sessionStart)).toBe("session:start")
+    expect(str(HookEvent.subAgentDispatch)).toBe("sub-agent:dispatch")
+    expect(HookEvent.is(Json.parse(`"turn-context:assemble"`))).toBeTruthy()
+    expect(HookEvent.is(Json.parse(`"sessionStart"`))).toBeFalsy()
+    expect(str(TrustLevel.bundledOfficial)).toBe("bundled-official")
+    expect(str(Kind.velarosMod)).toBe("velaros-mod")
+
+test "a wire value that collides with a keyword keeps its wire spelling":
+    expect(str(ReservedWords.typeValue)).toBe("type")
+    expect(str(ReservedWords.parseValue)).toBe("parse")
+    expect(str(ReservedWords.value1st)).toBe("1st")
+    expect(ReservedWords.is(Json.parse(`"typeValue"`))).toBeFalsy()
+
+test "an absent optional parses to null and stays absent in the copy":
+    const value = Optionality.parse(Json.parse(`{"required":"r"}`))
+    expect(value.optional).toBe(null)
+    expect(value.nullable).toBe(null)
+    expect(value.nullish).toBe(null)
+    expect(Json.stringify(value)).toBe(`{"required":"r"}`)
+
+test "z.undefined() lands on a required null field":
+    expect(Primitives.is(Json.parse(`{"name":"n","count":1,"enabled":true,"nothing":null}`))).toBeTruthy()
+    expect(UndefinedField.is(Json.parse(`{"present":"p","absent":null}`))).toBeTruthy()
+    expect(UndefinedField.is(Json.parse(`{"present":"p"}`))).toBeFalsy()
+
+test "a primitive union accepts each arm and refuses the rest":
+    const value = Unions.parse(Json.parse(`{"scalar":1,"maybeScalar":null,"listOrText":["a"]}`))
+    expect(value.maybeScalar).toBe(null)
+    expect(Unions.is(Json.parse(`{"scalar":true,"maybeScalar":null,"listOrText":"a"}`))).toBeFalsy()
+
+test "the channel table binds a validator to each channel name":
+    expect(str(FixtureChannel.chatDescribeArticle)).toBe("chat:describe-article")
+    expect(str(FixtureChannel.modKind)).toBe("mod:kind")
+    const article = chatDescribeArticleRequest.parse(Json.parse(
+        `{"slug":"s","author":{"id":"a","displayName":"Ada"},"reviewers":[],"nested":{"depth":1}}`,
+    ))
+    expect(article.author.displayName).toBe("Ada")
+    expect(Article.is(Json.parse(`{"slug":"s"}`))).toBeFalsy()
+    expect(modKindRequest.is(Json.parse(`"velaros-mod"`))).toBeTruthy()
