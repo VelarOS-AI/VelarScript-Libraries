@@ -19,7 +19,7 @@
       "zodExport": "PrimitivesSchema",
       "why": "non-ASCII text and a negative fraction",
       "payload": {
-        "name": "caf\u00e9",
+        "name": "café",
         "count": -0.5,
         "enabled": false,
         "nothing": null
@@ -833,6 +833,148 @@
       },
       "zod": false,
       "vel": false
+    },
+    {
+      "schema": "OpaqueOptionality",
+      "zodExport": "OpaqueOptionalitySchema",
+      "why": "both optional keys left out",
+      "payload": {
+        "present": "p"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "OpaqueOptionality",
+      "zodExport": "OpaqueOptionalitySchema",
+      "why": "an opaque value and an explicit null",
+      "payload": {
+        "present": "p",
+        "opaque": {
+          "any": [
+            1,
+            2
+          ]
+        },
+        "nothing": null
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "OpaqueOptionality",
+      "zodExport": "OpaqueOptionalitySchema",
+      "why": "the required key left out",
+      "payload": {
+        "opaque": 1
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "OpaqueOptionality",
+      "zodExport": "OpaqueOptionalitySchema",
+      "why": "a non-null value in the optional null field",
+      "payload": {
+        "present": "p",
+        "nothing": 5
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "optional-null-widened-to-unknown"
+    },
+    {
+      "schema": "NonOptional",
+      "zodExport": "NonOptionalSchema",
+      "why": "both keys present",
+      "payload": {
+        "reinstated": "a",
+        "plain": "b"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "NonOptional",
+      "zodExport": "NonOptionalSchema",
+      "why": "the still-optional key left out",
+      "payload": {
+        "reinstated": "a"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "NonOptional",
+      "zodExport": "NonOptionalSchema",
+      "why": "the reinstated key left out",
+      "payload": {
+        "plain": "b"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "NonOptional",
+      "zodExport": "NonOptionalSchema",
+      "why": "an explicit null in the still-optional key",
+      "payload": {
+        "reinstated": "a",
+        "plain": null
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "optional-accepts-null"
+    },
+    {
+      "schema": "Formats",
+      "zodExport": "FormatsSchema",
+      "why": "a well-formed address, timestamp, and integer",
+      "payload": {
+        "mail": "a@b.co",
+        "when": "2026-08-27T09:30:00Z",
+        "count": 3
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "Formats",
+      "zodExport": "FormatsSchema",
+      "why": "text where a number belongs",
+      "payload": {
+        "mail": "a@b.co",
+        "when": "2026-08-27T09:30:00Z",
+        "count": "3"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
+      "schema": "Formats",
+      "zodExport": "FormatsSchema",
+      "why": "an address that is not one",
+      "payload": {
+        "mail": "not-an-address",
+        "when": "2026-08-27T09:30:00Z",
+        "count": 3
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "refinement-not-carried"
+    },
+    {
+      "schema": "Formats",
+      "zodExport": "FormatsSchema",
+      "why": "a fractional count",
+      "payload": {
+        "mail": "a@b.co",
+        "when": "2026-08-27T09:30:00Z",
+        "count": 1.5
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "refinement-not-carried"
     }
   ]
 }

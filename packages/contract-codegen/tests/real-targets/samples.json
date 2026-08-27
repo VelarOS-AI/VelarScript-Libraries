@@ -754,6 +754,82 @@
       },
       "zod": false,
       "vel": false
+    },
+    {
+      "module": "agent",
+      "schema": "AgentModContributes",
+      "zodExport": "AgentModContributesSchema",
+      "why": "every exempted key left out, which zod accepts",
+      "payload": {},
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "AgentModContributes",
+      "zodExport": "AgentModContributesSchema",
+      "why": "one exempted key present and empty",
+      "payload": {
+        "tools": []
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "agent",
+      "schema": "AgentModContributes",
+      "zodExport": "AgentModContributesSchema",
+      "why": "a number where the exempted key takes a list",
+      "payload": {
+        "tools": 5
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "module": "kernel",
+      "schema": "VelarosModCapabilityRequirement",
+      "zodExport": "VelarosModCapabilityRequirementSchema",
+      "why": "both keys present",
+      "payload": {
+        "id": "fs",
+        "versionRange": "^1.0.0"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "VelarosModCapabilityRequirement",
+      "zodExport": "VelarosModCapabilityRequirementSchema",
+      "why": "the exempted optional key left out",
+      "payload": {
+        "id": "fs"
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "module": "kernel",
+      "schema": "VelarosModCapabilityRequirement",
+      "zodExport": "VelarosModCapabilityRequirementSchema",
+      "why": "the required key left out",
+      "payload": {},
+      "zod": false,
+      "vel": false
+    },
+    {
+      "module": "kernel",
+      "schema": "VelarosModCapabilityRequirement",
+      "zodExport": "VelarosModCapabilityRequirementSchema",
+      "why": "a number where the exempted key takes a branded id",
+      "payload": {
+        "id": 5
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
     }
   ]
 }

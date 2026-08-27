@@ -98,6 +98,7 @@ it unformatted — so `"velarFormat": false` in a project without a toolchain on
 | `undefined` | `null` (undefined-to-null interop normalization) |
 | `unknown` | `unknown` |
 | `optional` / `nullable` / `nullish` | `T?` |
+| `nonoptional` | the optionality it wraps is taken back: the key is required again |
 | `array` | `List<T>` |
 | `record(string, V)` | `Record<V>` |
 | `enum`, string `literal`, string literal union | `enum`, with a wire value for any member no identifier can spell |
@@ -119,29 +120,42 @@ To accept one of those as opaque data, exempt its path:
 "unknownDegrade": [{ "path": "RunTurnRequestSchema.options", "reason": "forwarded to the agent untouched" }]
 ```
 
-The field becomes `unknown`, and the degrade appears in the generation report
-with its path and reason. A degrade that no longer matches anything is also
-reported, so an exemption cannot outlive the schema that needed it.
+The field becomes `unknown` — or `unknown?`, when the zod schema at that path
+lets the sender leave the key out — and the degrade appears in the generation
+report with its path and reason. A degrade that no longer matches anything is
+also reported, so an exemption cannot outlive the schema that needed it.
+
+An exemption covers **the path it names and no other**. One schema object
+standing in two records occupies two positions, and each is a decision the
+consumer makes for itself: exempting the first leaves the second refused, by its
+own path, until it is exempted too.
 
 ## What the report says out loud
 
 Two kinds of information cannot cross into a VelarScript type, so both are
 reported rather than silently dropped:
 
-- **zod refinements.** `min_length`, `regex`, `int`, and a `.refine()` on a whole
-  record are predicates on a value, not a shape. They are listed per path; the
-  consumer owns them.
-- **Boundary widenings.** Three are inherent to the mapping:
+- **zod refinements.** `min_length`, `regex`, `email`, `safeint`, and a
+  `.refine()` on a whole record are predicates on a value, not a shape. They are
+  listed per path; the consumer owns them. A zod 4 top-level format schema
+  (`z.email()`, `z.iso.datetime()`, `z.int()`) keeps its constraint on
+  `_def.format` rather than `_def.checks`, and reads the same as its chained
+  spelling here.
+- **Boundary widenings.** Four are inherent to the mapping:
   - `strict-unknown-keys` — `z.strictObject` rejects a surplus key; a
     VelarScript record accepts the value and drops the key.
   - `optional-accepts-null` — `z.optional()` rejects an explicit `null`; `T?`
     accepts it.
   - `nullable-accepts-absent` — `z.nullable()`, and any union carrying
     `z.null()`, rejects an absent key; a `T?` field accepts it.
+  - `optional-null-widened-to-unknown` — an optional `z.null()` accepts an
+    absent key, and the language writes no `null?`, so the position becomes
+    `unknown?` rather than losing its optionality.
 
-  The last two are the undefined-to-null normalization this generator is
-  specified to apply. All three are counted, explained, and locked by the
-  equivalence fixtures.
+  The middle two are the undefined-to-null normalization this generator is
+  specified to apply. All four are counted, explained, and locked by the
+  equivalence fixtures. Optionality itself is never dropped: every declared
+  divergence is a widening, and a lost `?` would be a narrowing.
 
 Every other payload is accepted by the generated type exactly when the zod schema
 accepts it. The fixture suite asserts that biconditional over positive and
@@ -176,10 +190,13 @@ equivalence samples over real payloads.
 
 | Target | Exported schemas | Declarations | Degrades | Refinements reported |
 | --- | --- | --- | --- | --- |
-| `@velaros-ai/agent` `./protocol` | 92 | 102 | 44 | 48 |
-| `@velaros-ai/kernel` `./contracts/protocol` | 56 | 61 | 24 | 77 |
+| `@velaros-ai/agent` `./protocol` | 92 | 102 | 73 | 48 |
+| `@velaros-ai/kernel` `./contracts/protocol` | 56 | 61 | 28 | 77 |
 
-Every degrade names a path and a reason; the reports list them in full. See
+Every degrade names a path and a reason; the reports list them in full. The
+committed reports carry no machine path and no record of whether the run that
+made them had to write, so a regeneration on another machine reproduces them
+byte for byte — a test asserts exactly that. See
 [`tests/real-targets/README.md`](tests/real-targets/README.md) for how the
 schemas are reached without installing the authenticated packages.
 

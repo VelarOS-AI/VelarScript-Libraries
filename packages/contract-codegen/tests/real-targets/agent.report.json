@@ -5,7 +5,7 @@
   "zod": {
     "supportedMajor": 4,
     "resolved": "4.4.3",
-    "path": "/Users/mac/Desktop/VelarOS/projects/VelarOS-Platform/node_modules/.bun/zod@4.4.3/node_modules/zod/package.json"
+    "resolvedFrom": "./platform/agent"
   },
   "formatted": true,
   "modules": [
@@ -14,7 +14,7 @@
       "output": "agent-protocol.vel",
       "sourcePackage": "@velaros-ai/agent",
       "sourceVersion": "0.6.3",
-      "schemaDigest": "sha256-daef79a0f23eace3f16c1108559af30a3874d698bcd8bdad93022d34da75e92a",
+      "schemaDigest": "sha256-5e450e4653f10fb446f7c58c76b6978746644ff693916e1c350e985404a378ff",
       "exportedSchemas": 92,
       "declarations": 102,
       "degrades": [
@@ -74,6 +74,11 @@
           "zodType": "optional pipe"
         },
         {
+          "path": "AgentModEnginesSchema.agent",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
           "path": "AgentModEnginesSchema.shell",
           "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data",
           "zodType": "optional record"
@@ -82,6 +87,16 @@
           "path": "AgentModEnginesSchema.velaros",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "pipe"
+        },
+        {
+          "path": "AgentModExecutionModeContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
+          "path": "AgentModExecutionModeContributionSchema.promptFeatureId",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional nullable pipe"
         },
         {
           "path": "AgentModHookContributionSchema",
@@ -114,6 +129,11 @@
           "zodType": "optional pipe"
         },
         {
+          "path": "AgentModManifestSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
           "path": "AgentModManifestSchema.locale",
           "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data",
           "zodType": "optional record"
@@ -139,6 +159,16 @@
           "zodType": "pipe"
         },
         {
+          "path": "AgentModPromptSegmentContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
+          "path": "AgentModSkillContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
           "path": "AgentModSkillContributionSchema.spaces",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "pipe"
@@ -147,6 +177,21 @@
           "path": "AgentModSpaceContributionSchema.boundCapabilityIds",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.descriptor.localeKey",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.iconId",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
         },
         {
           "path": "AgentModSpaceContributionSchema.inheritsSpaceIds",
@@ -164,6 +209,11 @@
           "zodType": "optional pipe"
         },
         {
+          "path": "AgentModSpaceContributionSchema.surfaceProfileId",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
           "path": "AgentModSpaceContributionSchema.toolCategoryIds",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "optional pipe"
@@ -172,6 +222,11 @@
           "path": "AgentModSpaceContributionSchema.turnContextSourceIds",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModSubAgentTypeContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
         },
         {
           "path": "AgentModSubAgentTypeContributionSchema.toolCategoryIds",
@@ -184,7 +239,17 @@
           "zodType": "optional pipe"
         },
         {
+          "path": "AgentModToolCategoryContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
           "path": "AgentModToolContributionSchema.availableInSpaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModToolContributionSchema.categoryId",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "optional pipe"
         },
@@ -202,6 +267,11 @@
           "path": "AgentModToolContributionSchema.residentInSpaces",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
           "zodType": "optional pipe"
+        },
+        {
+          "path": "AgentModTurnContextSourceContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
         },
         {
           "path": "AgentModTurnContextSourceContributionSchema.spaces",
@@ -224,9 +294,84 @@
           "zodType": "literal"
         },
         {
+          "path": "ExternalAgentBridgeCommandMessageSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeDisconnectSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeDisconnectedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeErrorSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeEventAckSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeEventSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeHelloSchema.protocol",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeHelloSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
           "path": "ExternalAgentBridgeMessageSchema",
           "reason": "a union of two discriminated unions carries no single discriminator; the shell consumes the two halves directly",
           "zodType": "union"
+        },
+        {
+          "path": "ExternalAgentBridgePairSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgePairedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgePingSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgePongSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeProbeSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeResumeSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
+        },
+        {
+          "path": "ExternalAgentBridgeResumedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself",
+          "zodType": "literal"
         },
         {
           "path": "LeaseDeniedResponseSchema.protocolVersion",
@@ -244,14 +389,14 @@
           "path": "AdmitReceiptSchema.seq",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "AgentModManifestSchema.budget.residentPromptTokens",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -259,28 +404,28 @@
           "path": "AgentModPromptSegmentContributionSchema.priority",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "AgentModSkillContributionSchema.priority",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "AgentModSpaceContributionSchema.descriptor.order",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "AgentModToolCategoryContributionSchema.order",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -294,35 +439,35 @@
           "path": "AgentModTurnContextSourceContributionSchema.priority",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "AnswerRequestSchema.seq",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "ApproveRequestSchema.seq",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "BranchSummaryEntrySchema.createdAt",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "CancelRequestSchema.seq",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -336,7 +481,7 @@
           "path": "CapabilitySpanSchema.endedAt",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -350,14 +495,14 @@
           "path": "CapabilitySpanSchema.startedAt",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "ContractLeaseSchema.expiresInMs",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -396,21 +541,21 @@
           "path": "ExecutionSpanMetricsSchema.tokensIn",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "ExecutionSpanMetricsSchema.tokensOut",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "ExternalAgentBridgeAckSchema.sequence",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -509,28 +654,28 @@
           "path": "RunTurnOptionsSchema.maxToolTurns",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "RuntimeStatusResponseSchema.backgroundJobs",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "RuntimeStatusResponseSchema.queuedInputs",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "SessionEventEnvelopeSchema.sequence",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -585,7 +730,7 @@
           "path": "TurnSpanSchema.turn",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         }
       ],
@@ -593,25 +738,25 @@
         {
           "kind": "nullable-accepts-absent",
           "detail": "z.nullable(), and any union carrying z.null(), rejects an absent key; a `T?` field accepts it. This is the declared undefined-to-null interop normalization.",
-          "count": 53,
+          "count": 52,
           "samplePaths": [
             "AdmitRequestSchema.role",
             "AdmitRequestSchema.delivery",
             "AdmitRequestSchema.metadata",
-            "AgentModExecutionModeContributionSchema.promptFeatureId",
-            "AnswerRequestSchema.seq"
+            "AnswerRequestSchema.seq",
+            "ApproveRequestSchema.seq"
           ]
         },
         {
           "kind": "optional-accepts-null",
           "detail": "z.optional() rejects an explicit null; `T?` accepts it. This is the declared undefined-to-null interop normalization.",
-          "count": 45,
+          "count": 39,
           "samplePaths": [
             "AdmitRequestSchema.parts",
-            "AgentModEnginesSchema.agent",
-            "AgentModExecutionModeContributionSchema.promptFeatureId",
             "AgentModExecutionModeContributionSchema.sessionSticky",
-            "AgentModManifestSchema.publisher"
+            "AgentModManifestSchema.publisher",
+            "AgentModManifestSchema.displayName",
+            "AgentModManifestSchema.description"
           ]
         },
         {
@@ -642,11 +787,13 @@
   "files": [
     {
       "output": "agent-protocol.vel",
-      "status": "written"
+      "status": "unchanged",
+      "written": false
     },
     {
       "output": "agent-channels.vel",
-      "status": "written"
+      "status": "unchanged",
+      "written": false
     }
   ],
   "ok": true

@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+
+import { z } from "zod";
 
 import {
   DriftError,
@@ -22,7 +24,9 @@ import {
   renderType,
   resolveZod,
   run,
+  velarSpawnPlan,
 } from "../dist/index.js";
+import { schemaDigest } from "../dist/digest.js";
 import { FIXTURES, PACKAGE_ROOT, copyFixtures, velarExecutable } from "./support/equivalence.mjs";
 
 const MANIFEST = join(FIXTURES, "manifest.json");
@@ -39,6 +43,31 @@ async function lowerFixture(moduleFile, options = {}) {
     { stripSuffix: "Schema", prefix: options.prefix ?? "", degrades },
     moduleFile,
   );
+}
+
+/** Lowers schemas built in the test itself, for shapes no committed fixture holds. */
+function lowerInline(exports, degrades = []) {
+  return lowerModule(
+    Object.entries(exports).map(([name, schema]) => ({ name, schema })),
+    { stripSuffix: "Schema", prefix: "", degrades },
+    "inline",
+  );
+}
+
+function fieldsOf(result, name) {
+  const declaration = result.declarations.find((entry) => entry.name === name);
+  assert.ok(declaration !== undefined, `no declaration named '${name}' in ${result.declarations.map((d) => d.name)}`);
+  return declaration.fields.map((field) => `${field.name}: ${renderType(field.type)}`);
+}
+
+function refusalOf(build) {
+  try {
+    build();
+  } catch (error) {
+    assert.ok(error instanceof MappingError, String(error));
+    return error.shapes;
+  }
+  return assert.fail("expected the closed table to refuse this shape");
 }
 
 test("the manifest refuses everything it cannot act on", () => {
@@ -188,13 +217,257 @@ test("names avoid VelarScript keywords and the enum's reserved surface", () => {
   assert.deepEqual(registry.collisions.map((entry) => entry.name), ["Event2", "Event3"]);
 });
 
+test("a claimed name is never handed to a second claimant", () => {
+  // The counter belongs to the requested name, but the answer has to clear
+  // every name already given out, or two declarations collapse into one.
+  const registry = new NameRegistry();
+  assert.equal(registry.claim("Event2"), "Event2");
+  assert.equal(registry.claim("Event"), "Event");
+  assert.equal(registry.claim("Event"), "Event3");
+  assert.equal(registry.claim("Event"), "Event4");
+  assert.equal(registry.claim("Event2"), "Event22");
+
+  // The same counter names enum members, where a collision is a wire value
+  // silently answering to another one's name.
+  const result = lowerInline({ CollidingSchema: z.enum(["a2", "a", "A"]) });
+  const members = result.declarations.find((entry) => entry.name === "Colliding").members;
+  assert.deepEqual(members.map((member) => member.name), ["a2", "a", "a3"]);
+  assert.equal(new Set(members.map((member) => member.name)).size, members.length);
+  assert.deepEqual(members.map((member) => member.wire ?? member.name), ["a2", "a", "A"]);
+});
+
+test("an exported z.lazy names the schema it resolves to", async () => {
+  // A contract whose root is the self-reference: the export must lower to the
+  // record, not burn its name on the wrapper and refuse it.
+  const NodeSchema = z.strictObject({
+    label: z.string(),
+    children: z.array(z.lazy(() => LazyNodeSchema)),
+  });
+  const LazyNodeSchema = z.lazy(() => NodeSchema);
+  const result = lowerInline({ LazyNodeSchema });
+  assert.deepEqual(result.renamed, [], "the wrapper must not spend a second name");
+  assert.deepEqual(result.declarations.map((entry) => entry.name), ["LazyNode"]);
+  assert.deepEqual(fieldsOf(result, "LazyNode"), ["label: string", "children: List<LazyNode>"]);
+  assert.equal(result.exportNames.get("LazyNodeSchema"), "LazyNode");
+
+  // A lazy alias beside the export it points at defers to it.
+  const both = lowerInline({ AliasSchema: z.lazy(() => NodeSchema), NodeSchema });
+  assert.deepEqual(both.declarations.map((entry) => entry.name), ["Node"]);
+  assert.equal(both.exportNames.get("AliasSchema"), "Node");
+  assert.equal(both.exportNames.get("NodeSchema"), "Node");
+
+  // A getter that answers with no schema is named in the refusal.
+  const shapes = refusalOf(() => lowerInline({ BrokenSchema: z.lazy(() => undefined) }));
+  assert.deepEqual(shapes.map((shape) => [shape.path, shape.zodType]), [["BrokenSchema", "lazy"]]);
+  assert.match(shapes[0].reason, /z\.lazy\(\) did not resolve to a schema/u);
+});
+
+test("an exemption covers the path that declares it and no other", async () => {
+  // One schema object in two records is two positions. Exempting one must not
+  // open the other, and the other has to be refused where a reader can see it.
+  const shared = z.date();
+  const OneSchema = z.strictObject({ x: shared });
+  const TwoSchema = z.strictObject({ y: shared });
+  const shapes = refusalOf(() =>
+    lowerInline({ OneSchema, TwoSchema }, [{ path: "OneSchema.x", reason: "the shell reads the timestamp itself" }]),
+  );
+  assert.deepEqual(shapes.map((shape) => shape.path), ["TwoSchema.y"]);
+
+  const both = lowerInline({ OneSchema, TwoSchema }, [
+    { path: "OneSchema.x", reason: "the shell reads the timestamp itself" },
+    { path: "TwoSchema.y", reason: "the shell reads the timestamp itself" },
+  ]);
+  assert.deepEqual(both.degrades.map((degrade) => degrade.path), ["OneSchema.x", "TwoSchema.y"]);
+  assert.deepEqual(fieldsOf(both, "One"), ["x: unknown"]);
+  assert.deepEqual(fieldsOf(both, "Two"), ["y: unknown"]);
+
+  // An exempted export is `unknown` under its own name; borrowing that name
+  // elsewhere would spend one declared exemption on a second path.
+  const OpaqueSchema = z.strictObject({ at: z.date() });
+  const HolderSchema = z.strictObject({ opaque: OpaqueSchema });
+  const borrowed = refusalOf(() =>
+    lowerInline({ HolderSchema, OpaqueSchema }, [{ path: "OpaqueSchema", reason: "the shell parses this envelope itself" }]),
+  );
+  assert.deepEqual(borrowed.map((shape) => shape.path), ["HolderSchema.opaque"]);
+  assert.match(borrowed[0].reason, /exempted to unknown at 'OpaqueSchema'/u);
+});
+
+test("two cases behind one discriminator value are refused", () => {
+  // zod defers this to the first parse, where it throws; introspection alone
+  // would emit two enum members carrying the same runtime string.
+  const AmbiguousSchema = z.discriminatedUnion("type", [
+    z.strictObject({ type: z.literal("end"), a: z.string() }),
+    z.strictObject({ type: z.literal("end"), b: z.string() }),
+  ]);
+  const shapes = refusalOf(() => lowerInline({ AmbiguousSchema }));
+  assert.deepEqual(shapes.map((shape) => shape.path), ["AmbiguousSchema|1.type"]);
+  assert.match(shapes[0].reason, /declared by more than one case/u);
+
+  // Distinct values still lower, and every member name stays distinct.
+  const FineSchema = z.discriminatedUnion("type", [
+    z.strictObject({ type: z.literal("end"), a: z.string() }),
+    z.strictObject({ type: z.literal("End"), b: z.string() }),
+  ]);
+  const members = lowerInline({ FineSchema }).declarations.find((entry) => entry.kind === "enum").members;
+  assert.equal(new Set(members.map((member) => member.name)).size, 2);
+  assert.deepEqual(members.map((member) => member.wire ?? member.name), ["end", "End"]);
+});
+
+test("`.nonoptional()` takes back the optionality it wraps", () => {
+  const NonOptionalSchema = z.strictObject({
+    reinstated: z.string().optional().nonoptional(),
+    stillNullable: z.string().nullable().nonoptional(),
+    plain: z.string().optional(),
+  });
+  const result = lowerInline({ NonOptionalSchema });
+  assert.deepEqual(fieldsOf(result, "NonOptional"), [
+    "reinstated: string",
+    "stillNullable: string?",
+    "plain: string?",
+  ]);
+  // zod is the arbiter: the generated field says exactly what zod requires.
+  assert.equal(NonOptionalSchema.safeParse({ stillNullable: null }).success, false);
+  assert.equal(NonOptionalSchema.safeParse({ reinstated: "a", stillNullable: null }).success, true);
+  // `.nonoptional()` removes no divergence it did not create.
+  const kinds = new Map(result.boundaryNotes.map((note) => [note.kind, note.count]));
+  assert.equal(kinds.get("optional-accepts-null"), 1, "only the still-optional field diverges");
+  assert.equal(kinds.get("nullable-accepts-absent"), 1);
+});
+
+test("optionality survives the shapes VelarScript writes without a `?`", () => {
+  // Dropping it would narrow: zod accepts the key left out and the generated
+  // record would demand it. Every declared divergence is a widening.
+  assert.equal(renderType(optional({ kind: "primitive", name: "unknown" })), "unknown?");
+  assert.equal(renderType(optional({ kind: "primitive", name: "null" })), "unknown?");
+
+  const OpaqueSchema = z.strictObject({ opaque: z.unknown().optional(), nothing: z.null().optional() });
+  const result = lowerInline({ OpaqueSchema });
+  assert.deepEqual(fieldsOf(result, "Opaque"), ["opaque: unknown?", "nothing: unknown?"]);
+  assert.equal(OpaqueSchema.safeParse({}).success, true, "zod accepts both keys left out");
+  const widened = result.boundaryNotes.find((note) => note.kind === "optional-null-widened-to-unknown");
+  assert.ok(widened !== undefined && widened.count === 1, "the null widening is counted, not silent");
+  assert.ok(widened.detail.length > 40);
+
+  // An exemption opens the value, not the key: a wrapper that accepts an
+  // absent key has to keep saying so.
+  const DegradedSchema = z.strictObject({ maybe: z.date().optional(), always: z.date() });
+  const degraded = lowerInline({ DegradedSchema }, [
+    { path: "DegradedSchema.maybe", reason: "the shell reads the timestamp itself" },
+    { path: "DegradedSchema.always", reason: "the shell reads the timestamp itself" },
+  ]);
+  assert.deepEqual(fieldsOf(degraded, "Degraded"), ["maybe: unknown?", "always: unknown"]);
+});
+
+test("a top-level zod 4 format reports its constraint like the chained form", () => {
+  // `z.email()` keeps its constraint on `_def.format`, not `_def.checks`.
+  const FormatsSchema = z.strictObject({
+    mail: z.email(),
+    id: z.uuid(),
+    link: z.url(),
+    when: z.iso.datetime(),
+    day: z.iso.date(),
+    count: z.int(),
+    chained: z.string().email(),
+    least: z.string().min(1),
+  });
+  const result = lowerInline({ FormatsSchema });
+  assert.deepEqual(fieldsOf(result, "Formats"), [
+    "mail: string",
+    "id: string",
+    "link: string",
+    "when: string",
+    "day: string",
+    "count: number",
+    "chained: string",
+    "least: string",
+  ]);
+  assert.deepEqual(
+    result.constraints.map((entry) => `${entry.path}:${entry.checks.join(",")}`),
+    [
+      "FormatsSchema.chained:email",
+      "FormatsSchema.count:safeint",
+      "FormatsSchema.day:date",
+      "FormatsSchema.id:uuid",
+      "FormatsSchema.least:min_length",
+      "FormatsSchema.link:url",
+      "FormatsSchema.mail:email",
+      "FormatsSchema.when:datetime",
+    ],
+    "a top-level format and its chained spelling read the same",
+  );
+});
+
+test("a record union without a discriminator is refused through z.lazy too", () => {
+  const arms = [
+    z.strictObject({ kind: z.string(), a: z.string() }),
+    z.strictObject({ kind: z.string(), b: z.string() }),
+  ];
+  for (const [label, schema] of [
+    ["bare", z.union(arms)],
+    ["lazy", z.union(arms.map((arm) => z.lazy(() => arm)))],
+  ]) {
+    const shapes = refusalOf(() => lowerInline({ UndiscriminatedSchema: schema }));
+    assert.deepEqual(shapes.map((shape) => shape.path), ["UndiscriminatedSchema"], label);
+    assert.match(shapes[0].reason, /without a discriminator/u, label);
+  }
+});
+
+test("the digest reads the definition zod actually holds", () => {
+  // A check instance has no own enumerable property: its definition lives on
+  // `_zod.def`, which is exactly where the change classes live.
+  const digestOf = (schema) => schemaDigest([{ name: "S", schema }]);
+  assert.notEqual(
+    digestOf(z.strictObject({ a: z.string().min(1) })),
+    digestOf(z.strictObject({ a: z.string().min(5) })),
+    "a bound change must move the digest",
+  );
+  assert.notEqual(
+    digestOf(z.strictObject({ a: z.string().regex(/^a$/u) })),
+    digestOf(z.strictObject({ a: z.string().regex(/^b$/u) })),
+    "a pattern change must move the digest",
+  );
+  assert.notEqual(
+    digestOf(z.strictObject({ a: z.string() }).refine(() => true, "one")),
+    digestOf(z.strictObject({ a: z.string() }).refine(() => true, "two")),
+    "a refinement message change must move the digest",
+  );
+  assert.notEqual(
+    digestOf(z.strictObject({ a: z.number() }).refine((value) => value.a > 1)),
+    digestOf(z.strictObject({ a: z.number() }).refine((value) => value.a > 5)),
+    "a refinement predicate change must move the digest",
+  );
+  assert.equal(
+    digestOf(z.strictObject({ a: z.string().min(1) })),
+    digestOf(z.strictObject({ a: z.string().min(1) })),
+    "the same contract twice is one digest",
+  );
+
+  // Depth: the walk costs several steps per record, so the old 64 stopped
+  // seeing changes about twenty records down.
+  const nest = (levels, leaf) => {
+    let schema = z.strictObject({ leaf });
+    for (let level = 0; level < levels; level += 1) schema = z.strictObject({ next: schema });
+    return schema;
+  };
+  for (const levels of [20, 40, 100]) {
+    assert.notEqual(
+      digestOf(nest(levels, z.string())),
+      digestOf(nest(levels, z.number())),
+      `a change ${levels} records down must move the digest`,
+    );
+  }
+});
+
 test("`T?` is the one canonical nullability shape", () => {
   const string = { kind: "primitive", name: "string" };
   const number = { kind: "primitive", name: "number" };
   assert.equal(renderType(optional(string)), "string?");
   assert.equal(renderType(optional(optional(string))), "string?");
   assert.equal(renderType(optional({ kind: "union", options: [string, number] })), "(string | number)?");
-  assert.equal(renderType(optional({ kind: "primitive", name: "unknown" })), "unknown");
+  // `unknown` is not already optional — a record field carrying it demands the
+  // key — and `null?` is the one shape the language refuses, so it widens.
+  assert.equal(renderType(optional({ kind: "primitive", name: "unknown" })), "unknown?");
+  assert.equal(renderType(optional({ kind: "primitive", name: "null" })), "unknown?");
   assert.equal(renderType({ kind: "list", element: optional(string) }), "List<string?>");
   assert.equal(renderType({ kind: "map", value: string }), "Record<string>");
   assert.equal(renderType({ kind: "enumMember", enumName: "Tag", member: "toolCall" }), "Tag.toolCall");
@@ -322,10 +595,17 @@ test("boundary widenings are counted rather than left silent", async () => {
   assert.ok(byKind.get("nullable-accepts-absent").count >= 3);
   assert.equal(byKind.get("undefined-normalized-to-null").count, 1);
   for (const note of result.boundaryNotes) assert.ok(note.detail.length > 40, note.kind);
-  // A refinement on a record is reported too, not only one on a primitive.
+  // A refinement on a record is reported too, not only one on a primitive, and
+  // a zod 4 top-level format names the format rather than nothing at all.
   assert.deepEqual(
     result.constraints.map((constraint) => `${constraint.path}:${constraint.checks.join(",")}`),
-    ["AuthorSchema.displayName:min_length", "RefinedRangeSchema:custom"],
+    [
+      "AuthorSchema.displayName:min_length",
+      "FormatsSchema.count:safeint",
+      "FormatsSchema.mail:email",
+      "FormatsSchema.when:datetime",
+      "RefinedRangeSchema:custom",
+    ],
   );
 });
 
@@ -345,12 +625,16 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   const report = await run({ manifestPath: MANIFEST, mode: "generate", toolVersion: "0.1.0" });
   assert.ok(report.ok);
   assert.deepEqual(report.files.map((file) => file.status), ["unchanged", "unchanged"]);
+  assert.deepEqual(report.files.map((file) => file.written), [false, false]);
   assert.equal(readFileSync(join(GENERATED, "contracts.vel"), "utf8"), first);
 
   const checked = await run({ manifestPath: MANIFEST, mode: "check", toolVersion: "0.1.0" });
   assert.ok(checked.ok);
   assert.equal(checked.mode, "check");
-  assert.equal(checked.modules[0].exportedSchemas, 19);
+  // Both modes answer the same question about the tree, so a committed report
+  // does not depend on whether the run that made it had to write.
+  assert.deepEqual(checked.files, report.files);
+  assert.equal(checked.modules[0].exportedSchemas, 22);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);
@@ -363,7 +647,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
       () => run({ manifestPath: join(temporary, "manifest.json"), mode: "check", toolVersion: "0.1.0" }),
       (error) => {
         assert.ok(error instanceof DriftError);
-        assert.deepEqual(error.files, [{ output: "contracts.vel", status: "drift" }]);
+        assert.deepEqual(error.files, [{ output: "contracts.vel", status: "drift", written: false }]);
         return true;
       },
     );
@@ -432,6 +716,171 @@ test("the digest moves when the source schema moves and not when naming does", a
   } finally {
     rmSync(unchanged, { recursive: true, force: true });
     rmSync(edited, { recursive: true, force: true });
+  }
+});
+
+test("a channel table imports its types from where they sit", () => {
+  // Both outputs are named relative to the output directory, so a table in a
+  // subdirectory has to reach its types by the path between them.
+  const temporary = copyFixtures("nested");
+  try {
+    const manifest = JSON.parse(readFileSync(join(temporary, "manifest.json"), "utf8"));
+    manifest.outputDirectory = "./nested";
+    manifest.modules[0].output = "types/contracts.vel";
+    manifest.channelTables[0].output = "channels/table.vel";
+    manifest.channelTables[0].typesOutput = "types/contracts.vel";
+    const manifestPath = join(temporary, "nested.json");
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+    mkdirSync(join(temporary, "nested"), { recursive: true });
+    writeFileSync(
+      join(temporary, "nested", "velar.json"),
+      JSON.stringify({ formatVersion: 2, entry: "main.vel", extensions: [] }, null, 2),
+      "utf8",
+    );
+    writeFileSync(
+      join(temporary, "nested", "main.vel"),
+      'import {FixtureChannel} from "./channels/table.vel"\n\nprint(str(FixtureChannel.modKind))\n',
+      "utf8",
+    );
+    execFileSync(process.execPath, [join(PACKAGE_ROOT, "dist", "cli.js"), "generate", manifestPath], { encoding: "utf8" });
+    const table = readFileSync(join(temporary, "nested", "channels", "table.vel"), "utf8");
+    assert.match(table, /^import \{[^}]+\} from "\.\.\/types\/contracts\.vel"$/mu);
+    // The import has to resolve, not merely look right.
+    const checked = execFileSync(velarExecutable(), ["check", join(temporary, "nested")], { encoding: "utf8" });
+    assert.match(checked, /Checked \d+ modules/u);
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
+});
+
+test("a formatter failure leaves the generated tree as it was", { skip: process.platform === "win32" }, async () => {
+  // Formatting fails per file. Writing as each one is formatted would leave a
+  // half-regenerated tree behind, which is worse than an unchanged one.
+  const temporary = copyFixtures("format-failure");
+  try {
+    const formatter = join(temporary, "fake-velar");
+    writeFileSync(
+      formatter,
+      '#!/bin/sh\ncase "$2" in *channels.vel) echo "boom" >&2; exit 3;; esac\nexit 0\n',
+      "utf8",
+    );
+    chmodSync(formatter, 0o755);
+    const manifest = JSON.parse(readFileSync(join(temporary, "manifest.json"), "utf8"));
+    manifest.velarCommand = formatter;
+    const manifestPath = join(temporary, "failing.json");
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+
+    const generated = join(temporary, "vel", "generated");
+    const before = ["contracts.vel", "channels.vel"].map((name) => readFileSync(join(generated, name), "utf8"));
+    // Make the module file stale, so a run that wrote file by file would
+    // rewrite it before the channel table failed.
+    writeFileSync(join(generated, "contracts.vel"), "// stale\n", "utf8");
+
+    await assert.rejects(
+      () => run({ manifestPath, mode: "generate", toolVersion: "0.1.0" }),
+      (error) => {
+        assert.equal(error.name, "FormatError");
+        assert.match(error.message, /boom/u);
+        return true;
+      },
+    );
+    assert.equal(readFileSync(join(generated, "contracts.vel"), "utf8"), "// stale\n", "nothing may be written");
+    assert.equal(readFileSync(join(generated, "channels.vel"), "utf8"), before[1]);
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
+});
+
+test("a channel table with no channels is refused before anything is emitted", async () => {
+  // A member-less enum is not VelarScript, so an empty table is a manifest
+  // error rather than a file the consuming project fails to compile.
+  assert.throws(
+    () =>
+      parseManifest({
+        formatVersion: 1,
+        outputDirectory: "out",
+        modules: [{ specifier: "x", output: "a.vel" }],
+        channelTables: [{ output: "c.vel", enumName: "C", typesOutput: "a.vel", channels: [] }],
+      }),
+    /at least one channel/u,
+  );
+
+  const temporary = copyFixtures("runtime-channels");
+  try {
+    writeFileSync(
+      join(temporary, "contracts", "runtime.mjs"),
+      [
+        'import { z } from "zod";',
+        "export const PingSchema = z.strictObject({ id: z.string() });",
+        'export const MAPPED = new Map([["ping", { request: PingSchema }]]);',
+        "export const EMPTY = {};",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+    const base = {
+      formatVersion: 1,
+      resolveFrom: "./contracts",
+      outputDirectory: "./vel/runtime",
+      velarFormat: false,
+      modules: [{ specifier: "./runtime.mjs", output: "runtime.vel", exports: ["PingSchema"] }],
+    };
+    for (const [exportName, reason] of [["MAPPED", /is a Map/u], ["EMPTY", /declares no channels/u]]) {
+      const manifestPath = join(temporary, `${exportName}.json`);
+      writeFileSync(
+        manifestPath,
+        JSON.stringify({
+          ...base,
+          channelTables: [
+            {
+              output: "runtime-channels.vel",
+              enumName: "RuntimeChannel",
+              typesOutput: "runtime.vel",
+              source: { specifier: "./runtime.mjs", export: exportName },
+            },
+          ],
+        }),
+        "utf8",
+      );
+      await assert.rejects(() => run({ manifestPath, mode: "generate", toolVersion: "0.1.0" }), reason, exportName);
+    }
+    assert.throws(() => readdirSync(join(temporary, "vel", "runtime")), "a refused table must write nothing");
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
+});
+
+test("the formatter is spawned the way each platform can run it", () => {
+  // npm installs the Windows entry point as a batch script, which `spawn` has
+  // refused to run without a shell since Node 20.12.
+  const posix = velarSpawnPlan("/project/node_modules/.bin/velar", ["format", "/tmp/a.vel"], "darwin");
+  assert.deepEqual(posix, {
+    command: "/project/node_modules/.bin/velar",
+    args: ["format", "/tmp/a.vel"],
+    shell: false,
+  });
+  assert.deepEqual(velarSpawnPlan("velar", ["format", "a.vel"], "linux").shell, false);
+
+  const windows = velarSpawnPlan("C:\\p\\node_modules\\.bin\\velar.cmd", ["format", "C:\\tmp\\a b.vel"], "win32");
+  assert.deepEqual(windows, {
+    command: '"C:\\p\\node_modules\\.bin\\velar.cmd"',
+    args: ['"format"', '"C:\\tmp\\a b.vel"'],
+    shell: true,
+  });
+  assert.equal(velarSpawnPlan("C:\\p\\velar.BAT", ["format"], "win32").shell, true);
+  // A bare executable on Windows is still spawned directly.
+  assert.equal(velarSpawnPlan("C:\\p\\velar.exe", ["format"], "win32").shell, false);
+  // cmd.exe has no escape for a quote, so a path carrying one is refused.
+  assert.throws(() => velarSpawnPlan('C:\\p\\ve"lar.cmd', [], "win32"), /double quote/u);
+});
+
+test("the report names the zod install without naming the machine", async () => {
+  const report = await run({ manifestPath: MANIFEST, mode: "check", toolVersion: "0.1.0" });
+  assert.equal(report.zod.resolvedFrom, "./contracts");
+  assert.equal(report.zod.resolved, REFERENCE_ZOD_VERSION);
+  const text = JSON.stringify(report);
+  for (const machinePath of [PACKAGE_ROOT, tmpdir(), process.cwd()]) {
+    assert.ok(!text.includes(machinePath), `the report carries the machine path ${machinePath}`);
   }
 });
 

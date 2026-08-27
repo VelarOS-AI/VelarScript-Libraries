@@ -115,6 +115,30 @@ export const RefinedRangeSchema = z
   .strictObject({ from: z.number(), to: z.number() })
   .refine((value) => value.from <= value.to, "from must not exceed to");
 
+// optionality over the two shapes VelarScript writes without a `?` of their
+// own. Dropping the `?` here would demand a key zod lets the sender omit, so
+// `unknown` keeps it and `null` widens to `unknown?` to keep it.
+export const OpaqueOptionalitySchema = z.strictObject({
+  opaque: z.unknown().optional(),
+  nothing: z.null().optional(),
+  present: z.string(),
+});
+
+// .nonoptional() takes back exactly the optionality it wraps: the key is
+// required again, and the generated field must say so.
+export const NonOptionalSchema = z.strictObject({
+  reinstated: z.string().optional().nonoptional(),
+  plain: z.string().optional(),
+});
+
+// zod 4 keeps a top-level format's constraint off `_def.checks`. The type is
+// still `string` or `number`; the constraint is reported, not carried.
+export const FormatsSchema = z.strictObject({
+  mail: z.email(),
+  when: z.iso.datetime(),
+  count: z.int(),
+});
+
 // Outside the closed table on purpose: the fixture manifest degrades this
 // path, so the golden output carries an `unknown` field with a recorded reason.
 export const DegradedSchema = z.strictObject({

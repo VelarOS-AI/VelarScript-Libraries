@@ -5,7 +5,7 @@
   "zod": {
     "supportedMajor": 4,
     "resolved": "4.4.3",
-    "path": "/Users/mac/Desktop/VelarOS/projects/VelarOS-Platform/node_modules/.bun/zod@4.4.3/node_modules/zod/package.json"
+    "resolvedFrom": "./platform/kernel"
   },
   "formatted": true,
   "modules": [
@@ -14,7 +14,7 @@
       "output": "kernel-protocol.vel",
       "sourcePackage": "@velaros-ai/kernel",
       "sourceVersion": "0.2.1",
-      "schemaDigest": "sha256-196b0cfa4e216fa96a97d562a07158676f50316920c9583c0d10823a8dc745c5",
+      "schemaDigest": "sha256-25dc7adbcac8f80ed91ba027f582b903ac60751ce4f5b47d51ee51d0d2be8bb3",
       "exportedSchemas": 56,
       "declarations": 61,
       "degrades": [
@@ -104,9 +104,29 @@
           "zodType": "optional pipe"
         },
         {
+          "path": "VelarosModCapabilityTokenSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
+        },
+        {
           "path": "VelarosModCapabilityTokenSchema.version",
           "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default",
           "zodType": "default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.entry",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.exportName",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "optional pipe"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself",
+          "zodType": "pipe"
         },
         {
           "path": "VelarosModModuleSectionSchema.isolation",
@@ -256,7 +276,7 @@
           "path": "KernelHandshakeSchema.protocolVersion",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -292,7 +312,7 @@
           "path": "KernelModuleDescriptorSchema.apiVersion",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -328,7 +348,7 @@
           "path": "KernelRunIdentitySchema.generation",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -357,14 +377,14 @@
           "path": "KernelRunIdentitySchema.startedAt",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
           "path": "KernelSessionIdentitySchema.createdAt",
           "zodType": "number",
           "checks": [
-            "number_format"
+            "safeint"
           ]
         },
         {
@@ -448,7 +468,7 @@
           "path": "RemoteNodeChallengeSchema.protocolVersion",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -526,7 +546,7 @@
           "path": "RemoteNodeInvokeSchema.deadlineMs",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -569,7 +589,7 @@
           "path": "RemoteNodePairSchema.pairingCode",
           "zodType": "string",
           "checks": [
-            "string_format"
+            "regex"
           ]
         },
         {
@@ -583,7 +603,7 @@
           "path": "RemoteNodePingSchema.at",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -591,7 +611,7 @@
           "path": "RemoteNodePongSchema.at",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         },
@@ -683,7 +703,7 @@
           "path": "VelarosModModuleSectionSchema.apiVersion",
           "zodType": "number",
           "checks": [
-            "number_format",
+            "safeint",
             "greater_than"
           ]
         }
@@ -704,13 +724,11 @@
         {
           "kind": "optional-accepts-null",
           "detail": "z.optional() rejects an explicit null; `T?` accepts it. This is the declared undefined-to-null interop normalization.",
-          "count": 5,
+          "count": 3,
           "samplePaths": [
             "RemoteNodeResultSchema.output",
             "VelarosModEnvelopeSchema.agent",
-            "VelarosModEnvelopeSchema.ui",
-            "VelarosModModuleSectionSchema.entry",
-            "VelarosModModuleSectionSchema.exportName"
+            "VelarosModEnvelopeSchema.ui"
           ]
         },
         {
@@ -741,11 +759,13 @@
   "files": [
     {
       "output": "kernel-protocol.vel",
-      "status": "written"
+      "status": "unchanged",
+      "written": false
     },
     {
       "output": "kernel-channels.vel",
-      "status": "written"
+      "status": "unchanged",
+      "written": false
     }
   ],
   "ok": true

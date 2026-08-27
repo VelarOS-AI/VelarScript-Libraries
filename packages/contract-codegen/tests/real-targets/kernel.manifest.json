@@ -82,8 +82,24 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "VelarosModCapabilityTokenSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "VelarosModCapabilityTokenSchema.version",
           "reason": "zod .default() fills an absent key, so the accepted wire shape is wider than the parsed value; the shell applies its own default"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.entry",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.exportName",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "VelarosModModuleSectionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
           "path": "VelarosModModuleSectionSchema.isolation",

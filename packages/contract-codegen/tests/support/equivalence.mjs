@@ -35,6 +35,7 @@ export const DIVERGENCE_CLASSES = new Set([
   "undefined-normalized-to-null",
   "refinement-not-carried",
   "degraded-to-unknown",
+  "optional-null-widened-to-unknown",
 ]);
 
 export function velarExecutable() {

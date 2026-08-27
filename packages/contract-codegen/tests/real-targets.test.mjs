@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { copyFileSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -79,13 +79,30 @@ test("the committed reports state what each target degraded", () => {
   assert.equal(kernel.sourcePackage, "@velaros-ai/kernel");
   assert.equal(agent.exportedSchemas, 92);
   assert.equal(kernel.exportedSchemas, 56);
-  assert.equal(agent.degrades.length, 44);
-  assert.equal(kernel.degrades.length, 24);
+  // One exemption per exempted path: a schema object standing in two records
+  // occupies two positions, and each one is a decision the consumer declares.
+  assert.equal(agent.degrades.length, 73);
+  assert.equal(kernel.degrades.length, 28);
   for (const module of [agent, kernel]) {
     assert.deepEqual(module.unusedDegrades, [], `${module.sourcePackage} carries a stale exemption`);
     for (const degrade of module.degrades) assert.ok(degrade.reason.length > 20, degrade.path);
     assert.ok(module.constraints.length > 0, `${module.sourcePackage} reports no refinements`);
     assert.ok(module.boundaryNotes.some((note) => note.kind === "strict-unknown-keys"));
+  }
+});
+
+test("the committed reports carry nothing machine-specific", () => {
+  for (const manifest of Object.keys(REPORTS)) {
+    const text = readFileSync(join(REAL_TARGETS, REPORTS[manifest]), "utf8");
+    assert.ok(!/"[A-Za-z]:[\\/]/u.test(text), `${manifest} report carries a Windows path`);
+    assert.ok(!/"\/(?:Users|home|var|tmp|private)\//u.test(text), `${manifest} report carries an absolute path`);
+    const report = JSON.parse(text);
+    assert.match(report.zod.resolvedFrom, /^\.\//u);
+    // Nothing in the report may depend on whether the run that made it wrote.
+    for (const file of report.files) {
+      assert.equal(file.status, "unchanged", `${manifest}: ${file.output}`);
+      assert.equal(file.written, false);
+    }
   }
 });
 
@@ -122,6 +139,11 @@ test("regenerating from the platform reproduces the committed output byte for by
   const root = platformRoot();
   const linked = linkPlatform("real", root);
   try {
+    // Seeded with the committed artifacts, so the run answers the question the
+    // committed report states: is this tree what the contracts say it is.
+    for (const file of readdirSync(join(REAL_TARGETS, "generated"))) {
+      copyFileSync(join(REAL_TARGETS, "generated", file), join(linked.directory, "generated", file));
+    }
     for (const [manifest] of TARGETS) {
       const report = await run({
         manifestPath: join(linked.directory, manifest),
@@ -132,18 +154,15 @@ test("regenerating from the platform reproduces the committed output byte for by
         const produced = readFileSync(join(linked.directory, "generated", file.output), "utf8");
         const committed = readFileSync(join(REAL_TARGETS, "generated", file.output), "utf8");
         assert.equal(produced, committed, `${file.output} drifted from the committed artifact`);
+        assert.equal(file.status, "unchanged", `${file.output} is not what the contracts produce`);
       }
-      const stored = committedReport(manifest);
-      const [produced] = report.modules;
-      const [expected] = stored.modules;
-      assert.equal(produced.schemaDigest, expected.schemaDigest, `${manifest} schema digest`);
-      assert.equal(produced.exportedSchemas, expected.exportedSchemas);
-      assert.equal(produced.declarations, expected.declarations);
-      assert.deepEqual(produced.degrades, expected.degrades);
-      assert.deepEqual(produced.constraints, expected.constraints);
-      assert.deepEqual(produced.boundaryNotes, expected.boundaryNotes);
-      assert.equal(produced.sourceVersion, expected.sourceVersion, `${manifest} source package version`);
-      assert.equal(stored.zod.resolved, report.zod.resolved, `${manifest} zod version`);
+      // The whole report, not a chosen field of it: a committed report a
+      // regeneration cannot reproduce is a claim nothing checks.
+      assert.equal(
+        `${JSON.stringify(report, null, 2)}\n`,
+        readFileSync(join(REAL_TARGETS, REPORTS[manifest]), "utf8"),
+        `${manifest} report drifted from the committed one`,
+      );
     }
   } finally {
     linked.dispose();

@@ -58,11 +58,23 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "AgentModEnginesSchema.agent",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "AgentModEnginesSchema.shell",
           "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data"
         },
         {
           "path": "AgentModEnginesSchema.velaros",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModExecutionModeContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModExecutionModeContributionSchema.promptFeatureId",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
@@ -90,6 +102,10 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "AgentModManifestSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "AgentModManifestSchema.locale",
           "reason": "the record key is a transformed string rather than a plain one, so the table is read as opaque data"
         },
@@ -110,11 +126,31 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "AgentModPromptSegmentContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSkillContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "AgentModSkillContributionSchema.spaces",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
           "path": "AgentModSpaceContributionSchema.boundCapabilityIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.descriptor.localeKey",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.iconId",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSpaceContributionSchema.id",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
@@ -130,11 +166,19 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "AgentModSpaceContributionSchema.surfaceProfileId",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "AgentModSpaceContributionSchema.toolCategoryIds",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
           "path": "AgentModSpaceContributionSchema.turnContextSourceIds",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModSubAgentTypeContributionSchema.id",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
@@ -146,7 +190,15 @@
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
+          "path": "AgentModToolCategoryContributionSchema.id",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
           "path": "AgentModToolContributionSchema.availableInSpaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModToolContributionSchema.categoryId",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
@@ -159,6 +211,10 @@
         },
         {
           "path": "AgentModToolContributionSchema.residentInSpaces",
+          "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
+        },
+        {
+          "path": "AgentModTurnContextSourceContributionSchema.id",
           "reason": "zod transform: the accepted wire value and the parsed value differ, so the shell reads this position as opaque data and applies the transform itself"
         },
         {
@@ -178,8 +234,68 @@
           "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
         },
         {
+          "path": "ExternalAgentBridgeCommandMessageSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeDisconnectSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeDisconnectedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeErrorSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeEventAckSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeEventSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeHelloSchema.protocol",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeHelloSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
           "path": "ExternalAgentBridgeMessageSchema",
           "reason": "a union of two discriminated unions carries no single discriminator; the shell consumes the two halves directly"
+        },
+        {
+          "path": "ExternalAgentBridgePairSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgePairedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgePingSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgePongSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeProbeSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeResumeSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
+        },
+        {
+          "path": "ExternalAgentBridgeResumedSchema.version",
+          "reason": "numeric protocol-version literal: VelarScript enums are string-backed and the language has no numeric singleton type, so the shell compares the version itself"
         },
         {
           "path": "LeaseDeniedResponseSchema.protocolVersion",
