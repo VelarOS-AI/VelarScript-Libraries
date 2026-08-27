@@ -121,13 +121,29 @@ function enumWireValues(schema: ZodSchema): readonly unknown[] {
   return Object.values(entries as Record<string, unknown>);
 }
 
+/**
+ * zod 4 writes a chained constraint into `_def.checks`, but a top-level format
+ * schema — `z.email()`, `z.uuid()`, `z.url()`, `z.iso.*()`, `z.int()` — carries
+ * its constraint on `_def.format` / `_def.check` and leaves `_def.checks`
+ * empty. Both are read, and both name the specific format rather than the
+ * generic `string_format` wrapper, so the two spellings report identically.
+ */
 function checkNames(schema: ZodSchema): string[] {
-  const checks = def(schema)["checks"];
-  if (!Array.isArray(checks)) return [];
-  return checks.map((check: unknown) => {
-    const core = (check as { _zod?: { def?: { check?: unknown } } })?._zod?.def?.check;
-    return typeof core === "string" ? core : "check";
-  });
+  const names: string[] = [];
+  const own = def(schema);
+  const format = own["format"];
+  const check = own["check"];
+  if (typeof format === "string") names.push(format);
+  else if (typeof check === "string") names.push(check);
+  const checks = own["checks"];
+  if (Array.isArray(checks)) {
+    for (const entry of checks) {
+      const core = (entry as { _zod?: { def?: { check?: unknown; format?: unknown } } })?._zod?.def;
+      const named = typeof core?.format === "string" ? core.format : core?.check;
+      names.push(typeof named === "string" ? named : "check");
+    }
+  }
+  return names;
 }
 
 /** Names the shape a degrade actually covers: `optional pipe`, not just `optional`. */
@@ -159,6 +175,40 @@ function resolveLazy(schema: ZodSchema): ZodSchema | null {
   }
 }
 
+/**
+ * An exported `z.lazy()` stands for the schema it resolves to, so the export
+ * name is claimed for that schema rather than for the wrapper. Naming the
+ * wrapper would spend the export's name and leave the record it wraps renamed.
+ * A wrapper that resolves to nothing keeps itself, and is refused by name.
+ */
+function lazyTarget(schema: ZodSchema): ZodSchema {
+  let current = schema;
+  for (let step = 0; step < MAX_SCHEMA_DEPTH && zodType(current) === "lazy"; step += 1) {
+    const resolved = resolveLazy(current);
+    if (resolved === null) return current;
+    current = resolved;
+  }
+  return current;
+}
+
+/**
+ * Whether a wrapper chain leaves the value writable as `T?`. `.nonoptional()`
+ * removes exactly the optionality it wraps, so an `optional` under it
+ * contributes nothing; a `nullable` still does.
+ */
+function chainNullable(schema: ZodSchema): boolean {
+  let current: ZodSchema | null = schema;
+  let stripOptional = false;
+  while (current !== null && TRANSPARENT.has(zodType(current))) {
+    const type = zodType(current);
+    if (type === "nullable") return true;
+    if (type === "nonoptional") stripOptional = true;
+    else if (type === "optional" && !stripOptional) return true;
+    current = innerOf(current);
+  }
+  return false;
+}
+
 function optionsOf(schema: ZodSchema): readonly ZodSchema[] | null {
   const options = def(schema)["options"];
   return Array.isArray(options) ? (options as ZodSchema[]) : null;
@@ -181,6 +231,8 @@ export function lowerModule(
   const named: NamedNode[] = [];
   const caseTags = new Map<ZodSchema, CaseTag>();
   const tagEnums: Declaration[] = [];
+  /** Unions whose cases were already refused; lowering them again only repeats it. */
+  const brokenUnions = new Set<ZodSchema>();
   const degradeByPath = new Map(options.degrades.map((entry) => [entry.path, entry]));
   const usedDegrades = new Set<string>();
   const applied: AppliedDegrade[] = [];
@@ -200,17 +252,16 @@ export function lowerModule(
     if (entry.paths.length < 5) entry.paths.push(path);
   }
 
+  // Two shapes can be refused at one path — a wrapper and what it wraps share
+  // it — so only an identical repeat of the same refusal is collapsed.
   function refuse(path: string, schema: ZodSchema, reason: string): void {
-    if (unmapped.some((shape) => shape.path === path)) return;
-    unmapped.push({ path, zodType: zodType(schema), reason });
+    const type = zodType(schema);
+    if (unmapped.some((shape) => shape.path === path && shape.zodType === type && shape.reason === reason)) return;
+    unmapped.push({ path, zodType: type, reason });
   }
 
   function remember(schema: ZodSchema, path: string): void {
     if (!canonicalPath.has(schema)) canonicalPath.set(schema, path);
-  }
-
-  function pathOf(schema: ZodSchema, reaching: string): string {
-    return canonicalPath.get(schema) ?? reaching;
   }
 
   function declare(schema: ZodSchema, path: string, requested: string): string {
@@ -228,17 +279,29 @@ export function lowerModule(
   // Naming runs before lowering so a record that is both an export and a union
   // case reads under its exported name, whichever path reaches it first.
 
-  for (const entry of exports) {
-    const name = `${options.prefix}${pascalCase(stripSuffix(entry.name, options.stripSuffix))}`;
-    exportNames.set(entry.name, declare(entry.schema, entry.name, name));
+  // A `z.lazy()` export stands for the schema it resolves to, so it claims that
+  // schema's name — but only after every direct export has claimed one, or an
+  // alias would take the name of the record it merely points at.
+  const declaredExports = new Map<string, string>();
+  for (const pass of [false, true]) {
+    for (const entry of exports) {
+      if ((zodType(entry.schema) === "lazy") !== pass) continue;
+      const name = `${options.prefix}${pascalCase(stripSuffix(entry.name, options.stripSuffix))}`;
+      declaredExports.set(entry.name, declare(lazyTarget(entry.schema), entry.name, name));
+    }
   }
+  for (const entry of exports) exportNames.set(entry.name, declaredExports.get(entry.name)!);
 
   function discover(schema: ZodSchema, path: string, hint: string, depth = 0): void {
+    // An exemption covers the path that declares it and nothing else, so a
+    // schema reached through that path is neither walked nor named there. The
+    // same schema reached anywhere else is still walked, and answers at its own
+    // path rather than borrowing this one's exemption.
+    if (degradeByPath.has(path)) return;
     remember(schema, path);
     if (discovered.has(schema)) return;
     discovered.add(schema);
     const canonical = canonicalPath.get(schema) ?? path;
-    if (degradeByPath.has(canonical)) return;
     if (depth > MAX_SCHEMA_DEPTH) {
       refuse(canonical, schema, `nesting exceeds ${MAX_SCHEMA_DEPTH} levels; a shape schema that rebuilds itself on every read cannot be walked`);
       return;
@@ -328,6 +391,7 @@ export function lowerModule(
     const enumName = registry.claim(`${unionName}Tag`);
     const members: EnumMember[] = [];
     const memberNames = new NameRegistry();
+    const wires = new Set<string>();
     let usable = true;
     cases.forEach((option, index) => {
       const casePath = `${path}|${index}`;
@@ -351,6 +415,19 @@ export function lowerModule(
         return;
       }
       const wire = values[0];
+      // zod defers this to the first parse, where it throws. Two cases behind
+      // one tag would emit two enum members carrying the same runtime string,
+      // and neither the tag nor the union would narrow.
+      if (wires.has(wire)) {
+        refuse(
+          `${canonical}.${discriminator}`,
+          tagSchema,
+          `discriminator value '${wire}' is declared by more than one case of this union, so the tag names no single case`,
+        );
+        usable = false;
+        return;
+      }
+      wires.add(wire);
       const base = enumMemberName(wire);
       if (base === null) {
         refuse(`${canonical}.${discriminator}`, tagSchema, `tag '${wire}' has no VelarScript identifier form`);
@@ -374,7 +451,10 @@ export function lowerModule(
       discovered.add(option);
       discoverFields(option, canonical, childHint(caseName), depth + 1);
     });
-    if (!usable) return;
+    if (!usable) {
+      brokenUnions.add(schema);
+      return;
+    }
     tagEnums.push({
       kind: "enum",
       name: enumName,
@@ -388,17 +468,40 @@ export function lowerModule(
   }
 
   // ── Pass 2: bodies ────────────────────────────────────────────────────────
+  //
+  // Every path here is the path that reaches the position being lowered, not
+  // the canonical path of the schema that sits in it. An exemption and a
+  // refusal are both statements about a position, and a schema object shared by
+  // two records occupies two of them.
 
-  function reference(schema: ZodSchema, reaching: string): VelType {
-    const path = pathOf(schema, reaching);
-    const degrade = degradeByPath.get(path);
-    if (degrade !== undefined) {
-      usedDegrades.add(path);
-      if (!applied.some((entry) => entry.path === path)) {
-        applied.push({ path, reason: degrade.reason, zodType: describeType(schema) });
-      }
-      return PRIMITIVE_UNKNOWN;
+  // A declaration whose own path is exempted stands for `unknown`. Handing that
+  // name to another position would spend one declared exemption on a second
+  // path, so every other reference to it is refused where it appears.
+  const exemptedDeclarations = new Map<ZodSchema, string>();
+  for (const node of named) {
+    if (degradeByPath.has(node.path)) exemptedDeclarations.set(node.schema, node.path);
+  }
+
+  function applyDegrade(path: string, schema: ZodSchema, degrade: DegradeEntry): VelType {
+    usedDegrades.add(path);
+    if (!applied.some((entry) => entry.path === path)) {
+      applied.push({ path, reason: degrade.reason, zodType: describeType(schema) });
     }
+    // The exemption opens the value, not the key. A wrapper chain that lets the
+    // sender leave the key out has to keep saying so, or the generated record
+    // demands a key zod accepts as absent.
+    return chainNullable(schema) ? optional(PRIMITIVE_UNKNOWN) : PRIMITIVE_UNKNOWN;
+  }
+
+  /** `T?` over a `null` is the one shape VelarScript cannot spell; it is counted. */
+  function optionalOf(lowered: VelType, path: string): VelType {
+    if (lowered.kind === "primitive" && lowered.name === "null") note("optional-null-widened-to-unknown", path);
+    return optional(lowered);
+  }
+
+  function reference(schema: ZodSchema, path: string, stripOptional = false): VelType {
+    const degrade = degradeByPath.get(path);
+    if (degrade !== undefined) return applyDegrade(path, schema, degrade);
     const type = zodType(schema);
     if (TRANSPARENT.has(type)) {
       const inner = innerOf(schema);
@@ -406,10 +509,14 @@ export function lowerModule(
         refuse(path, schema, "wrapper declares no inner schema");
         return PRIMITIVE_UNKNOWN;
       }
+      // `.nonoptional()` takes back exactly the optionality it wraps. Carrying
+      // the inner `?` outward would accept an absent key that zod rejects.
+      if (type === "nonoptional") return reference(inner, path, true);
+      if (type === "optional" && stripOptional) return reference(inner, path, true);
       if (type === "optional") note("optional-accepts-null", path);
       if (type === "nullable") note("nullable-accepts-absent", path);
-      const lowered = reference(inner, path);
-      return type === "optional" || type === "nullable" ? optional(lowered) : lowered;
+      const lowered = reference(inner, path, stripOptional);
+      return type === "optional" || type === "nullable" ? optionalOf(lowered, path) : lowered;
     }
     if (type === "lazy") {
       const resolved = resolveLazy(schema);
@@ -417,18 +524,33 @@ export function lowerModule(
         refuse(path, schema, "z.lazy() did not resolve to a schema");
         return PRIMITIVE_UNKNOWN;
       }
-      return reference(resolved, path);
+      return reference(resolved, path, stripOptional);
+    }
+    const exempted = exemptedDeclarations.get(schema);
+    if (exempted !== undefined) {
+      refuse(
+        path,
+        schema,
+        `this schema is exempted to unknown at '${exempted}', and an exemption covers only the path that declares it; `
+          + `add '${path}' to "unknownDegrade" with its own reason to accept unknown here too`,
+      );
+      return PRIMITIVE_UNKNOWN;
     }
     const name = declaredName.get(schema);
     if (name !== undefined) return { kind: "named", name };
     return structure(schema, path);
   }
 
+  // One schema carries one set of refinements however many positions hold it,
+  // so the note is recorded once, under the path the walk first read it at.
+  const checked = new Set<ZodSchema>();
+
   function recordChecks(schema: ZodSchema, path: string): void {
     const checks = checkNames(schema);
     if (checks.length === 0) return;
-    if (constraints.some((entry) => entry.path === path)) return;
-    constraints.push({ path, zodType: zodType(schema), checks });
+    if (checked.has(schema)) return;
+    checked.add(schema);
+    constraints.push({ path: canonicalPath.get(schema) ?? path, zodType: zodType(schema), checks });
   }
 
   function structure(schema: ZodSchema, path: string): VelType {
@@ -528,11 +650,18 @@ export function lowerModule(
     }
   }
 
-  function isRecordLike(schema: ZodSchema): boolean {
+  function isRecordLike(schema: ZodSchema, depth = 0): boolean {
+    if (depth > MAX_SCHEMA_DEPTH) return false;
     const type = zodType(schema);
     if (TRANSPARENT.has(type)) {
       const inner = innerOf(schema);
-      return inner === null ? false : isRecordLike(inner);
+      return inner === null ? false : isRecordLike(inner, depth + 1);
+    }
+    // A self-referential arm is written `z.lazy(() => Record)`, and it is as
+    // much a record as the one spelled out.
+    if (type === "lazy") {
+      const resolved = resolveLazy(schema);
+      return resolved === null ? false : isRecordLike(resolved, depth + 1);
     }
     return type === "object" || type === "union";
   }
@@ -604,28 +733,18 @@ export function lowerModule(
     if (degrade !== undefined) {
       // An exported schema the table refuses outright still keeps its name, so
       // the consuming module's import list does not silently lose an export.
-      usedDegrades.add(path);
-      if (!applied.some((entry) => entry.path === path)) {
-        applied.push({ path, reason: degrade.reason, zodType: describeType(schema) });
-      }
-      return { kind: "alias", name, type: PRIMITIVE_UNKNOWN, doc: [`Degraded to unknown: ${path}.`] };
-    }
-    const type = zodType(schema);
-    if (TRANSPARENT.has(type)) {
-      const inner = innerOf(schema);
-      if (inner === null) {
-        refuse(path, schema, "wrapper declares no inner schema");
-        return null;
-      }
-      if (type === "optional") note("optional-accepts-null", path);
-      if (type === "nullable") note("nullable-accepts-absent", path);
-      const lowered = reference(inner, path);
       return {
         kind: "alias",
         name,
-        type: type === "optional" || type === "nullable" ? optional(lowered) : lowered,
-        doc: [`Alias of ${path}.`],
+        type: applyDegrade(path, schema, degrade),
+        doc: [`Degraded to unknown: ${path}.`],
       };
+    }
+    const type = zodType(schema);
+    // A wrapper and a `z.lazy()` both stand for what they hold; `reference`
+    // reads either one, and refuses in its own words when it cannot.
+    if (TRANSPARENT.has(type) || type === "lazy") {
+      return { kind: "alias", name, type: reference(schema, path), doc: [`Alias of ${path}.`] };
     }
     switch (type) {
       case "enum":
@@ -672,6 +791,9 @@ export function lowerModule(
         }
         const discriminator = def(schema)["discriminator"];
         if (typeof discriminator === "string") {
+          // Naming already said what is wrong with this union's cases; lowering
+          // them would only add a second diagnostic for the same fault.
+          if (brokenUnions.has(schema)) return null;
           return {
             kind: "alias",
             name,
@@ -780,6 +902,10 @@ const BOUNDARY_DETAIL: Readonly<Record<string, string>> = {
   "undefined-normalized-to-null":
     "z.undefined() accepts a present key holding undefined; `null` accepts a present key holding null. JSON "
     + "transport cannot carry undefined, so the two agree on every wire payload.",
+  "optional-null-widened-to-unknown":
+    "An optional or nullable z.null() accepts an absent key, and VelarScript writes no `null?`: a `null` field "
+    + "rejects an absent key, and the compiler reads `null?` as redundant. The position is widened to `unknown?`, "
+    + "which accepts an absent key as required and any value besides null as well.",
 };
 
 /** Exposed so a report renderer states a boundary widening in one wording. */

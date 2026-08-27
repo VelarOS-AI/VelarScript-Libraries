@@ -31,11 +31,19 @@ export const PRIMITIVE_BOOL: VelType = { kind: "primitive", name: "bool" };
 export const PRIMITIVE_NULL: VelType = { kind: "primitive", name: "null" };
 export const PRIMITIVE_UNKNOWN: VelType = { kind: "primitive", name: "unknown" };
 
-/** `T?` is the one canonical nullability shape: wrapping twice is still one `?`. */
+/**
+ * `T?` is the one canonical nullability shape: wrapping twice is still one `?`.
+ *
+ * Optionality always survives, because dropping it narrows: a record field
+ * accepts an absent key only when it carries `?`, and `unknown` alone does not.
+ * `null?` is the one shape the language will not spell — the compiler reads it
+ * as redundant (VEL2012) while a plain `null` field still rejects an absent
+ * key — so an optional `null` widens to `unknown?`, the narrowest shape that
+ * accepts both. `lowerModule` counts that widening.
+ */
 export function optional(inner: VelType): VelType {
   if (inner.kind === "optional") return inner;
-  if (inner.kind === "primitive" && inner.name === "unknown") return inner;
-  if (inner.kind === "primitive" && inner.name === "null") return inner;
+  if (inner.kind === "primitive" && inner.name === "null") return { kind: "optional", inner: PRIMITIVE_UNKNOWN };
   if (inner.kind === "union") {
     const flattened = inner.options.map((option) => (option.kind === "optional" ? option.inner : option));
     return { kind: "optional", inner: { kind: "union", options: flattened } };
