@@ -1,0 +1,408 @@
+/// The goldens below are written against one text rendering of the whole tree,
+/// so a test says what the shape is rather than poking at one field. Every
+/// declared block and inline kind appears in `describeBlock`/`describeInline`,
+/// and both end by throwing, so a kind added to the vocabulary without a
+/// rendering fails these tests instead of passing silently.
+import {
+    MarkdownAlignment,
+    MarkdownBlock,
+    MarkdownBlockKind,
+    MarkdownDocument,
+    MarkdownInline,
+    MarkdownInlineKind,
+    MarkdownReparseReason,
+    MarkdownTableRow,
+    parseMarkdown,
+    reparseMarkdown,
+} from "../src/index.vel"
+
+def flat(value: string) -> string: return value.replaceAll("\n", "\\n")
+
+def orDash(value: string?) -> string: return value ?? "-"
+
+def describeAlignment(value: MarkdownAlignment?) -> string: return value != null ? str(value) : "-"
+
+def describeInlines(nodes: List<MarkdownInline>) -> string: return nodes.map(describeInline).join(" ")
+
+def describeInline(node: MarkdownInline) -> string:
+    if node.kind == MarkdownInlineKind.text: return f"text({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.code: return f"code({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.html: return f"html({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.softBreak: return "softbreak"
+    if node.kind == MarkdownInlineKind.hardBreak: return "hardbreak"
+    if node.kind == MarkdownInlineKind.strong: return f"strong[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.emphasis: return f"em[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.strikethrough: return f"del[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.image: return f"image({node.src}|{flat(node.alt)}|{orDash(node.title)})"
+    if node.kind == MarkdownInlineKind.link:
+        const children = describeInlines(node.children)
+        return f"link({node.href}|{orDash(node.title)}|{node.autolink})[{children}]"
+    throw Error(f"The test has no rendering for inline kind {node.kind}")
+
+def describeRow(row: MarkdownTableRow) -> string:
+    return row.cells.map(cell => f"[{describeInlines(cell.inlines)}]").join(" ")
+
+def describeBlocks(blocks: List<MarkdownBlock>) -> string: return blocks.map(describeBlock).join(" ")
+
+def describeBlock(block: MarkdownBlock) -> string:
+    if block.kind == MarkdownBlockKind.thematicBreak: return "hr"
+    if block.kind == MarkdownBlockKind.html: return f"htmlblock({flat(block.text)})"
+    if block.kind == MarkdownBlockKind.paragraph: return f"p[{describeInlines(block.inlines)}]"
+    if block.kind == MarkdownBlockKind.heading: return f"h{block.level}[{describeInlines(block.inlines)}]"
+    if block.kind == MarkdownBlockKind.code:
+        return f"code({orDash(block.language)}|{orDash(block.meta)}|{flat(block.text)})"
+    if block.kind == MarkdownBlockKind.blockquote: return f"quote[{describeBlocks(block.blocks)}]"
+    if block.kind == MarkdownBlockKind.list:
+        const items = block.items.map(item => f"item[{describeBlocks(item.blocks)}]").join(" ")
+        return f"list({block.ordered}|{block.start}|{block.tight})[{items}]"
+    if block.kind == MarkdownBlockKind.table:
+        const columns = block.alignments.map(describeAlignment).join(",")
+        const rows = block.rows.map(describeRow).join(" / ")
+        return f"table({columns})[{describeRow(block.head)} // {rows}]"
+    throw Error(f"The test has no rendering for block kind {block.kind}")
+
+def describe(source: string) -> string: return describeBlocks(parseMarkdown(source).blocks)
+
+test "every block kind reaches the tree with its own shape":
+    const source = "
+        Setext title
+        ============
+
+        ### Third level
+
+        A paragraph.
+
+        > quoted
+        > lines
+
+        - first
+        - second
+
+        3. third
+        4. fourth
+
+        - loose
+
+        - list
+
+        | left | mid | right | plain |
+        | :--- | :-: | ----: | ----- |
+        | a | b | c | d |
+
+        ---
+
+        <div class=x>raw</div>
+
+            indented code
+    "
+    const expected = [
+        "h1[text(Setext title)]",
+        "h3[text(Third level)]",
+        "p[text(A paragraph.)]",
+        "quote[p[text(quoted) softbreak text(lines)]]",
+        "list(false|1|true)[item[p[text(first)]] item[p[text(second)]]]",
+        "list(true|3|true)[item[p[text(third)]] item[p[text(fourth)]]]",
+        "list(false|1|false)[item[p[text(loose)]] item[p[text(list)]]]",
+        "table(left,center,right,-)[[text(left)] [text(mid)] [text(right)] [text(plain)] // [text(a)] [text(b)] [text(c)] [text(d)]]",
+        "hr",
+        "htmlblock(<div class=x>raw</div>\\n)",
+        "code(-|-|indented code\\n)",
+    ].join(" ")
+    const actual = describe(source)
+    assert actual == expected else f"block goldens changed: {actual}"
+
+test "a fenced block carries its language and its meta and nothing else happens to it":
+    const fenced = "
+        ```js title=demo
+        const x = 1
+        ```
+    "
+    const fencedTree = describe(fenced)
+    assert fencedTree == "code(js|title=demo|const x = 1\\n)" else f"fence changed: {fencedTree}"
+
+    // A diagram or a formula language is a fenced block here: the adapter does
+    // not render it, execute it, or look inside it.
+    const mermaid = "
+        ```mermaid
+        graph TD
+        A-->B
+        ```
+    "
+    const mermaidTree = describe(mermaid)
+    assert mermaidTree == "code(mermaid|-|graph TD\\nA-->B\\n)" else f"mermaid changed: {mermaidTree}"
+
+    const bare = "
+        ```
+        plain
+        ```
+    "
+    const bareTree = describe(bare)
+    assert bareTree == "code(-|-|plain\\n)" else f"bare fence changed: {bareTree}"
+
+test "every inline kind reaches the tree with its own shape":
+    const emphasised = describe("plain **strong** and *emphasis* and ~~struck~~")
+    const emphasisGolden = "p[text(plain ) strong[text(strong)] text( and ) em[text(emphasis)] text( and ) del[text(struck)]]"
+    assert emphasised == emphasisGolden else f"emphasis changed: {emphasised}"
+
+    const spanned = describe("a `span` of code")
+    assert spanned == "p[text(a ) code(span) text( of code)]" else f"code span changed: {spanned}"
+
+    const titled = describe(`see [label](/u/1 "Title")`)
+    assert titled == "p[text(see ) link(/u/1|Title|false)[text(label)]]" else f"link changed: {titled}"
+
+    const nested = describe("read [**bold** link](/u/2)")
+    assert nested == "p[text(read ) link(/u/2|-|false)[strong[text(bold)] text( link)]]" else f"nested link changed: {nested}"
+
+    const pictured = describe(`![alt text](/i.png "Caption")`)
+    assert pictured == "p[image(/i.png|alt text|Caption)]" else f"image changed: {pictured}"
+
+    const broken = describe("one\ntwo  \nthree")
+    assert broken == "p[text(one) softbreak text(two) hardbreak text(three)]" else f"breaks changed: {broken}"
+
+    const inlineHtml = describe("a <span data-x>b</span> c")
+    const htmlGolden = "p[text(a ) html(<span data-x>) text(b) html(</span>) text( c)]"
+    assert inlineHtml == htmlGolden else f"inline html changed: {inlineHtml}"
+
+test "a link destination is carried exactly as written, and an autolink says so":
+    // The consumer owns link policy. Nothing here filters a scheme, resolves a
+    // relative path, or refuses a destination.
+    const hostile = describe("[click](javascript:alert(1)) and [up](../../secret) and [empty]()")
+    const hostileGolden = "p[link(javascript:alert(1)|-|false)[text(click)] text( and ) link(../../secret|-|false)[text(up)] text( and ) link(|-|false)[text(empty)]]"
+    assert hostile == hostileGolden else f"destination changed: {hostile}"
+
+    const bracketed = describe("<https://example.com/a>")
+    const bracketedGolden = "p[link(https://example.com/a|-|true)[text(https://example.com/a)]]"
+    assert bracketed == bracketedGolden else f"autolink changed: {bracketed}"
+
+    const bare = describe("visit https://example.com/b now")
+    const bareGolden = "p[text(visit ) link(https://example.com/b|-|true)[text(https://example.com/b)] text( now)]"
+    assert bare == bareGolden else f"bare url changed: {bare}"
+
+test "raw HTML is carried opaque instead of being interpreted":
+    const source = "
+        <script>alert(1)</script>
+
+        text
+    "
+    // The script is one HTML block of literal text. This adapter has no sandbox
+    // policy because it never runs, strips, or rewrites what it carries.
+    const actual = describe(source)
+    assert actual == "htmlblock(<script>alert(1)</script>\\n) p[text(text)]" else f"html changed: {actual}"
+
+test "a link reference definition resolves into the block that used it":
+    const source = "
+        See [the label] here.
+
+        [the label]: /resolved
+    "
+    const actual = describe(source)
+    assert actual == "p[text(See ) link(/resolved|-|false)[text(the label)] text( here.)]" else f"reference changed: {actual}"
+    const references = parseMarkdown(source).references
+    assert references.size == 1 else f"reference count changed: {references.size}"
+    assert references[0].label == "THE LABEL" else f"reference label changed: {references[0].label}"
+    assert references[0].href == "/resolved" else f"reference href changed: {references[0].href}"
+    assert references[0].title == null else "a reference grew a title"
+
+test "an unclosed fence swallows the rest of the document instead of failing":
+    const source = "
+        before
+
+        ```js
+        const open = true
+        more text that looks like prose
+    "
+    const actual = describe(source)
+    const expected = "p[text(before)] code(js|-|const open = true\\nmore text that looks like prose)"
+    assert actual == expected else f"unclosed fence changed: {actual}"
+
+test "input beyond the size bound is refused by name":
+    let message = ""
+    try: parseMarkdown("x".repeat(2 * 1024 * 1024 + 1))
+    catch error: message = error.message
+    assert message == "Markdown source cannot exceed 2 MiB" else f"size refusal changed: {message}"
+
+test "nesting beyond the depth bound is refused by name":
+    let quoted = ""
+    try: parseMarkdown(">".repeat(1000) + " deep")
+    catch error: quoted = error.message
+    assert quoted == "Markdown nesting cannot exceed 32 levels" else f"quote depth refusal changed: {quoted}"
+
+    let source = "x"
+    for level in range(200): source = "- " + source
+    let listed = ""
+    try: parseMarkdown(source)
+    catch error: listed = error.message
+    assert listed == "Markdown nesting cannot exceed 32 levels" else f"list depth refusal changed: {listed}"
+
+    // The bound is generous enough that ordinary nesting is nowhere near it.
+    const modest = "
+        > - a
+        >   - b
+        >     - **c**
+    "
+    assert describe(modest).size > 0 else "modest nesting was refused"
+
+/// One assistant answer shaped like the real thing: prose, a heading, a list, a
+/// table, a fence, a quote, and a trailing paragraph that is still arriving.
+const streamedAnswer = "
+    Here is what I found.
+
+    ## Findings
+
+    - The parser is bounded.
+    - The renderer is *someone else's* job.
+
+    | file | lines |
+    | :--- | ----: |
+    | a.ts | 12 |
+    | b.ts | 340 |
+
+    ```ts
+    export const answer = 42
+    ```
+
+    > A closing note, quoted.
+
+    And one last paragraph that is still
+"
+
+def stablePrefixHolds(previous: MarkdownDocument, next: MarkdownDocument, stableBlocks: number) -> bool:
+    if stableBlocks > previous.blocks.size or stableBlocks > next.blocks.size: return false
+    for index in range(stableBlocks):
+        if describeBlock(previous.blocks[index]) != describeBlock(next.blocks[index]): return false
+    return true
+
+type ReplayCost:
+    steps: number
+    rendered: number
+    naive: number
+
+/// Feeds `source` one character at a time and checks the whole contract at
+/// every step: the streaming reparse must agree with a cold parse of the same
+/// prefix, and every block it claimed stable must really be unchanged.
+def replay(source: string, label: string) -> ReplayCost:
+    let previous: MarkdownDocument? = null
+    let steps = 0
+    let rendered = 0
+    let naive = 0
+    for size in range(1, source.size + 1):
+        const prefix = source.slice(0, size)
+        const step = reparseMarkdown(previous, prefix)
+        steps += 1
+        rendered += step.document.blocks.size - step.stableBlocks
+        naive += step.document.blocks.size
+
+        const cold = describeBlocks(parseMarkdown(prefix).blocks)
+        assert describeBlocks(step.document.blocks) == cold else f"{label}: the reparse disagreed with a cold parse at {size}"
+
+        const settled = previous
+        if settled != null:
+            assert stablePrefixHolds(settled, step.document, step.stableBlocks) else f"{label}: the stable prefix claim was wrong at {size}"
+
+        previous = step.document
+    return {steps, rendered, naive}
+
+test "the stable prefix claim survives a token-by-token replay of a real answer":
+    const cost = replay(streamedAnswer, "answer")
+    assert cost.steps == streamedAnswer.size else "the replay skipped a step"
+    // The claim is worth making. A consumer that trusts it re-renders about one
+    // block per fragment — the open tail, plus one more on each step where a new
+    // block opened — against re-rendering the whole document every time.
+    assert cost.rendered <= cost.steps + 20 else f"the stable prefix claimed too little: {cost.rendered} renders over {cost.steps} steps"
+    assert cost.naive > 3 * cost.rendered else f"the stable prefix saved too little: {cost.rendered} against {cost.naive}"
+
+    const settled = parseMarkdown(streamedAnswer)
+    const grown = reparseMarkdown(settled, streamedAnswer + "\n\ndone.")
+    assert grown.stableBlocks == settled.blocks.size - 1 else f"the settled claim changed: {grown.stableBlocks}"
+
+test "the stable prefix claim survives replays of documents built to break it":
+    // Each of these arrives one character at a time, and every prefix of every
+    // one of them is a legal markdown document of its own. The replay asserts
+    // the whole contract at each of those prefixes.
+    const hostile = [
+        // A reference definition that lands after the block that uses it.
+        "Uses [label] early.\n\nA middle paragraph.\n\n[label]: /late\n",
+        // A fence that opens, closes, and opens again.
+        "a\n\n```js\none\n```\n\nb\n\n```\ntwo\n",
+        // Nested containers, and a list that keeps absorbing items.
+        "> - a\n>   - b\n\n- c\n\n- d\n\n- e\n",
+        // A table growing a row at a time under a paragraph that could become
+        // a setext heading first.
+        "lead\n\n| h |\n| - |\n| 1 |\n| 2 |\n",
+        // An HTML block, then inline HTML, then a thematic break.
+        "<div>\nraw\n</div>\n\ntext <b>bold</b>\n\n***\n",
+        // A paragraph that turns into a heading, twice.
+        "one\n===\n\ntwo\n---\n\nthree\n",
+        // Text whose characters are wider than one unit, so a fragment boundary
+        // lands inside a surrogate pair. A half-written character is a legal
+        // prefix of a stream and must parse like any other.
+        "一段中文。\n\n- 🙂 emoji\n- 更多文字\n\n> 引用\n",
+    ]
+    for source, index in hostile:
+        const cost = replay(source, f"hostile {index}")
+        assert cost.steps == source.size else f"hostile {index} skipped a step"
+
+test "a construct that reaches backwards is never inside the claimed prefix":
+    // A setext underline turns the paragraph above it into a heading, a
+    // delimiter row turns the line above it into a table, a fence swallows what
+    // follows, a list absorbs a later item, and a lazy line extends a quote.
+    // Each of them changes the last block of the earlier text, which is exactly
+    // the block the claim withholds.
+    const cases = [
+        ["intro\n\ntitle", "intro\n\ntitle\n===\n"],
+        ["intro\n\n| a | b |", "intro\n\n| a | b |\n| - | - |\n| 1 | 2 |\n"],
+        ["intro\n\n```js", "intro\n\n```js\nbody\n```\n"],
+        ["intro\n\n- one", "intro\n\n- one\n- two\n"],
+        ["intro\n\n> quoted", "intro\n\n> quoted\nlazy continuation\n"],
+    ]
+    for pair in cases:
+        const before = parseMarkdown(pair[0])
+        const step = reparseMarkdown(before, pair[1])
+        assert stablePrefixHolds(before, step.document, step.stableBlocks) else f"the claim was wrong for {flat(pair[0])}"
+        assert step.stableBlocks == 1 else f"the claim changed for {flat(pair[0])}: {step.stableBlocks}"
+        // The block the claim withheld is the one that actually changed.
+        const changed = describeBlock(before.blocks[1]) != describeBlock(step.document.blocks[1])
+        assert changed else f"the withheld block did not change for {flat(pair[0])}"
+
+test "a late reference definition withdraws the whole claim":
+    const before = parseMarkdown("[label] in the first block.\n\nmore text\n")
+    const step = reparseMarkdown(before, "[label] in the first block.\n\nmore text\n\n[label]: /late\n")
+    assert step.reason == MarkdownReparseReason.referenceDefinitionsChanged else f"reason changed: {step.reason}"
+    assert step.stableBlocks == 0 else f"a claim survived a reference change: {step.stableBlocks}"
+    // The first block really did change, two blocks away from the definition.
+    const changed = describeBlock(before.blocks[0]) != describeBlock(step.document.blocks[0])
+    assert changed else "the reference did not reach the earlier block"
+
+test "a reference destination that grows one character withdraws the claim too":
+    // The label set is identical on both sides here — only the destination is
+    // longer — and the block that used it still changed. Comparing labels alone
+    // would have claimed this prefix and been wrong.
+    const before = parseMarkdown("Uses [label] early.\n\n[label]: /")
+    const step = reparseMarkdown(before, "Uses [label] early.\n\n[label]: /late")
+    assert step.reason == MarkdownReparseReason.referenceDefinitionsChanged else f"reason changed: {step.reason}"
+    assert step.stableBlocks == 0 else f"a claim survived a destination change: {step.stableBlocks}"
+    assert describeBlock(before.blocks[0]) != describeBlock(step.document.blocks[0]) else "the destination did not reach the block"
+
+test "each reparse reason is reachable and says what it says":
+    const first = reparseMarkdown(null, "a\n\nb\n")
+    assert first.reason == MarkdownReparseReason.noPreviousDocument else f"first reason changed: {first.reason}"
+    assert first.stableBlocks == 0 else "a first parse claimed a prefix"
+
+    const same = reparseMarkdown(first.document, "a\n\nb\n")
+    assert same.reason == MarkdownReparseReason.unchanged else f"same reason changed: {same.reason}"
+    assert same.stableBlocks == 2 else f"unchanged text lost a block: {same.stableBlocks}"
+
+    const grown = reparseMarkdown(first.document, "a\n\nb\n\nc\n")
+    assert grown.reason == MarkdownReparseReason.appendedTail else f"grown reason changed: {grown.reason}"
+    assert grown.stableBlocks == 1 else f"grown claim changed: {grown.stableBlocks}"
+
+    const rewritten = reparseMarkdown(first.document, "different\n")
+    assert rewritten.reason == MarkdownReparseReason.textRewritten else f"rewritten reason changed: {rewritten.reason}"
+    assert rewritten.stableBlocks == 0 else "a rewrite claimed a prefix"
+
+test "an empty and a blank document are ordinary answers rather than failures":
+    assert parseMarkdown("").blocks.size == 0 else "an empty document produced blocks"
+    assert parseMarkdown("   \n\n  \n").blocks.size == 0 else "a blank document produced blocks"
+    const step = reparseMarkdown(parseMarkdown(""), "")
+    assert step.reason == MarkdownReparseReason.unchanged else f"empty reparse reason changed: {step.reason}"
+    assert step.stableBlocks == 0 else "an empty document claimed blocks"

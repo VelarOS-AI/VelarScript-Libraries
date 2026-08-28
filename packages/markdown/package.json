@@ -1,0 +1,56 @@
+{
+  "name": "@velarscript-labs/markdown",
+  "version": "0.1.0",
+  "description": "Bounded CommonMark parsing into a closed VelarScript block and inline tree, with a stable-prefix contract for streaming text.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "src/index.vel",
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "velar build-library",
+    "check": "velar format --check && velar check && velar format --check ../../examples/markdown && velar check ../../examples/markdown",
+    "test": "velar test",
+    "test:browser": "velar test ../../examples/markdown --browser=chromium && velar test ../../examples/markdown --browser=webkit"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git",
+    "directory": "packages/markdown"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "velar": {
+    "entry": "src/index.vel",
+    "artifacts": {
+      "core": "dist/velar-library.json"
+    },
+    "targets": [
+      "core",
+      "node",
+      "web",
+      "desktop"
+    ],
+    "requires": {
+      "capabilities": [],
+      "language": ">=0.21 <0.22"
+    }
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.1"
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.21.0"
+  }
+}

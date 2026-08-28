@@ -1,0 +1,96 @@
+/// One text rendering of the whole parsed tree, so a browser page can report
+/// what it parsed as plain text and a browser test can read the same fact a
+/// product would render from.
+///
+/// Every declared kind has a branch here and both walkers end by throwing, so a
+/// vocabulary the browser build does not carry fails the page loudly instead of
+/// quietly rendering less.
+import {
+    MarkdownAlignment,
+    MarkdownBlock,
+    MarkdownBlockKind,
+    MarkdownDocument,
+    MarkdownInline,
+    MarkdownInlineKind,
+    MarkdownTableRow,
+} from "@velarscript-labs/markdown"
+
+def flat(value: string) -> string: return value.replaceAll("\n", "\\n")
+
+def orDash(value: string?) -> string: return value ?? "-"
+
+def describeAlignment(value: MarkdownAlignment?) -> string: return value != null ? str(value) : "-"
+
+export def describeInlines(nodes: List<MarkdownInline>) -> string: return nodes.map(describeInline).join(" ")
+
+def describeInline(node: MarkdownInline) -> string:
+    if node.kind == MarkdownInlineKind.text: return f"text({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.code: return f"code({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.html: return f"html({flat(node.text)})"
+    if node.kind == MarkdownInlineKind.softBreak: return "softbreak"
+    if node.kind == MarkdownInlineKind.hardBreak: return "hardbreak"
+    if node.kind == MarkdownInlineKind.strong: return f"strong[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.emphasis: return f"em[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.strikethrough: return f"del[{describeInlines(node.children)}]"
+    if node.kind == MarkdownInlineKind.image: return f"image({node.src}|{flat(node.alt)}|{orDash(node.title)})"
+    if node.kind == MarkdownInlineKind.link:
+        const children = describeInlines(node.children)
+        return f"link({node.href}|{orDash(node.title)}|{node.autolink})[{children}]"
+    throw Error(f"The example has no rendering for inline kind {node.kind}")
+
+def describeRow(row: MarkdownTableRow) -> string:
+    return row.cells.map(cell => f"[{describeInlines(cell.inlines)}]").join(" ")
+
+export def describeBlocks(blocks: List<MarkdownBlock>) -> string: return blocks.map(describeBlock).join(" ")
+
+export def describeBlock(block: MarkdownBlock) -> string:
+    if block.kind == MarkdownBlockKind.thematicBreak: return "hr"
+    if block.kind == MarkdownBlockKind.html: return f"htmlblock({flat(block.text)})"
+    if block.kind == MarkdownBlockKind.paragraph: return f"p[{describeInlines(block.inlines)}]"
+    if block.kind == MarkdownBlockKind.heading: return f"h{block.level}[{describeInlines(block.inlines)}]"
+    if block.kind == MarkdownBlockKind.code:
+        return f"code({orDash(block.language)}|{orDash(block.meta)}|{flat(block.text)})"
+    if block.kind == MarkdownBlockKind.blockquote: return f"quote[{describeBlocks(block.blocks)}]"
+    if block.kind == MarkdownBlockKind.list:
+        const items = block.items.map(item => f"item[{describeBlocks(item.blocks)}]").join(" ")
+        return f"list({block.ordered}|{block.start}|{block.tight})[{items}]"
+    if block.kind == MarkdownBlockKind.table:
+        const columns = block.alignments.map(describeAlignment).join(",")
+        const rows = block.rows.map(describeRow).join(" / ")
+        return f"table({columns})[{describeRow(block.head)} // {rows}]"
+    throw Error(f"The example has no rendering for block kind {block.kind}")
+
+export def describeReferences(parsed: MarkdownDocument) -> string:
+    return parsed.references.map(entry => f"{entry.label}={entry.href}|{orDash(entry.title)}").join(" ")
+
+/// One assistant answer that uses every block kind the adapter declares, so the
+/// browser build has to carry all of them.
+export const answer = "
+    ## Findings
+
+    A paragraph with **strong**, *emphasis*, ~~strikethrough~~, `a span`,
+    a [labelled link](/u/1), <https://example.com/auto>, a bare
+    https://example.com/bare, an <b>inline tag</b>, and ![art](/i.png).
+
+    - first
+    - second
+
+    2. second item
+    3. third item
+
+    | left | right |
+    | :--- | ----: |
+    | a | b |
+
+    > Quoted, with a [reference link][doc].
+
+    ```ts
+    export const answer = 42
+    ```
+
+    <div data-raw>carried opaque</div>
+
+    ---
+
+    [doc]: /docs/markdown
+"

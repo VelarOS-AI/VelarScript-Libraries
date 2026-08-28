@@ -93,6 +93,14 @@
       "status": "experimental",
       "supportedVelarScript": ">=0.21.0 <0.22.0",
       "targets": ["web", "desktop"]
+    },
+    {
+      "name": "@velarscript-labs/markdown",
+      "path": "packages/markdown",
+      "kind": "adapter",
+      "status": "experimental",
+      "supportedVelarScript": ">=0.21.0 <0.22.0",
+      "targets": ["core", "node", "web", "desktop"]
     }
   ]
 }

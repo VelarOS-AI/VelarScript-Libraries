@@ -167,6 +167,7 @@ try {
   }, null, 2)}\n`, "utf8");
   await writeFile(join(consumer, "main.vel"), `
 import {deflate, inflate} from "@velarscript-labs/compression"
+import {parseMarkdown, reparseMarkdown} from "@velarscript-labs/markdown"
 import {encode, parse} from "@velarscript-labs/msgpack"
 import {simplex2} from "@velarscript-labs/noise"
 import {selectQuery, sqlColumnEqual, sqlNamedField, sqlTable} from "@velarscript-labs/sql"
@@ -186,6 +187,8 @@ const wire = deflate(encode({id: "u-1", name: "Ada"}))
 const user = parse(inflate(wire), PackedUser)
 const field = simplex2("packed-consumer")
 const configuration = PackedConfiguration.parse(parseYaml("port: 3000"))
+const answer = parseMarkdown("# Packed\\n\\n- one\\n- two\\n")
+const stableBlocks = reparseMarkdown(answer, "# Packed\\n\\n- one\\n- two\\n\\nmore\\n").stableBlocks
 const packedUserQuery = selectQuery(
     sqlTable("users"),
     [sqlNamedField("id"), sqlNamedField("name")],
@@ -193,13 +196,13 @@ const packedUserQuery = selectQuery(
     where=sqlColumnEqual("id", "u-1"),
     maximumRows=1,
 )
-print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configuration.port}:{packedUserQuery.maximumRows}")
+print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configuration.port}:{packedUserQuery.maximumRows}:{answer.blocks.size}:{stableBlocks}")
 `.trimStart(), "utf8");
 
   const cli = join(consumer, "node_modules", ".bin", velarExecutable);
   await run(cli, ["build", "main.vel", "--out-dir", "dist"], consumer);
   const execution = await run(process.execPath, [join(consumer, "dist", "main.js")], consumer);
-  assert.equal(execution.stdout, "5:B!:Ada:0:3000:1\n");
+  assert.equal(execution.stdout, "5:B!:Ada:0:3000:1:2:1\n");
 
   const nodeConsumer = join(consumer, "node-consumer");
   await mkdir(join(nodeConsumer, "tests"), { recursive: true });

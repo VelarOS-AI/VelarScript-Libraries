@@ -1,0 +1,547 @@
+/// A markdown parsing adapter. It parses; it never renders.
+///
+/// The result is a closed block and inline tree of ordinary Vel data. Nothing
+/// here interprets HTML, applies a link policy, highlights code, or executes a
+/// diagram or a formula: raw HTML is carried verbatim as opaque text, an `href`
+/// is carried exactly as written, and a fenced block whose language is `mermaid`
+/// or `math` is a fenced block like any other. Every one of those decisions
+/// belongs to the consumer that renders the tree.
+
+/// Every block this adapter can produce. The vocabulary is closed.
+export enum MarkdownBlockKind:
+    paragraph
+    heading
+    code
+    blockquote
+    list
+    table
+    thematicBreak
+    html
+
+/// Every inline this adapter can produce. The vocabulary is closed.
+export enum MarkdownInlineKind:
+    text
+    strong
+    emphasis
+    strikethrough
+    code
+    link
+    image
+    softBreak
+    hardBreak
+    html
+
+/// A table column's declared alignment. A column the delimiter row wrote as
+/// plain `---` declares none, and arrives as `null`.
+export enum MarkdownAlignment:
+    left
+    center
+    right
+
+/// Why a reparse could claim the stable prefix it claimed.
+export enum MarkdownReparseReason:
+    noPreviousDocument
+    unchanged
+    appendedTail
+    textRewritten
+    referenceDefinitionsChanged
+
+export type MarkdownInline = MarkdownText | MarkdownStrong | MarkdownEmphasis | MarkdownStrikethrough | MarkdownCodeSpan | MarkdownLink | MarkdownImage | MarkdownSoftBreak | MarkdownHardBreak | MarkdownInlineHtml
+
+export type MarkdownBlock = MarkdownParagraph | MarkdownHeading | MarkdownCodeBlock | MarkdownBlockQuote | MarkdownList | MarkdownTable | MarkdownThematicBreak | MarkdownHtmlBlock
+
+/// Literal text, with markdown's own escapes and entities already resolved.
+export type MarkdownText:
+    kind: MarkdownInlineKind.text
+    text: string
+
+export type MarkdownStrong:
+    kind: MarkdownInlineKind.strong
+    children: List<MarkdownInline>
+
+export type MarkdownEmphasis:
+    kind: MarkdownInlineKind.emphasis
+    children: List<MarkdownInline>
+
+export type MarkdownStrikethrough:
+    kind: MarkdownInlineKind.strikethrough
+    children: List<MarkdownInline>
+
+/// A code span. Its text is literal; nothing highlights it here.
+export type MarkdownCodeSpan:
+    kind: MarkdownInlineKind.code
+    text: string
+
+/// `href` is carried exactly as the source wrote it, with no scheme filter, no
+/// normalization, and no safety verdict — the consumer owns link policy.
+/// `autolink` is true when markdown built the destination out of the link text
+/// itself, either as `<https://example.com>` or as a bare URL in running text.
+export type MarkdownLink:
+    kind: MarkdownInlineKind.link
+    href: string
+    title: string?
+    autolink: bool
+    children: List<MarkdownInline>
+
+/// `src` is carried verbatim, on the same terms as a link's `href`.
+export type MarkdownImage:
+    kind: MarkdownInlineKind.image
+    src: string
+    alt: string
+    title: string?
+
+/// A single newline inside a paragraph.
+export type MarkdownSoftBreak:
+    kind: MarkdownInlineKind.softBreak
+
+/// A line break the source asked for, with two trailing spaces or a backslash.
+export type MarkdownHardBreak:
+    kind: MarkdownInlineKind.hardBreak
+
+/// Raw inline HTML, carried opaque. This adapter never parses, sanitizes, or
+/// judges it; a consumer applies its own sandbox policy or shows it as text.
+export type MarkdownInlineHtml:
+    kind: MarkdownInlineKind.html
+    text: string
+
+export type MarkdownParagraph:
+    kind: MarkdownBlockKind.paragraph
+    inlines: List<MarkdownInline>
+
+/// `level` is 1 through 6, for both `#` and underlined headings.
+export type MarkdownHeading:
+    kind: MarkdownBlockKind.heading
+    level: number
+    inlines: List<MarkdownInline>
+
+/// A fenced or indented code block. `language` is the first word of the info
+/// string and `meta` is the rest of it; both are absent on an indented block
+/// and on a fence that opened with no info. The language is carried, never
+/// acted on: `mermaid`, `math`, and `html` are ordinary code blocks here.
+export type MarkdownCodeBlock:
+    kind: MarkdownBlockKind.code
+    language: string?
+    meta: string?
+    text: string
+
+export type MarkdownBlockQuote:
+    kind: MarkdownBlockKind.blockquote
+    blocks: List<MarkdownBlock>
+
+export type MarkdownListItem:
+    blocks: List<MarkdownBlock>
+
+/// `start` is the first ordinal of an ordered list and 1 otherwise. `tight` is
+/// markdown's own looseness rule, which decides whether a renderer wraps item
+/// text in paragraph spacing.
+export type MarkdownList:
+    kind: MarkdownBlockKind.list
+    ordered: bool
+    start: number
+    tight: bool
+    items: List<MarkdownListItem>
+
+export type MarkdownTableCell:
+    inlines: List<MarkdownInline>
+
+export type MarkdownTableRow:
+    cells: List<MarkdownTableCell>
+
+/// A table has exactly one header row. `alignments` has one entry per declared
+/// column, absent where that column declared none; a row may be shorter or
+/// longer than that, exactly as written.
+export type MarkdownTable:
+    kind: MarkdownBlockKind.table
+    alignments: List<MarkdownAlignment?>
+    head: MarkdownTableRow
+    rows: List<MarkdownTableRow>
+
+export type MarkdownThematicBreak:
+    kind: MarkdownBlockKind.thematicBreak
+
+/// A raw HTML block, carried opaque on the same terms as inline HTML.
+export type MarkdownHtmlBlock:
+    kind: MarkdownBlockKind.html
+    text: string
+
+/// One link reference definition the source declared. `label` is markdown's own
+/// normalized, case-folded form of the label, which is what a `[shortcut]`
+/// elsewhere in the document is matched against.
+export type MarkdownReference:
+    label: string
+    href: string
+    title: string?
+
+/// One parsed document. `source` is the text it was parsed from, which is what
+/// lets `reparseMarkdown` prove that a later text extends this one.
+/// `references` is the whole link reference definition table, sorted by label.
+/// It is document-global — a definition at the end resolves a `[shortcut]` at
+/// the start — which is why a change to any part of it, a destination included,
+/// withdraws every stable-prefix claim.
+export type MarkdownDocument:
+    source: string
+    references: List<MarkdownReference>
+    blocks: List<MarkdownBlock>
+
+/// A reparse of streaming text. `stableBlocks` is the number of leading blocks
+/// of `document` that are guaranteed identical to the previous document's
+/// leading blocks, so a consumer re-renders only from that index onward.
+export type MarkdownReparse:
+    document: MarkdownDocument
+    stableBlocks: number
+    reason: MarkdownReparseReason
+
+type MarkdownParseOutcome:
+    overflow: bool
+    document: MarkdownDocument
+
+type MarkdownItOptions:
+    html: bool
+    linkify: bool
+    typographer: bool
+    breaks: bool
+    maxNesting: number
+
+// CommonMark plus GFM tables and strikethrough is markdown-it's `default`
+// preset, and it is the whole enabled set. `html` is on so raw HTML arrives as
+// its own token to be carried opaque rather than silently escaped into text;
+// `linkify` is on because a bare URL in an assistant message is a link in the
+// product. `typographer` and `breaks` stay off: neither rewrites text here.
+extern module "markdown-it":
+    export class default:
+        constructor(preset: string, options: MarkdownItOptions)
+        def parse(source: string, environment: unknown) -> unknown
+
+import js MarkdownIt from "markdown-it"
+
+/// The deepest a block or inline may sit before the adapter refuses the input.
+/// markdown-it's own limit stops the token stream well above this one, so a
+/// hostile document is named here instead of arriving as a wall of tokens.
+const maximumDepth = 32
+const maximumBytes = 2 * 1024 * 1024
+
+// Token stream to closed tree, and nothing else. Every branch either emits one
+// of the declared kinds or steps over a token that carries no data of its own.
+extern js(maximumDepth: number)`
+    function attribute(token, name) {
+      const value = token.attrGet(name);
+      return value === null || value === undefined ? null : String(value);
+    }
+
+    function alignmentOf(token) {
+      const style = attribute(token, "style");
+      if (style === null) return null;
+      const declared = style.split(" ").join("");
+      if (declared === "text-align:left") return "left";
+      if (declared === "text-align:center") return "center";
+      if (declared === "text-align:right") return "right";
+      return null;
+    }
+
+    function infoParts(info) {
+      const trimmed = String(info || "").trim();
+      if (trimmed === "") return { language: null, meta: null };
+      const boundary = trimmed.search(/\s/);
+      if (boundary < 0) return { language: trimmed, meta: null };
+      const meta = trimmed.slice(boundary).trim();
+      return { language: trimmed.slice(0, boundary), meta: meta === "" ? null : meta };
+    }
+
+    function readInlines(children, cursor, closer, depth, state) {
+      const nodes = [];
+      if (depth > maximumDepth) {
+        state.overflow = true;
+        return nodes;
+      }
+      while (cursor.index < children.length && !state.overflow) {
+        const token = children[cursor.index];
+        const type = token.type;
+        if (closer !== null && type === closer) {
+          cursor.index += 1;
+          return nodes;
+        }
+        cursor.index += 1;
+        // markdown-it emits an empty text token at some construct boundaries. A
+        // text node carrying no text is noise in a tree nobody renders from.
+        if (type === "text" || type === "text_special") {
+          if (token.content !== "") nodes.push({ kind: "text", text: token.content });
+        }
+        else if (type === "code_inline") nodes.push({ kind: "code", text: token.content });
+        else if (type === "softbreak") nodes.push({ kind: "softBreak" });
+        else if (type === "hardbreak") nodes.push({ kind: "hardBreak" });
+        else if (type === "html_inline") nodes.push({ kind: "html", text: token.content });
+        else if (type === "strong_open") nodes.push({ kind: "strong", children: readInlines(children, cursor, "strong_close", depth + 1, state) });
+        else if (type === "em_open") nodes.push({ kind: "emphasis", children: readInlines(children, cursor, "em_close", depth + 1, state) });
+        else if (type === "s_open") nodes.push({ kind: "strikethrough", children: readInlines(children, cursor, "s_close", depth + 1, state) });
+        else if (type === "image") nodes.push({ kind: "image", src: attribute(token, "src") || "", alt: token.content || "", title: attribute(token, "title") });
+        else if (type === "link_open") nodes.push({
+          kind: "link",
+          href: attribute(token, "href") || "",
+          title: attribute(token, "title"),
+          autolink: token.markup === "autolink" || token.markup === "linkify",
+          children: readInlines(children, cursor, "link_close", depth + 1, state),
+        });
+      }
+      return nodes;
+    }
+
+    function readInlineSlot(tokens, cursor, depth, state) {
+      if (cursor.index >= tokens.length || tokens[cursor.index].type !== "inline") return [];
+      const token = tokens[cursor.index];
+      cursor.index += 1;
+      return readInlines(token.children || [], { index: 0 }, null, depth + 1, state);
+    }
+
+    function skipClose(tokens, cursor, first, second) {
+      if (cursor.index >= tokens.length) return;
+      const type = tokens[cursor.index].type;
+      if (type === first || type === second) cursor.index += 1;
+    }
+
+    function readRow(tokens, cursor, depth, state, columns, collect) {
+      cursor.index += 1;
+      const cells = [];
+      while (cursor.index < tokens.length && !state.overflow) {
+        const token = tokens[cursor.index];
+        const type = token.type;
+        if (type === "tr_close") {
+          cursor.index += 1;
+          break;
+        }
+        if (type === "th_open" || type === "td_open") {
+          if (collect) columns.push(alignmentOf(token));
+          cursor.index += 1;
+          const inlines = readInlineSlot(tokens, cursor, depth, state);
+          skipClose(tokens, cursor, "th_close", "td_close");
+          cells.push({ inlines: inlines });
+          continue;
+        }
+        cursor.index += 1;
+      }
+      return { cells: cells };
+    }
+
+    function readTable(tokens, cursor, depth, state) {
+      cursor.index += 1;
+      const columns = [];
+      const rows = [];
+      let head = { cells: [] };
+      let heading = false;
+      while (cursor.index < tokens.length && !state.overflow) {
+        const type = tokens[cursor.index].type;
+        if (type === "table_close") {
+          cursor.index += 1;
+          break;
+        }
+        if (type === "thead_open" || type === "thead_close") {
+          heading = type === "thead_open";
+          cursor.index += 1;
+          continue;
+        }
+        if (type === "tr_open") {
+          const row = readRow(tokens, cursor, depth, state, columns, heading);
+          if (heading) head = row;
+          else rows.push(row);
+          continue;
+        }
+        cursor.index += 1;
+      }
+      return { kind: "table", alignments: columns, head: head, rows: rows };
+    }
+
+    function readList(tokens, cursor, ordered, depth, state) {
+      const declared = ordered ? tokens[cursor.index].attrGet("start") : null;
+      const parsed = declared === null || declared === undefined ? 1 : Number(declared);
+      const closer = ordered ? "ordered_list_close" : "bullet_list_close";
+      const items = [];
+      const frame = { loose: false };
+      cursor.index += 1;
+      while (cursor.index < tokens.length && !state.overflow) {
+        const type = tokens[cursor.index].type;
+        if (type === closer) {
+          cursor.index += 1;
+          break;
+        }
+        if (type === "list_item_open") {
+          cursor.index += 1;
+          items.push({ blocks: readBlocks(tokens, cursor, "list_item_close", depth + 1, state, frame) });
+          continue;
+        }
+        cursor.index += 1;
+      }
+      return {
+        kind: "list",
+        ordered: ordered,
+        start: Number.isFinite(parsed) ? parsed : 1,
+        tight: !frame.loose,
+        items: items,
+      };
+    }
+
+    function readBlocks(tokens, cursor, closer, depth, state, frame) {
+      const blocks = [];
+      if (depth > maximumDepth) {
+        state.overflow = true;
+        return blocks;
+      }
+      while (cursor.index < tokens.length && !state.overflow) {
+        const token = tokens[cursor.index];
+        const type = token.type;
+        if (closer !== null && type === closer) {
+          cursor.index += 1;
+          return blocks;
+        }
+        if (type === "paragraph_open") {
+          // markdown-it hides an item's paragraph exactly when the list is
+          // tight, which is where the list's own looseness is read from.
+          if (frame !== null && !token.hidden) frame.loose = true;
+          cursor.index += 1;
+          const inlines = readInlineSlot(tokens, cursor, depth, state);
+          skipClose(tokens, cursor, "paragraph_close", null);
+          blocks.push({ kind: "paragraph", inlines: inlines });
+          continue;
+        }
+        if (type === "heading_open") {
+          const level = Number(String(token.tag).slice(1)) || 1;
+          cursor.index += 1;
+          const inlines = readInlineSlot(tokens, cursor, depth, state);
+          skipClose(tokens, cursor, "heading_close", null);
+          blocks.push({ kind: "heading", level: level, inlines: inlines });
+          continue;
+        }
+        if (type === "fence" || type === "code_block") {
+          const parts = type === "fence" ? infoParts(token.info) : { language: null, meta: null };
+          cursor.index += 1;
+          blocks.push({ kind: "code", language: parts.language, meta: parts.meta, text: token.content });
+          continue;
+        }
+        if (type === "hr") {
+          cursor.index += 1;
+          blocks.push({ kind: "thematicBreak" });
+          continue;
+        }
+        if (type === "html_block") {
+          cursor.index += 1;
+          blocks.push({ kind: "html", text: token.content });
+          continue;
+        }
+        if (type === "blockquote_open") {
+          cursor.index += 1;
+          blocks.push({ kind: "blockquote", blocks: readBlocks(tokens, cursor, "blockquote_close", depth + 1, state, null) });
+          continue;
+        }
+        if (type === "bullet_list_open" || type === "ordered_list_open") {
+          blocks.push(readList(tokens, cursor, type === "ordered_list_open", depth, state));
+          continue;
+        }
+        if (type === "table_open") {
+          blocks.push(readTable(tokens, cursor, depth, state));
+          continue;
+        }
+        cursor.index += 1;
+      }
+      return blocks;
+    }
+
+    function everyLink() {
+      return true;
+    }
+
+    function sameLink(url) {
+      return url;
+    }
+
+    export function carryLinksVerbatim(instance) {
+      instance.validateLink = everyLink;
+      instance.normalizeLink = sameLink;
+      instance.normalizeLinkText = sameLink;
+    }
+
+    export function newEnvironment() {
+      return {};
+    }
+
+    // The whole definition table, not just its labels: two texts can declare the
+    // same label and still resolve it to a different destination, which changes
+    // every block that used it.
+    export function referenceEntries(environment) {
+      const references = environment === null || environment === undefined ? null : environment.references;
+      if (!references) return [];
+      return Object.keys(references).sort().map(function (label) {
+        const entry = references[label] || {};
+        const href = entry.href;
+        const title = entry.title;
+        return {
+          label: label,
+          href: href === null || href === undefined ? "" : String(href),
+          title: title === null || title === undefined || title === "" ? null : String(title),
+        };
+      });
+    }
+
+    export function buildDocument(tokens, source, references) {
+      const state = { overflow: false };
+      const blocks = readBlocks(tokens, { index: 0 }, null, 1, state, null);
+      return {
+        overflow: state.overflow,
+        document: { source: source, references: references, blocks: state.overflow ? [] : blocks },
+      };
+    }
+`:
+    export def carryLinksVerbatim(instance: unknown) -> null
+    export def newEnvironment() -> unknown
+    export def referenceEntries(environment: unknown) -> unknown
+    export def buildDocument(tokens: unknown, source: string, references: unknown) -> unknown
+
+const parser = MarkdownIt("default", {html: true, linkify: true, typographer: false, breaks: false, maxNesting: 100})
+
+// markdown-it ships a link policy of its own: it drops a `javascript:`, `data:`,
+// or `vbscript:` destination on the floor, and percent-encodes and punycodes
+// every other one. Both are decisions this adapter does not get to make. They
+// are turned off here so a destination reaches the consumer exactly as the
+// source wrote it, and the one policy that governs is the consumer's.
+carryLinksVerbatim(parser)
+
+def documentOf(source: string) -> MarkdownDocument:
+    const environment = newEnvironment()
+    const tokens = parser.parse(source, environment)
+    const outcome = MarkdownParseOutcome.parse(buildDocument(tokens, source, referenceEntries(environment)))
+    assert not outcome.overflow else f"Markdown nesting cannot exceed {maximumDepth} levels"
+    return outcome.document
+
+/// Parses one bounded markdown source into the closed tree. The same text
+/// always produces the same document, and the function's only failures are the
+/// two bounds it names.
+export def parseMarkdown(source: string) -> MarkdownDocument:
+    assert Text.utf8Size(source) <= maximumBytes else "Markdown source cannot exceed 2 MiB"
+    return documentOf(source)
+
+/// Parses streaming markdown and reports how much of the previous render still
+/// stands.
+///
+/// Conversation markdown arrives one fragment at a time, and re-rendering a
+/// whole transcript on every fragment is what the consumer is trying to avoid.
+/// The claim this function makes is deliberately narrow and provable: when the
+/// new text extends the old one and the document's link reference definitions
+/// did not change, every block *before* the previous document's last block is
+/// byte-identical in source and parses identically, so only the tail needs a
+/// new render.
+///
+/// The last block is never claimed, because markdown lets a trailing construct
+/// reach backwards into the text it already covers: an open fence swallows
+/// whatever follows, an underline turns the paragraph above it into a heading,
+/// a delimiter row turns the line above it into a table, and a list absorbs
+/// items across blank lines. A change to the reference definitions withdraws
+/// every claim, because those resolve across the whole document and can turn
+/// text in an early block into a link.
+export def reparseMarkdown(previous: MarkdownDocument?, source: string) -> MarkdownReparse:
+    const parsed = parseMarkdown(source)
+    if previous == null: return {document: parsed, stableBlocks: 0, reason: MarkdownReparseReason.noPreviousDocument}
+    if previous.source == source:
+        return {document: parsed, stableBlocks: parsed.blocks.size, reason: MarkdownReparseReason.unchanged}
+    if not source.startsWith(previous.source):
+        return {document: parsed, stableBlocks: 0, reason: MarkdownReparseReason.textRewritten}
+    if not equals(previous.references, parsed.references):
+        return {document: parsed, stableBlocks: 0, reason: MarkdownReparseReason.referenceDefinitionsChanged}
+    const settled = Math.max(previous.blocks.size - 1, 0)
+    return {document: parsed, stableBlocks: Math.min(settled, parsed.blocks.size), reason: MarkdownReparseReason.appendedTail}

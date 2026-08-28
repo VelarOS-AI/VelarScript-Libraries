@@ -23,6 +23,7 @@ repository does not depend on this repository.
 | `@velarscript-labs/yaml` | adapter | experimental | Strict, bounded YAML parsing |
 | `@velarscript-labs/sqlite` | adapter | experimental | Worker-isolated SQLite capability for Node applications |
 | `@velarscript-labs/screencast` | adapter | experimental | Bounded encoded-frame rendering onto a host canvas |
+| `@velarscript-labs/markdown` | adapter | experimental | Bounded markdown parsing into a closed block and inline tree, with a stable-prefix contract for streaming text |
 
 All non-standard packages use the dedicated public npm scope
 `@velarscript-labs`. The `@velarscript/*` scope remains reserved for the
@@ -55,7 +56,10 @@ contains connection metadata and compatibility checks only; editors continue
 to use standard LSP and do not receive a second language implementation.
 `@velarscript-labs/contract-codegen` writes `.vel` source and hands it to the
 consuming project's own `velar format`; it owns no grammar, no type rules, and
-no transport protocol.
+no transport protocol. `@velarscript-labs/markdown` parses and never renders: it
+answers with a closed data tree, carries raw HTML and every link destination
+verbatim, and leaves sandbox policy, link policy, and syntax highlighting to the
+consumer that renders the tree.
 
 Project-specific models, UI, product policy, and deployment configuration stay
 with their owning application. A new package is admitted only after two real

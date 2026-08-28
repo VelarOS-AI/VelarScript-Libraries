@@ -1,0 +1,80 @@
+/// The smallest application that drives the adapter end to end in a browser: it
+/// parses one answer that uses every declared kind, replays that answer one
+/// character at a time through the streaming contract, and asks for the two
+/// refusals by name.
+///
+/// The page reports every fact as plain text, so `src/markdown.browser.test.vel`
+/// reads the same facts a product would render from.
+import {MarkdownDocument, parseMarkdown, reparseMarkdown} from "@velarscript-labs/markdown"
+
+import {answer, describeBlock, describeBlocks, describeReferences} from "./tree.vel"
+
+def stableHolds(previous: MarkdownDocument, next: MarkdownDocument, stableBlocks: number) -> bool:
+    if stableBlocks > previous.blocks.size or stableBlocks > next.blocks.size: return false
+    for index in range(stableBlocks):
+        if describeBlock(previous.blocks[index]) != describeBlock(next.blocks[index]): return false
+    return true
+
+component Markdown:
+    state treeLine = "idle"
+    state referenceLine = "idle"
+    state streamLine = "idle"
+    state verdictLine = "idle"
+    state costLine = "idle"
+    state refusalLine = ""
+
+    def parseAnswer():
+        const parsed = parseMarkdown(answer)
+        treeLine = describeBlocks(parsed.blocks)
+        referenceLine = describeReferences(parsed)
+
+    // The whole streaming contract, checked inside the browser: at every prefix
+    // the reparse must agree with a cold parse, and every block it called stable
+    // must really be unchanged. The page reports the first prefix that breaks it
+    // rather than a bare pass or fail.
+    def replay():
+        let previous: MarkdownDocument? = null
+        let rendered = 0
+        let naive = 0
+        for size in range(1, answer.size + 1):
+            const prefix = answer.slice(0, size)
+            const step = reparseMarkdown(previous, prefix)
+            rendered += step.document.blocks.size - step.stableBlocks
+            naive += step.document.blocks.size
+            if describeBlocks(step.document.blocks) != describeBlocks(parseMarkdown(prefix).blocks):
+                verdictLine = f"cold parse disagreed at {size}"
+                return
+            const settled = previous
+            if settled != null and not stableHolds(settled, step.document, step.stableBlocks):
+                verdictLine = f"the stable prefix claim was wrong at {size}"
+                return
+            previous = step.document
+        const last = previous
+        streamLine = last != null ? f"{answer.size} {last.blocks.size}" : "empty"
+        costLine = f"{rendered} of {naive}"
+        verdictLine = "held"
+
+    def refuseDepth():
+        try: parseMarkdown(">".repeat(1000) + " deep")
+        catch error: refusalLine = error.message
+
+    def refuseSize():
+        try: parseMarkdown("x".repeat(2 * 1024 * 1024 + 1))
+        catch error: refusalLine = error.message
+
+    @mounted:
+        parseAnswer()
+
+    return <main data-example>
+        <p data-tree>{treeLine}</p>
+        <p data-references>{referenceLine}</p>
+        <p data-stream>{streamLine}</p>
+        <p data-cost>{costLine}</p>
+        <p data-verdict>{verdictLine}</p>
+        <p data-refusal>{refusalLine}</p>
+        <button type="button" data-replay on:click={replay}>Replay the answer</button>
+        <button type="button" data-depth on:click={refuseDepth}>Ask for the depth refusal</button>
+        <button type="button" data-size on:click={refuseSize}>Ask for the size refusal</button>
+    </main>
+
+@main: mount(<Markdown />, "#app")

@@ -16,7 +16,10 @@
 - `@velarscript-labs/editor-kit`：编辑器接入 `velar lsp` 的中立元数据与兼容检查；
 - `@velarscript-labs/yaml`：严格、有界的 YAML 解析边界；
 - `@velarscript-labs/sqlite`：Node Worker 隔离、串行化且有界的 SQLite 能力；
-- `@velarscript-labs/screencast`：把编码帧流有界地画到宿主 canvas 上的适配器。
+- `@velarscript-labs/screencast`：把编码帧流有界地画到宿主 canvas 上的适配器；
+- `@velarscript-labs/markdown`：把 markdown 有界地解析成封闭的块/行内数据树，
+  并给流式文本一个可证明的稳定前缀契约。它只解析、从不渲染：原始 HTML 与链接
+  目标原样携带，沙箱策略、链接策略与语法高亮都归渲染方。
 
 全部非标准包统一使用公开 npm scope `@velarscript-labs`；`@velarscript/*` 只保留
 语言工具链、标准能力所有者和官方目标框架。只安装应用实际使用的包：

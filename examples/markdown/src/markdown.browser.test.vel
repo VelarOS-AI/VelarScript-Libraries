@@ -1,0 +1,74 @@
+/// The adapter's browser gate: the whole chain — markdown-it, the token walk,
+/// the runtime type validation of the tree, and the streaming contract — running
+/// inside Chromium and WebKit rather than only in Node.
+///
+/// The page reports what it parsed as plain text:
+///   `[data-tree]` is one text rendering of the whole block and inline tree.
+///   `[data-references]` is the link reference definition table.
+///   `[data-verdict]` is `held` only if every prefix of the answer satisfied the
+///   stable-prefix contract, checked in the browser.
+///   `[data-cost]` is `rendered of naive` blocks across that replay.
+///   `[data-refusal]` is the message of the refusal the page last asked for.
+import {expect} from "velar/test"
+import {browser} from "velar/web-test"
+
+const tree = "[data-tree]"
+
+test "every declared block and inline kind survives the web build":
+    await browser.open("/")
+    // The page parses on mount, so a tree line proves the package loaded, the
+    // extern reached markdown-it, and the runtime type validation passed.
+    const parsed = await browser.text(tree)
+    expect(parsed.startsWith("h2[text(Findings)]")).toBe(true)
+
+    // One of each block form, which is only possible if the browser build
+    // carries the whole closed vocabulary rather than the parts Node exercised.
+    expect(parsed.has("p[text(A paragraph with )")).toBe(true)
+    expect(parsed.has("list(false|1|true)[item[p[text(first)]] item[p[text(second)]]]")).toBe(true)
+    expect(parsed.has("list(true|2|true)[item[p[text(second item)]] item[p[text(third item)]]]")).toBe(true)
+    expect(parsed.has("table(left,right)[[text(left)] [text(right)] // [text(a)] [text(b)]]")).toBe(true)
+    expect(parsed.has("code(ts|-|export const answer = 42\\n)")).toBe(true)
+    expect(parsed.has("htmlblock(<div data-raw>carried opaque</div>\\n)")).toBe(true)
+    expect(parsed.has("hr")).toBe(true)
+
+    // One of each inline form, including both autolink spellings and the
+    // reference link the definition at the end of the document resolves.
+    expect(parsed.has("strong[text(strong)]")).toBe(true)
+    expect(parsed.has("em[text(emphasis)]")).toBe(true)
+    expect(parsed.has("del[text(strikethrough)]")).toBe(true)
+    expect(parsed.has("code(a span)")).toBe(true)
+    expect(parsed.has("link(/u/1|-|false)[text(labelled link)]")).toBe(true)
+    expect(parsed.has("link(https://example.com/auto|-|true)")).toBe(true)
+    expect(parsed.has("link(https://example.com/bare|-|true)")).toBe(true)
+    expect(parsed.has("html(<b>)")).toBe(true)
+    expect(parsed.has("image(/i.png|art|-)")).toBe(true)
+    expect(parsed.has("softbreak")).toBe(true)
+    expect(parsed.has("quote[p[text(Quoted, with a ) link(/docs/markdown|-|false)[text(reference link)]")).toBe(true)
+
+test "the link reference definition table crosses to the browser whole":
+    await browser.open("/")
+    await browser.waitForText("[data-references]", "DOC=/docs/markdown|-")
+
+test "the stable prefix contract holds when it is checked inside the browser":
+    await browser.open("/")
+    await browser.waitForText("[data-verdict]", "idle")
+    // The page replays the answer one character at a time and checks, at every
+    // one of those prefixes, that the reparse agrees with a cold parse and that
+    // every block it called stable really is unchanged.
+    await browser.click("[data-replay]")
+    await browser.waitForText("[data-verdict]", "held")
+
+    // What the contract bought: the blocks a trusting consumer re-rendered
+    // against the blocks it would have re-rendered without the claim.
+    const cost = (await browser.text("[data-cost]")).split(" of ")
+    const rendered = number(cost[0])!
+    const naive = number(cost[1])!
+    expect(rendered < naive / 3).toBe(true)
+
+test "both bounds are refused by name in the browser too":
+    await browser.open("/")
+    await browser.click("[data-depth]")
+    await browser.waitForText("[data-refusal]", "Markdown nesting cannot exceed 32 levels")
+
+    await browser.click("[data-size]")
+    await browser.waitForText("[data-refusal]", "Markdown source cannot exceed 2 MiB")
