@@ -45,7 +45,7 @@ npm run validate
 ```
 
 验证会检查全部包、运行真实依赖测试、打包公开产物，并在干净消费者中安装和执行
-这些 tarball。仓库当前统一面向 VelarScript `>=0.13 <0.14`。
+这些 tarball。仓库当前统一面向 VelarScript `>=0.21.0 <0.22.0`。
 
 发布不属于 `validate`。提交、推送、打标签、npm 发布、从旧 `@velarscript/*`
 命名空间移除非标准包与 deprecate 仍是可分别审计的操作。
