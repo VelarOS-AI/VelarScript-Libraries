@@ -16,6 +16,10 @@
         {
           "path": "DegradedSchema.protocolVersion",
           "reason": "the consumer forwards this envelope to another process without reading its version, so the position is opaque data here even though the table now maps an integer literal"
+        },
+        {
+          "path": "ConfigWriteSchema.entry",
+          "reason": "a tuple, which the table refuses because VelarScript's positional collection is List<T> and no Vel type carries a pair's arity or its per-position types. This consumer builds the pair and sends it, and never parses one back, so the position crosses as opaque data"
         }
       ]
     }

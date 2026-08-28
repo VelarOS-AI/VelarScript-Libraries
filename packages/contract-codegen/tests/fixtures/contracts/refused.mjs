@@ -59,8 +59,17 @@ export const OddFieldSchema = z.strictObject({ "content-type": z.string() });
 // z.any() opts out of validation
 export const AnySchema = z.strictObject({ payload: z.any() });
 
-// tuple
+// A tuple: a fixed-length positional shape. VelarScript's positional collection
+// is List<T> — one element type, any length — so nothing in the language carries
+// the arity or the per-position types, and the near miss (a List of the element
+// union) is refused rather than applied because it drops both at once.
 export const TupleSchema = z.tuple([z.string(), z.number()]);
+
+// The same refusal for the rest form, which is not even fixed-length.
+export const RestTupleSchema = z.tuple([z.string()], z.number());
+
+// And for the empty tuple, whose one accepted value is [].
+export const EmptyTupleSchema = z.tuple([]);
 
 // intersection
 export const IntersectionSchema = z.intersection(

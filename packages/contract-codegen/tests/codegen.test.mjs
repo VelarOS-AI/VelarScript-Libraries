@@ -585,7 +585,17 @@ test("every row of the closed mapping table lowers to its declared VelarScript s
     byName.get("Degraded").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
     ["protocolVersion: unknown", "payload: string"],
   );
-  assert.deepEqual(result.degrades.map((degrade) => degrade.path), ["DegradedSchema.protocolVersion"]);
+  // The fixture carries one exemption of each kind: a mappable position the
+  // consumer chose to read as opaque data, and an escape from a shape the table
+  // refuses outright — the tuple.
+  assert.deepEqual(
+    byName.get("ConfigWrite").fields.map((field) => `${field.name}: ${renderType(field.type)}`),
+    ["channel: string", "entry: unknown"],
+  );
+  assert.deepEqual(
+    result.degrades.map((degrade) => degrade.path),
+    ["ConfigWriteSchema.entry", "DegradedSchema.protocolVersion"],
+  );
 });
 
 test("a plain z.object is an equivalence, not a widening", async () => {
@@ -688,7 +698,11 @@ test("a shape outside the table is refused with its schema path and reason", asy
     ["NumericKeySchema", /plain string keys/u],
     ["OddFieldSchema", /not a VelarScript identifier/u],
     ["AnySchema", /z\.any\(\) opts out/u],
-    ["TupleSchema", /closed type-mapping table/u],
+    // A tuple is refused by naming what the language lacks rather than by the
+    // generic "not in the table", and each arity form says which one it is.
+    ["TupleSchema", /a tuple of 2 elements is a fixed-length positional shape/u],
+    ["RestTupleSchema", /a tuple of 1 element and a rest element/u],
+    ["EmptyTupleSchema", /a tuple of 0 elements/u],
     ["IntersectionSchema", /closed type-mapping table/u],
   ];
   for (const [name, reason] of cases) {
@@ -703,6 +717,39 @@ test("a shape outside the table is refused with its schema path and reason", asy
       name,
     );
   }
+});
+
+test("a tuple's refusal names what the language lacks, the near miss, and both exits", () => {
+  const shapes = refusalOf(() => lowerInline({ PairSchema: z.tuple([z.string(), z.number()]) }));
+  assert.equal(shapes.length, 1, "one shape is refused, at the tuple, not once per element");
+  assert.equal(shapes[0].zodType, "tuple");
+
+  // What the language lacks, rather than "no entry in the table".
+  assert.match(shapes[0].reason, /VelarScript's positional collection is List<T>/u);
+  // The near miss is named and refused in the same breath, so a reader does not
+  // have to wonder whether the generator simply forgot about lists.
+  assert.match(shapes[0].reason, /Widening it to a List of the element union is refused rather than applied/u);
+  assert.match(shapes[0].reason, /accepts an empty value, a reordered one, and a longer one/u);
+  // Exit one is the contract side; exit two is the per-path exemption, which
+  // MappingError itself closes with and the degrade fixture below exercises.
+  assert.match(shapes[0].reason, /a wire tuple is usually a record with its field names left out/u);
+});
+
+test("a tuple accepted as opaque data degrades like any other refused shape", () => {
+  // The exit the live `config:set` contract takes: a request payload the shell
+  // builds rather than parses crosses as `unknown` either way.
+  const WriteSchema = z.strictObject({ entry: z.tuple([z.string(), z.number()]) });
+  const degraded = lowerInline({ WriteSchema }, [
+    { path: "WriteSchema.entry", reason: "the shell builds this pair and never reads it back" },
+  ]);
+  assert.deepEqual(fieldsOf(degraded, "Write"), ["entry: unknown"]);
+  assert.deepEqual(degraded.degrades, [
+    {
+      path: "WriteSchema.entry",
+      reason: "the shell builds this pair and never reads it back",
+      zodType: "tuple",
+    },
+  ]);
 });
 
 test("a per-path degrade is honoured, reported, and reported again when it goes stale", async () => {
@@ -768,7 +815,7 @@ test("generate is byte-stable and --check reports drift instead of writing", asy
   // Both modes answer the same question about the tree, so a committed report
   // does not depend on whether the run that made it had to write.
   assert.deepEqual(checked.files, report.files);
-  assert.equal(checked.modules[0].exportedSchemas, 29);
+  assert.equal(checked.modules[0].exportedSchemas, 30);
   assert.match(checked.modules[0].schemaDigest, /^sha256-[0-9a-f]{64}$/u);
   assert.equal(checked.channelTables[0].channels, 3);
   assert.equal(checked.channelTables[0].bindings, 4);

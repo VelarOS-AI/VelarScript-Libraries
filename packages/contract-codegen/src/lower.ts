@@ -160,6 +160,49 @@ function describeValue(value: unknown): string {
   return `a ${typeof value}`;
 }
 
+/**
+ * Says why a tuple has no VelarScript type, and why the near miss is refused
+ * rather than applied.
+ *
+ * A tuple is a fixed-length heterogeneous sequence. VelarScript's positional
+ * collection is `List<T>` — one element type, any length — and the language has
+ * nothing else that holds values by position: a record holds them by name.
+ * So a tuple's two claims, its arity and its per-position types, have no Vel
+ * spelling at all.
+ *
+ * The near miss is `List<A | B>`, and this table refuses it. Every divergence
+ * the table declares is a widening on one nameable dimension that is *inherent*
+ * to a mapping — a record is the only thing an object can become, so
+ * `z.strictObject`'s surplus-key widening is forced rather than chosen. A list
+ * is not the only thing a tuple could become; it is a substitution, and it
+ * diverges on two dimensions at once: the list accepts an empty value, a
+ * reordered one, and a longer one, none of which the tuple accepts. Arity and
+ * order are the whole content of a positional contract, so a type that drops
+ * both would describe the wire incorrectly while reading as though it described
+ * it — which is worse for a consumer than being told the shape has no type.
+ *
+ * Both exits are named, because a refusal that names none is a dead end:
+ * exempting the path accepts the position as `unknown` (right where the shape
+ * is built rather than parsed), and on the contract side a wire tuple is
+ * usually a record with its field names left out, which maps exactly.
+ */
+function tupleRefusal(schema: ZodSchema): string {
+  const items = def(schema)["items"];
+  const count = Array.isArray(items) ? items.length : 0;
+  const fixed = `${String(count)} element${count === 1 ? "" : "s"}`;
+  // The rest form is not fixed-length, and saying it was would be the one
+  // inaccuracy a reader could check against their own schema.
+  const shape = isZodSchema(def(schema)["rest"])
+    ? `a tuple of ${fixed} and a rest element is a positional shape`
+    : `a tuple of ${fixed} is a fixed-length positional shape`;
+  return `${shape}, and VelarScript's positional collection is `
+    + "List<T> — one element type, any length — so no Vel type carries this tuple's arity or its per-position "
+    + "types. Widening it to a List of the element union is refused rather than applied: that List also accepts "
+    + "an empty value, a reordered one, and a longer one, and every divergence this table declares is a widening "
+    + "inherent to a mapping rather than a substitution of one shape for another. On the contract side, a wire "
+    + "tuple is usually a record with its field names left out, and z.object() maps exactly";
+}
+
 /** Names the one rule every wire value has to satisfy, in one wording. */
 function wireValueRefusal(value: unknown): string {
   const rule = "a VelarScript enum member's wire value is a string or a safe integer (D102 ruling 1)";
@@ -705,6 +748,9 @@ export function lowerModule(
         return PRIMITIVE_UNKNOWN;
       case "date":
         refuse(path, schema, "z.date() is a host Date instance, not JSON wire data");
+        return PRIMITIVE_UNKNOWN;
+      case "tuple":
+        refuse(path, schema, tupleRefusal(schema));
         return PRIMITIVE_UNKNOWN;
       default:
         refuse(path, schema, "no entry in the closed type-mapping table");

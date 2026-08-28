@@ -765,6 +765,81 @@
       "vel": false
     },
     {
+      "schema": "ConfigWrite",
+      "zodExport": "ConfigWriteSchema",
+      "why": "a well-formed key/value pair",
+      "payload": {
+        "channel": "config:set",
+        "entry": [
+          "chat",
+          {
+            "enabled": true
+          }
+        ]
+      },
+      "zod": true,
+      "vel": true
+    },
+    {
+      "schema": "ConfigWrite",
+      "zodExport": "ConfigWriteSchema",
+      "why": "the pair in the other order, which the exemption stops checking",
+      "payload": {
+        "channel": "config:set",
+        "entry": [
+          {
+            "enabled": true
+          },
+          "chat"
+        ]
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "schema": "ConfigWrite",
+      "zodExport": "ConfigWriteSchema",
+      "why": "the value left off, so the arity is short",
+      "payload": {
+        "channel": "config:set",
+        "entry": [
+          "chat"
+        ]
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "schema": "ConfigWrite",
+      "zodExport": "ConfigWriteSchema",
+      "why": "a third element past the pair",
+      "payload": {
+        "channel": "config:set",
+        "entry": [
+          "chat",
+          {
+            "enabled": true
+          },
+          "chat"
+        ]
+      },
+      "zod": false,
+      "vel": true,
+      "divergence": "degraded-to-unknown"
+    },
+    {
+      "schema": "ConfigWrite",
+      "zodExport": "ConfigWriteSchema",
+      "why": "the degraded key left out, which an unknown field still requires",
+      "payload": {
+        "channel": "config:set"
+      },
+      "zod": false,
+      "vel": false
+    },
+    {
       "schema": "Tree",
       "zodExport": "TreeSchema",
       "why": "a two-level self-referential tree",

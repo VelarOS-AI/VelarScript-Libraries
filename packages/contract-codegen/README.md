@@ -209,6 +209,36 @@ standing in two records occupies two positions, and each is a decision the
 consumer makes for itself: exempting the first leaves the second refused, by its
 own path, until it is exempted too.
 
+### Tuples, and why the near miss is refused
+
+A tuple is a fixed-length heterogeneous sequence, and VelarScript has no such
+type. Its positional collection is `List<T>` — one element type, any length —
+and the only other thing that holds values in fixed slots is a record, which
+holds them by name. Both of a tuple's claims, its arity and its per-position
+types, are unspellable.
+
+The near miss is `List<A | B>`, and this table refuses it rather than applying
+it. Every divergence the generator declares is a widening on one nameable
+dimension that is *inherent* to the mapping: a record is the only thing an object
+can become, so `z.strictObject`'s surplus-key widening is forced rather than
+chosen. A list is not the only thing a tuple could become — it is a substitution
+— and it diverges on two dimensions at once, because the list also accepts an
+empty value, a reordered one, and a longer one. Arity and order are the whole
+content of a positional contract, so a generated type that drops both would
+describe the wire incorrectly while reading as though it described it, which is
+worse for a consumer than being told the shape has no type.
+
+The refusal therefore names what the language lacks, and names both exits:
+
+- **Exempt the path**, when the tuple is what a consumer *builds* rather than
+  what it parses. A write-side request payload crosses as `unknown` either way.
+  The fixture carries this route end to end, and its golden samples record
+  exactly what the exemption stops checking — a reordered pair, a short one, and
+  a long one all reach the wire.
+- **Change the contract**, since a wire tuple is usually a record with its field
+  names left out. `z.object({ key: …, value: … })` maps exactly, and reads
+  better at every consumer.
+
 ## What the report says out loud
 
 Two kinds of information cannot cross into a VelarScript type, so both are

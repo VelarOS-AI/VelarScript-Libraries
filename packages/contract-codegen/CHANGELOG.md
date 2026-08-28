@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+- Refuse a `z.tuple` by naming what VelarScript lacks, instead of by the generic
+  "no entry in the closed type-mapping table". A tuple is a fixed-length
+  heterogeneous sequence; the language's positional collection is `List<T>` —
+  one element type, any length — and the only other fixed-slot shape is a record,
+  which holds its values by name. So a tuple's arity and its per-position types
+  have no Vel spelling, and the diagnostic now says so, names the arity form it
+  is looking at (a rest element and the empty tuple each read as themselves), and
+  names both exits: exempt the path, or write the contract as the record the
+  tuple is standing in for.
+- Say why the near miss is refused rather than applied. `List<A | B>` was the
+  obvious widening and it is the wrong one: every divergence this table declares
+  is a widening on one nameable dimension that is *inherent* to a mapping,
+  whereas substituting a list for a tuple diverges on two at once — the list also
+  accepts an empty value, a reordered one, and a longer one. Arity and order are
+  the whole content of a positional contract, and a type that drops both would
+  describe the wire incorrectly while reading as though it described it. The
+  declared divergence classes are unchanged, and the biconditional the
+  equivalence suite asserts stays intact.
+- Carry the exemption route for a tuple end to end in the fixture: the golden
+  output holds an `unknown` field with its recorded reason, and the equivalence
+  samples record exactly what the exemption stops checking — a reordered pair, a
+  short one, and a long one all reach the wire, each as a `degraded-to-unknown`
+  divergence.
+- Neither real target holds a tuple, so no generated declaration, degrade, or
+  report count moves: both committed reports still regenerate byte for byte.
+
 - Load a bundler-compiled contract package, with a new manifest-level
   `"loader": {"kind": "bundle"}`. A package compiled under TypeScript's
   `moduleResolution: "bundler"` emits extensionless relative specifiers that

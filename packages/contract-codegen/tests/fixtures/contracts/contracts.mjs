@@ -190,3 +190,16 @@ export const DegradedSchema = z.strictObject({
   protocolVersion: z.literal(2),
   payload: z.string(),
 });
+
+// A wire tuple, and the other kind of exemption: this one is an escape from a
+// shape the table refuses outright. VelarScript's positional collection is
+// List<T> — one element type, any length — so no Vel type carries the pair's
+// arity or its per-position types, and the table refuses the List-of-the-union
+// substitution rather than applying it. The exemption is what a real contract
+// reaches for when the tuple is what a consumer *builds* rather than what it
+// parses; VelarOS-Desktop's `config:set` request is the live example. The golden
+// samples record exactly what the exemption stops checking.
+export const ConfigWriteSchema = z.strictObject({
+  channel: z.string(),
+  entry: z.tuple([z.enum(["chat", "system"]), z.strictObject({ enabled: z.boolean() })]),
+});
