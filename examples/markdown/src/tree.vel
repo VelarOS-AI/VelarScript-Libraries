@@ -21,6 +21,8 @@ def orDash(value: string?) -> string: return value ?? "-"
 
 def describeAlignment(value: MarkdownAlignment?) -> string: return value != null ? str(value) : "-"
 
+def describeChecked(value: bool?) -> string: return value != null ? str(value) : "-"
+
 export def describeInlines(nodes: List<MarkdownInline>) -> string: return nodes.map(describeInline).join(" ")
 
 def describeInline(node: MarkdownInline) -> string:
@@ -52,7 +54,7 @@ export def describeBlock(block: MarkdownBlock) -> string:
         return f"code({orDash(block.language)}|{orDash(block.meta)}|{flat(block.text)})"
     if block.kind == MarkdownBlockKind.blockquote: return f"quote[{describeBlocks(block.blocks)}]"
     if block.kind == MarkdownBlockKind.list:
-        const items = block.items.map(item => f"item[{describeBlocks(item.blocks)}]").join(" ")
+        const items = block.items.map(item => f"item({describeChecked(item.checked)})[{describeBlocks(item.blocks)}]").join(" ")
         return f"list({block.ordered}|{block.start}|{block.tight})[{items}]"
     if block.kind == MarkdownBlockKind.table:
         const columns = block.alignments.map(describeAlignment).join(",")
@@ -77,6 +79,9 @@ export const answer = "
 
     2. second item
     3. third item
+
+    - [x] a finished step
+    - [ ] an unfinished one
 
     | left | right |
     | :--- | ----: |

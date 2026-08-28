@@ -22,6 +22,8 @@ def orDash(value: string?) -> string: return value ?? "-"
 
 def describeAlignment(value: MarkdownAlignment?) -> string: return value != null ? str(value) : "-"
 
+def describeChecked(value: bool?) -> string: return value != null ? str(value) : "-"
+
 def describeInlines(nodes: List<MarkdownInline>) -> string: return nodes.map(describeInline).join(" ")
 
 def describeInline(node: MarkdownInline) -> string:
@@ -53,7 +55,7 @@ def describeBlock(block: MarkdownBlock) -> string:
         return f"code({orDash(block.language)}|{orDash(block.meta)}|{flat(block.text)})"
     if block.kind == MarkdownBlockKind.blockquote: return f"quote[{describeBlocks(block.blocks)}]"
     if block.kind == MarkdownBlockKind.list:
-        const items = block.items.map(item => f"item[{describeBlocks(item.blocks)}]").join(" ")
+        const items = block.items.map(item => f"item({describeChecked(item.checked)})[{describeBlocks(item.blocks)}]").join(" ")
         return f"list({block.ordered}|{block.start}|{block.tight})[{items}]"
     if block.kind == MarkdownBlockKind.table:
         const columns = block.alignments.map(describeAlignment).join(",")
@@ -100,9 +102,9 @@ test "every block kind reaches the tree with its own shape":
         "h3[text(Third level)]",
         "p[text(A paragraph.)]",
         "quote[p[text(quoted) softbreak text(lines)]]",
-        "list(false|1|true)[item[p[text(first)]] item[p[text(second)]]]",
-        "list(true|3|true)[item[p[text(third)]] item[p[text(fourth)]]]",
-        "list(false|1|false)[item[p[text(loose)]] item[p[text(list)]]]",
+        "list(false|1|true)[item(-)[p[text(first)]] item(-)[p[text(second)]]]",
+        "list(true|3|true)[item(-)[p[text(third)]] item(-)[p[text(fourth)]]]",
+        "list(false|1|false)[item(-)[p[text(loose)]] item(-)[p[text(list)]]]",
         "table(left,center,right,-)[[text(left)] [text(mid)] [text(right)] [text(plain)] // [text(a)] [text(b)] [text(c)] [text(d)]]",
         "hr",
         "htmlblock(<div class=x>raw</div>\\n)",
@@ -110,6 +112,68 @@ test "every block kind reaches the tree with its own shape":
     ].join(" ")
     const actual = describe(source)
     assert actual == expected else f"block goldens changed: {actual}"
+
+test "a task list item carries its state and leaves the marker behind":
+    const source = "
+        - [ ] todo
+        - [x] done
+        - [X] also done
+        - ordinary
+    "
+    const items = "item(false)[p[text(todo)]] item(true)[p[text(done)]] item(true)[p[text(also done)]] item(-)[p[text(ordinary)]]"
+    const actual = describe(source)
+    assert actual == f"list(false|1|true)[{items}]" else f"task list changed: {actual}"
+
+    // An ordered list takes the same marker, and a checked item is still an
+    // ordinary item in every other respect.
+    const ordered = describe("2. [x] first\n3. plain\n")
+    const orderedGolden = "list(true|2|true)[item(true)[p[text(first)]] item(-)[p[text(plain)]]]"
+    assert ordered == orderedGolden else f"ordered task list changed: {ordered}"
+
+test "the task marker rule is GFM's, and everything outside it stays text":
+    // A marker is a marker only at the head of the item's first paragraph, and
+    // only with one space and then content, or a line that carries on. Every
+    // other shape is a paragraph that happens to start with brackets.
+    const cases = [
+        // No whitespace after the marker: `x` is not whitespace.
+        ["- [x]done", "item(-)[p[text([x]done)]]"],
+        // A marker with nothing after it at all.
+        ["- [x]", "item(-)[p[text([x])]]"],
+        // Not one of the three markers.
+        ["- [y] no", "item(-)[p[text([y] no)]]"],
+        // Not at the head of the paragraph.
+        ["- a [x] mid", "item(-)[p[text(a [x] mid)]]"],
+        // The paragraph continues, but with strong text rather than a line end.
+        ["- [x]**bold**", "item(-)[p[text([x]) strong[text(bold)]]]"],
+        // The item's first block is not a paragraph.
+        ["- > [x] quoted", "item(-)[quote[p[text([x] quoted)]]]"],
+    ]
+    for pair in cases:
+        const actual = describe(pair[0])
+        assert actual == f"list(false|1|true)[{pair[1]}]" else f"{pair[0]} changed: {actual}"
+
+    // The two shapes that do open one: content after the space, and a marker
+    // whose own line ends there while the paragraph carries on. In the second
+    // the text node the marker filled is dropped rather than left empty.
+    const carried = describe("- [x]\n  and the rest\n")
+    const carriedGolden = "list(false|1|true)[item(true)[p[softbreak text(and the rest)]]]"
+    assert carried == carriedGolden else f"a carried-on marker changed: {carried}"
+
+    // The whole item, not just its first paragraph, belongs to the task item.
+    const rich = describe("- [ ] title\n\n  a second paragraph\n")
+    const richGolden = "list(false|1|false)[item(false)[p[text(title)] p[text(a second paragraph)]]]"
+    assert rich == richGolden else f"a multi-block task item changed: {rich}"
+
+test "a marker whose label is also a reference definition is a link, not a task":
+    // Known divergence from GFM, recorded rather than papered over: GFM decides
+    // task items while it is reading blocks, before any definition resolves, so
+    // it would still call this a task item. Here the definition wins and `[x]`
+    // is the link it now spells. It costs a document that defines a label of
+    // `x` or of a single space — and the streaming claim is withdrawn for it by
+    // the reference-definition rule, so no stale render survives.
+    const resolved = describe("- [x] done\n\n[x]: /late\n")
+    const golden = "list(false|1|true)[item(-)[p[link(/late|-|false)[text(x)] text( done)]]]"
+    assert resolved == golden else f"the resolved marker changed: {resolved}"
 
 test "a fenced block carries its language and its meta and nothing else happens to it":
     const fenced = "
@@ -252,6 +316,9 @@ const streamedAnswer = "
     - The parser is bounded.
     - The renderer is *someone else's* job.
 
+    - [x] read the tokens
+    - [ ] render the tree
+
     | file | lines |
     | :--- | ----: |
     | a.ts | 12 |
@@ -333,6 +400,14 @@ test "the stable prefix claim survives replays of documents built to break it":
         "<div>\nraw\n</div>\n\ntext <b>bold</b>\n\n***\n",
         // A paragraph that turns into a heading, twice.
         "one\n===\n\ntwo\n---\n\nthree\n",
+        // A checklist written one character at a time, so every prefix of every
+        // marker — `[`, `[ `, `[ ]`, `[ ] ` — passes through the task rule, and
+        // an item is text before it is a task item.
+        "todo:\n\n- [ ] one\n- [x] two\n\n- [ ] three\n\nafter\n",
+        // A definition that lands late and turns a settled task marker into the
+        // link it now spells. The claim is withdrawn, so the earlier render of
+        // that item is not trusted.
+        "- [x] done\n\nprose\n\n[x]: /late\n",
         // Text whose characters are wider than one unit, so a fragment boundary
         // lands inside a surrogate pair. A half-written character is a legal
         // prefix of a stream and must parse like any other.

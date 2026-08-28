@@ -12,7 +12,7 @@
   "sources": [
     {
       "path": "src/index.vel",
-      "sha256": "e03bd318f7321b89ac4be2cf599417e76726ac60cd6284a771678a26558e9ba6"
+      "sha256": "ecd870b933b1695ed3574b1d17a416a304d0bfea98b555e32f0ded044c58d330"
     }
   ],
   "entry": {
@@ -20,9 +20,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "5a9828fd231c7a6a904c49d8fa4573712df541f33d8c3e259b418fd1e955f2ed",
-      "sourceMap": "696fee9a7e8cf9c56061ad98d61ac4856745ea38aa4c29cbf735d6218d9caa7e",
-      "interface": "8674b374ab78621b2088d947a605b6f1cbbe7318549a399c717cbfbcf790c019"
+      "javascript": "b540530faf450c39c9d73b269b4f89e644b5cdd9ea3f7c9575ffb888b9fe1ea3",
+      "sourceMap": "047dbee94d12e300fa566c2fa0d138853a0a18c874614addf2fca7d097947c0b",
+      "interface": "a1aab2f0e970b209eb05721855240bbf409ac342251ff180647b7009e32af485"
     }
   }
 }

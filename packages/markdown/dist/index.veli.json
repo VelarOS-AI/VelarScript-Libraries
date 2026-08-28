@@ -3620,6 +3620,30 @@
                 "tag": "map",
                 "value": [
                   [
+                    "checked",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "bool"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
                     "blocks",
                     {
                       "tag": "object",
@@ -6825,6 +6849,30 @@
               {
                 "tag": "map",
                 "value": [
+                  [
+                    "checked",
+                    {
+                      "tag": "object",
+                      "value": [
+                        [
+                          "kind",
+                          "optional"
+                        ],
+                        [
+                          "inner",
+                          {
+                            "tag": "object",
+                            "value": [
+                              [
+                                "kind",
+                                "bool"
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
                   [
                     "blocks",
                     {

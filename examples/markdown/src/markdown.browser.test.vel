@@ -24,8 +24,11 @@ test "every declared block and inline kind survives the web build":
     // One of each block form, which is only possible if the browser build
     // carries the whole closed vocabulary rather than the parts Node exercised.
     expect(parsed.has("p[text(A paragraph with )")).toBe(true)
-    expect(parsed.has("list(false|1|true)[item[p[text(first)]] item[p[text(second)]]]")).toBe(true)
-    expect(parsed.has("list(true|2|true)[item[p[text(second item)]] item[p[text(third item)]]]")).toBe(true)
+    expect(parsed.has("list(false|1|true)[item(-)[p[text(first)]] item(-)[p[text(second)]]]")).toBe(true)
+    expect(parsed.has("list(true|2|true)[item(-)[p[text(second item)]] item(-)[p[text(third item)]]]")).toBe(true)
+    // The task rule runs inside the browser build too, on both of its states.
+    const checklist = "list(false|1|true)[item(true)[p[text(a finished step)]] item(false)[p[text(an unfinished one)]]]"
+    expect(parsed.has(checklist)).toBe(true)
     expect(parsed.has("table(left,right)[[text(left)] [text(right)] // [text(a)] [text(b)]]")).toBe(true)
     expect(parsed.has("code(ts|-|export const answer = 42\\n)")).toBe(true)
     expect(parsed.has("htmlblock(<div data-raw>carried opaque</div>\\n)")).toBe(true)

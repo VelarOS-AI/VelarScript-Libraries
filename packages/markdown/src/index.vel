@@ -128,7 +128,13 @@ export type MarkdownBlockQuote:
     kind: MarkdownBlockKind.blockquote
     blocks: List<MarkdownBlock>
 
+/// `checked` is GFM's task list item state: `true` for `- [x] done`, `false` for
+/// `- [ ] todo`, and `null` for an item that is not a task item at all. The
+/// marker is not left in the item's text — it *is* the checkbox, and a renderer
+/// draws it. Whether that checkbox can be clicked is the consumer's; nothing
+/// here writes back.
 export type MarkdownListItem:
+    checked: bool?
     blocks: List<MarkdownBlock>
 
 /// `start` is the first ordinal of an ordered list and 1 otherwise. `tight` is
@@ -349,6 +355,30 @@ extern js(maximumDepth: number)`
       return { kind: "table", alignments: columns, head: head, rows: rows };
     }
 
+    // GFM's task list item rule, applied to the item's blocks rather than to the
+    // token stream: the first block is a paragraph whose text opens with `[ ]`,
+    // `[x]`, or `[X]`, and what follows the marker is one space or tab and then
+    // some content, or the paragraph carrying on over a line break. `[x]y` and a
+    // bare `[ ]` are neither, and are ordinary text. The marker and that one
+    // space leave the text, because they are the checkbox.
+    function taskState(blocks) {
+      const paragraph = blocks[0];
+      if (paragraph === undefined || paragraph.kind !== "paragraph") return null;
+      const head = paragraph.inlines[0];
+      if (head === undefined || head.kind !== "text") return null;
+      const marker = /^\[([ xX])\]([ \t]?)/.exec(head.text);
+      if (marker === null) return null;
+      const rest = head.text.slice(marker[0].length);
+      const next = paragraph.inlines[1];
+      const carriesOn = next !== undefined && (next.kind === "softBreak" || next.kind === "hardBreak");
+      const spaced = marker[2] !== "";
+      const opens = spaced ? rest.trim() !== "" || carriesOn : rest === "" && carriesOn;
+      if (!opens) return null;
+      head.text = rest;
+      if (rest === "") paragraph.inlines.shift();
+      return marker[1] !== " ";
+    }
+
     function readList(tokens, cursor, ordered, depth, state) {
       const declared = ordered ? tokens[cursor.index].attrGet("start") : null;
       const parsed = declared === null || declared === undefined ? 1 : Number(declared);
@@ -364,7 +394,8 @@ extern js(maximumDepth: number)`
         }
         if (type === "list_item_open") {
           cursor.index += 1;
-          items.push({ blocks: readBlocks(tokens, cursor, "list_item_close", depth + 1, state, frame) });
+          const blocks = readBlocks(tokens, cursor, "list_item_close", depth + 1, state, frame);
+          items.push({ checked: taskState(blocks), blocks: blocks });
           continue;
         }
         cursor.index += 1;

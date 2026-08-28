@@ -17,6 +17,9 @@
   and withdraws the whole claim when the text was rewritten or when any part of
   the link reference definition table changed.
 - Bounds: 2 MiB of source and 32 levels of nesting, each refused by name.
-- CommonMark plus GFM tables and strikethrough, with `linkify` on. Task list
-  items and footnotes are outside the vocabulary and arrive as ordinary text.
+- CommonMark plus GFM tables, strikethrough, and task list items, with `linkify`
+  on. A list item carries `checked` — `true`, `false`, or `null` for an item
+  that is not a task item — and the marker leaves the item's text, because the
+  marker is the checkbox. Footnotes stay outside the vocabulary and arrive as
+  ordinary text; the README records what would reopen that.
 - Built against the VelarScript 0.21 language generation.

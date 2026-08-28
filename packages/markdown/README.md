@@ -42,6 +42,18 @@ these kinds or is not produced at all; nothing arrives untyped.
 `blockquote`, `list` (`ordered`, `start`, `tight`, `items`), `table`
 (`alignments`, one `head` row, `rows`), `thematicBreak`, `html`.
 
+A list item carries `checked`: `true` for `- [x] done`, `false` for
+`- [ ] todo`, and `null` for an item that is not a task item. The rule is GFM's
+— the item's first block is a paragraph opening with `[ ]`, `[x]`, or `[X]`,
+then one space or tab and some content, or a line that carries on — and the
+marker leaves the item's text, because the marker is the checkbox. Nothing here
+draws it and nothing here writes back; a consumer renders the state it is given.
+One divergence is known and cheap: GFM decides task items while it reads blocks,
+before link reference definitions resolve, so a document that defines a label of
+`x` or of a single space turns `[x]` into that link here and the item is not a
+task item. A change to the definition table withdraws every stable-prefix claim,
+so a streaming render cannot be left holding the earlier reading.
+
 **Inlines** — `text`, `strong`, `emphasis`, `strikethrough`, `code`, `link`
 (`href`, `title`, `autolink`, `children`), `image` (`src`, `alt`, `title`),
 `softBreak`, `hardBreak`, `html`.
@@ -49,12 +61,21 @@ these kinds or is not produced at all; nothing arrives untyped.
 A document also carries the whole link reference definition table, because a
 definition at the end of a document resolves a `[shortcut]` at its start.
 
-The enabled grammar is CommonMark plus GFM tables and strikethrough — the
-`markdown-it` `default` preset — with `linkify` on so a bare URL in running text
-becomes a link. Nothing else is enabled: **task list items** (`- [ ] todo`) and
-**footnotes** (`[^1]`) are not part of the vocabulary, and their source text
-arrives as ordinary text. `typographer` and `breaks` are off, so no text is
-rewritten on the way through.
+The enabled grammar is CommonMark plus GFM tables, strikethrough, and task list
+items — the `markdown-it` `default` preset, with the task rule applied to the
+tree rather than to the token stream — and `linkify` on so a bare URL in running
+text becomes a link. `typographer` and `breaks` are off, so no text is rewritten
+on the way through.
+
+**Footnotes** (`[^1]`) are outside the vocabulary, and their source text arrives
+as ordinary text. They are not a marker on a node the way a task state is: a
+footnote is a second document-global reference table plus a rendered back-matter
+section with bidirectional links, and the block vocabulary would grow a
+`footnoteDefinition` block, a `footnoteReference` inline, and an ordering rule
+that the streaming stable-prefix contract would then have to withdraw claims
+against. The reopening condition is a real consumer that renders them — an
+assistant answer or a document surface that produces `[^1]` and needs it to be
+anything other than text.
 
 ## Streaming
 
