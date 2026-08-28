@@ -234,4 +234,4 @@ component Screencast:
         <button type="button" data-reattach on:click={reattachDoubled}>Reattach at ratio 2</button>
     </main>
 
-mount(<Screencast />, "#app")
+@main: mount(<Screencast />, "#app")
