@@ -7,7 +7,7 @@
     "version": "0.1.0"
   },
   "target": "core",
-  "compilerVersion": "0.19.1",
+  "compilerVersion": "0.21.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {

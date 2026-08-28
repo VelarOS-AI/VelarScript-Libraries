@@ -7,7 +7,7 @@
     "version": "0.3.3"
   },
   "target": "core",
-  "compilerVersion": "0.18.0",
+  "compilerVersion": "0.21.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -20,8 +20,8 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "7a267e13c962d4fa444e556c1e3ae504791dbe104fc922cad07305b8cd3ae5f6",
-      "sourceMap": "b4f7c604def5ebb7c95d2794359ab9cd99d20edbb08ea97f8a65b0f8f2f7a3c5",
+      "javascript": "a23cc6e61dbcfb7b26009b7ec2f346771ad16d9f685f381f96e544c65891b362",
+      "sourceMap": "a5bcbd674018397caa6423bd96c9b05c25d7514812fdeb0329cd50f676e4ee49",
       "interface": "0e48c862499500f904f691dd77c923e4fc77db7d472214affbf98895052887be"
     }
   }
