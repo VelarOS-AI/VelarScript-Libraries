@@ -2,7 +2,7 @@
 // schema and to the generated VelarScript type, and the two answers must agree
 // except in the divergence classes the mapping table declares.
 
-import { cpSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -38,9 +38,21 @@ export const DIVERGENCE_CLASSES = new Set([
   "optional-null-widened-to-unknown",
 ]);
 
+/**
+ * npm links a registry devDependency's executable into the workspace root's
+ * `node_modules/.bin` rather than the package's own, so the search climbs
+ * instead of naming one directory: the toolchain is the same either way, and
+ * which link exists is an install-layout detail no test should depend on.
+ */
 export function velarExecutable() {
   const name = process.platform === "win32" ? "velar.cmd" : "velar";
-  return join(PACKAGE_ROOT, "node_modules", ".bin", name);
+  for (let directory = PACKAGE_ROOT; ; directory = dirname(directory)) {
+    const candidate = join(directory, "node_modules", ".bin", name);
+    if (existsSync(candidate)) return candidate;
+    if (dirname(directory) === directory) {
+      throw new Error(`Cannot find the '${name}' executable; install @velarscript/cli`);
+    }
+  }
 }
 
 /** A Vel string literal that survives any payload, ASCII-only for safety. */
