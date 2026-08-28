@@ -43,7 +43,7 @@
     "esbuild": "^0.28.2"
   },
   "devDependencies": {
-    "@velarscript/cli": "file:../../../VelarScript/packages/cli",
+    "@velarscript/cli": "0.21.0",
     "zod": "4.4.3"
   }
 }

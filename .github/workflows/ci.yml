@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - velar: "0.15.0"
+          - velar: "0.21.0"
             frozenArtifacts: "true"
           - velar: "latest"
             frozenArtifacts: "true"

@@ -7,9 +7,8 @@ output, so the acceptance keeps its value on a machine with no platform
 checkout.
 
 The generated declarations carry integer enum wire values (D102 ruling 1), so
-`velar check` and `velar test` over this directory need a VelarScript newer than
-`v0.20.1` — the package's `file:` devDependency on a sibling checkout is what
-supplies it until the next release.
+`velar check` and `velar test` over this directory need VelarScript `v0.21.0` or
+newer in that generation — the release the package's devDependency installs.
 
 | File | What it is |
 | --- | --- |

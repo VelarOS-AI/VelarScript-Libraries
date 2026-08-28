@@ -42,7 +42,7 @@
       "capabilities": [
         "node"
       ],
-      "language": ">=0.18 <0.19"
+      "language": ">=0.21 <0.22"
     }
   },
   "dependencies": {

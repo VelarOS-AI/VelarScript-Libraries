@@ -26,11 +26,10 @@ written.
 
 A contract that pins an integer wire value — `z.literal(1)`, `z.literal(2)` —
 generates an enum member carrying that number, which is D102 ruling 1 and landed
-in the language **after `v0.20.1`**. No published release carries it yet, so the
-package's own `check` and `test` scripts run against a sibling VelarScript
-checkout through a `file:` devDependency; the catalog states the range as
-`>0.20.1`, which is the truthful answer until the next release ships. Output
-that contains no integer literal is unaffected and still checks on `0.19.x`.
+in the language in **`v0.21.0`**. That is the published release the package's own
+`check` and `test` scripts run against, and the generation the catalog states.
+Output that contains no integer literal is unaffected and still checks on
+`0.19.x`.
 
 ## Install
 

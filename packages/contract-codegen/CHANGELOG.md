@@ -46,10 +46,10 @@
 - The two real targets lost 36 exemptions to that mapping: the agent's 73
   degrades become 52 and the kernel's 28 become 13, every dropped one an integer
   protocol-version literal that is now a pinned enum member.
-- Output containing an integer wire value needs a VelarScript newer than
-  `v0.20.1`, which no published release is yet; the package's own checks run
-  against a sibling checkout through a `file:` devDependency, and the catalog
-  states the range as `>0.20.1` rather than a version that cannot compile it.
+- Output containing an integer wire value needs VelarScript `v0.21.0`, the
+  published release that carries D102 ruling 1. The package's own checks run
+  against that release from the registry, and the catalog states the ordinary
+  `>=0.21.0 <0.22.0` generation range.
 - Accept a plain `z.object`. D102 ruling 2 makes surplus-field stripping the
   permanent semantics of a VelarScript record, which is exactly what `z.object`
   does — the two agree on every payload — while `z.strictObject` is the spelling

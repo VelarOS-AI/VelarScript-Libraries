@@ -12,6 +12,6 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "@velarscript/cli": "0.19.1"
+    "@velarscript/cli": "0.21.0"
   }
 }
