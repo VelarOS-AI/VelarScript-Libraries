@@ -2,6 +2,11 @@ name: Publish npm libraries
 
 on:
   workflow_dispatch:
+    inputs:
+      packages:
+        description: Space-separated exact catalog package names
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -23,6 +28,53 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: npm install --global npm@latest
-      - run: npm run publish:npm
+      - run: npm ci
+      - name: Validate selected packages
         env:
+          PUBLISH_PACKAGES: ${{ inputs.packages }}
+        shell: bash
+        run: |
+          read -r -a selected_packages <<< "$PUBLISH_PACKAGES"
+          if [[ ${#selected_packages[@]} -eq 0 ]]; then
+            echo "At least one exact catalog package name is required." >&2
+            exit 1
+          fi
+
+          publish_arguments=()
+          for package in "${selected_packages[@]}"; do
+            publish_arguments+=(--package "$package")
+          done
+
+          node --test scripts/publish-arguments.test.mjs
+          node scripts/check-repository.mjs
+          for package in "${selected_packages[@]}"; do
+            npm run build --workspace "$package"
+            npm run check --workspace "$package"
+            npm test --workspace "$package"
+            npm pack --dry-run --json --workspace "$package" >/dev/null
+          done
+          repository_changes="$(git status --porcelain=v1 --untracked-files=all)"
+          if [[ -n "$repository_changes" ]]; then
+            printf '%s\n' "$repository_changes"
+            echo "Selected-package validation changed the checkout." >&2
+            exit 1
+          fi
+          npm run publish:npm -- --dry-run "${publish_arguments[@]}"
+      - name: Publish selected packages
+        env:
+          PUBLISH_PACKAGES: ${{ inputs.packages }}
           NODE_AUTH_TOKEN: ""
+        shell: bash
+        run: |
+          read -r -a selected_packages <<< "$PUBLISH_PACKAGES"
+          publish_arguments=()
+          for package in "${selected_packages[@]}"; do
+            publish_arguments+=(--package "$package")
+          done
+
+          if [[ ${#publish_arguments[@]} -eq 0 ]]; then
+            echo "At least one exact catalog package name is required." >&2
+            exit 1
+          fi
+
+          npm run publish:npm -- "${publish_arguments[@]}"

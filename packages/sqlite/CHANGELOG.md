@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4 — 2026-09-07
+
+- Generate an explicit module Worker resource containing the SQLite grammar
+  parser, and build the frozen artifact for VelarScript 0.30.
+- Harden Worker readiness, failure, exit, and close lifecycle handling.
+
 ## 0.3.3 — 2026-08-27
 
 - Rebuild the frozen Node library artifact with VelarScript 0.18 and depend on

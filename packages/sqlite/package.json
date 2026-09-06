@@ -1,20 +1,26 @@
 {
   "name": "@velarscript-labs/sqlite",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Injection-resistant bounded SQLite capability for VelarScript Node applications.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
     "src/index.vel",
+    "src/generated/worker-source.vel",
     "dist",
     "README.md",
     "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md",
     "LICENSE"
   ],
   "scripts": {
+    "generate:worker": "node scripts/generate-worker.mjs",
+    "prebuild": "npm run generate:worker",
     "build": "velar build-library",
+    "precheck": "npm run generate:worker -- --check",
     "check": "velar format --check && velar check",
-    "test": "velar test"
+    "pretest": "npm run generate:worker -- --check",
+    "test": "velar test && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=24.12"
@@ -42,11 +48,14 @@
       "capabilities": [
         "node"
       ],
-      "language": ">=0.18 <0.19"
+      "language": ">=0.30 <0.31"
     }
   },
   "dependencies": {
-    "@velarscript-labs/database": "0.3.3",
+    "@velarscript-labs/database": "0.3.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
     "sqlite3-parser": "0.7.1"
   }
 }

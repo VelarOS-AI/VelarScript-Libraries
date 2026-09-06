@@ -1,10 +1,6 @@
 import {Bytes} from "velar/binary"
 
-extern module "msgpackr":
-    export def pack(value: unknown) -> unknown
-    export def unpack(value: Bytes) -> unknown
-
-import js {pack, unpack} from "msgpackr"
+import {pack, unpack} from "./generated/runtime.vel"
 
 extern js`
     export function unsupportedTag(value, maxDepth) {

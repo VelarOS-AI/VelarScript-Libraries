@@ -43,7 +43,7 @@
       "path": "packages/msgpack",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.18.0 <0.19.0",
+      "supportedVelarScript": ">=0.30.0 <0.31.0",
       "targets": ["core", "node", "web", "desktop"]
     },
     {
@@ -75,7 +75,7 @@
       "path": "packages/sqlite",
       "kind": "adapter",
       "status": "experimental",
-      "supportedVelarScript": ">=0.18.0 <0.19.0",
+      "supportedVelarScript": ">=0.30.0 <0.31.0",
       "targets": ["node"]
     }
   ]

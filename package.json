@@ -10,7 +10,7 @@
   "scripts": {
     "build": "node scripts/run-workspaces.mjs build",
     "check": "node scripts/check-repository.mjs && node scripts/run-workspaces.mjs check",
-    "test": "node scripts/run-workspaces.mjs test",
+    "test": "node --test scripts/publish-arguments.test.mjs && node scripts/run-workspaces.mjs test",
     "pack:check": "npm run build && node scripts/verify-packed-consumers.mjs",
     "publish:npm": "node scripts/publish-npm.mjs",
     "validate": "npm run check && npm test && npm run pack:check"
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
-    "@velarscript/cli": "0.18.0",
+    "@velarscript/cli": "0.30.1",
     "typescript": "^7.0.2"
   }
 }

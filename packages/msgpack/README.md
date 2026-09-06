@@ -1,8 +1,8 @@
 # @velarscript-labs/msgpack
 
-An independently versioned MessagePack adapter for VelarScript. It keeps
-`msgpackr` behind a checked `.vel` source facade and enforces a 64 MiB encoded
-and decoded data boundary.
+An independently versioned MessagePack adapter for VelarScript. Its generated,
+package-owned runtime closes `msgpackr` into the frozen artifact, while the
+checked `.vel` facade enforces a 64 MiB encoded and decoded data boundary.
 
 ```velar
 import {encode, parse} from "@velarscript-labs/msgpack"
@@ -49,3 +49,15 @@ the same domain: the extension bound above keeps it from returning a `Set`, an
 
 This package is not a `velar/*` Standard module and is not released as part of
 the language toolchain.
+
+## Runtime generation
+
+`npm run generate:runtime` bundles the pinned `msgpackr` ESM implementation
+into `src/generated/runtime.vel`. The generator replaces the dependency's
+computed `globalThis` typed-array lookup with an equivalent closed switch over
+the eleven supported typed-array constructors. This keeps production builds
+free of external npm edges and opaque loader-shaped global property access.
+
+The generator checks the exact upstream source fragment before applying the
+rewrite and fails if the pinned source changes. `npm run check` and `npm test`
+also verify that the committed generated runtime is current.

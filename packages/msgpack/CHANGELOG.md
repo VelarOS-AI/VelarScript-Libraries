@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 — 2026-09-07
+
+- Generate a package-owned MessagePack ESM runtime with no deployment-time npm
+  edge, and build the frozen artifact for VelarScript 0.30.
+- Pin and verify the reviewed `msgpackr` source used by the generator.
+
 ## 0.1.6 — 2026-08-27
 
 - Rebuild the frozen library artifact with VelarScript 0.18 and require the

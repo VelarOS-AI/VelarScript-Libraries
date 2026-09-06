@@ -1,20 +1,26 @@
 {
   "name": "@velarscript-labs/msgpack",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Bounded MessagePack adapter for VelarScript.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
     "src/index.vel",
+    "src/generated/runtime.vel",
     "dist",
     "README.md",
     "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md",
     "LICENSE"
   ],
   "scripts": {
+    "generate:runtime": "node scripts/generate-runtime.mjs",
+    "prebuild": "npm run generate:runtime",
     "build": "velar build-library",
+    "precheck": "npm run generate:runtime -- --check",
     "check": "velar format --check && velar check",
-    "test": "velar test"
+    "pretest": "npm run generate:runtime -- --check",
+    "test": "velar test && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=24"
@@ -43,10 +49,11 @@
     ],
     "requires": {
       "capabilities": [],
-      "language": ">=0.18 <0.19"
+      "language": ">=0.30 <0.31"
     }
   },
-  "dependencies": {
-    "msgpackr": "^2.0.5"
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "msgpackr": "2.0.5"
   }
 }
