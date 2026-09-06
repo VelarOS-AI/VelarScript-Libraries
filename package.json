@@ -23,7 +23,7 @@
     "url": "git+https://github.com/VelarOS-AI/VelarScript-Libraries.git"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.4.1",
     "@velarscript/cli": "0.30.1",
     "typescript": "^7.0.2"
   }
