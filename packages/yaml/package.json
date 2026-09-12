@@ -50,6 +50,6 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@velarscript/cli": "0.18.0"
+    "@velarscript/cli": "0.33.1"
   }
 }

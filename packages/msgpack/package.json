@@ -55,6 +55,6 @@
   "devDependencies": {
     "esbuild": "0.28.2",
     "msgpackr": "2.0.5",
-    "@velarscript/cli": "0.30.1"
+    "@velarscript/cli": "0.33.1"
   }
 }
