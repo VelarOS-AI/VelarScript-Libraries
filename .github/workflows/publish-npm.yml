@@ -53,6 +53,14 @@ jobs:
             npm test --workspace "$package"
             npm pack --dry-run --json --workspace "$package" >/dev/null
           done
+          for package in "${selected_packages[@]}"; do
+            case "$package" in
+              @velarscript-labs/database|@velarscript-labs/sql|@velarscript-labs/sqlite)
+                npm run pack:check:database-stack
+                break
+                ;;
+            esac
+          done
           repository_changes="$(git status --porcelain=v1 --untracked-files=all)"
           if [[ -n "$repository_changes" ]]; then
             printf '%s\n' "$repository_changes"

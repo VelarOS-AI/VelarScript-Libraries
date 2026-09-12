@@ -45,5 +45,8 @@
       "capabilities": [],
       "language": ">=0.18 <0.19"
     }
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.18.0"
   }
 }

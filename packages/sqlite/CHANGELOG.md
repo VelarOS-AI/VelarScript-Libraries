@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.5 — 2026-09-13
+
+- Rebuild with VelarScript 0.34 to retain Runtime Type validators for private
+  implementation types across package boundaries.
+- Use Database 0.3.4 with its complete runtime validator metadata.
+
 ## 0.3.4 — 2026-09-07
 
 - Generate an explicit module Worker resource containing the SQLite grammar

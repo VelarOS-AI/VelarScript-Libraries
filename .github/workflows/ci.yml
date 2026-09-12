@@ -26,13 +26,6 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    strategy:
-      matrix:
-        include:
-          - velar: "0.15.0"
-            frozenArtifacts: "true"
-          - velar: "latest"
-            frozenArtifacts: "true"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -41,7 +34,6 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify packed consumers
-        env:
-          VELAR_CLI_VERSION: ${{ matrix.velar }}
-          VELAR_VERIFY_FROZEN_ARTIFACTS: ${{ matrix.frozenArtifacts }}
+        # Each source package and packed suite uses its receipt's compiler.
+        # SQL/SQLite and LSP integration use the current root compiler.
         run: npm run pack:check

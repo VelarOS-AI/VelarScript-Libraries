@@ -13,13 +13,13 @@ test "select builders quote identifiers and bind every runtime value":
             sqlNamedField("id", qualifier="user"),
             sqlNamedField("display_name", alias="displayName", qualifier="user"),
         ],
-        where = sqlAnd([
+        where=sqlAnd([
             sqlColumnEqual("display_name", attack, qualifier="user"),
             sqlInValues(sqlColumn("id", qualifier="user"), ["u-1", "u-2"]),
         ]),
-        orderBy = [sqlAscending(sqlColumn("id", qualifier="user"))],
-        limit = 10,
-        offset = 2,
+        orderBy=[sqlAscending(sqlColumn("id", qualifier="user"))],
+        limit=10,
+        offset=2,
     ).render(DatabaseParameterStyle.questionMark)
     assert statement.text == `SELECT "user"."id", "user"."display_name" AS "displayName" FROM "main"."users" AS "user" WHERE (("user"."display_name" = ?) AND ("user"."id" IN (?, ?))) ORDER BY "user"."id" ASC LIMIT ? OFFSET ?` else "SELECT rendering changed"
     assert statement.parameters.size == 5 else "SELECT parameter count changed"
@@ -38,13 +38,13 @@ test "empty collection predicates have explicit set semantics":
     const emptyIn = selectStatement(
         sqlTable("users"),
         [sqlAllFields()],
-        where = sqlInValues(sqlColumn("id"), []),
+        where=sqlInValues(sqlColumn("id"), []),
     ).render(DatabaseParameterStyle.questionMark)
     assert emptyIn.text == `SELECT * FROM "users" WHERE (1 = 0)` else "Empty IN must match no rows"
     const emptyAnd = selectStatement(
         sqlTable("users"),
         [sqlAllFields()],
-        where = sqlAnd([]),
+        where=sqlAnd([]),
     ).render(DatabaseParameterStyle.questionMark)
     assert emptyAnd.text == `SELECT * FROM "users" WHERE (1 = 1)` else "Empty AND must match all rows"
 
@@ -52,7 +52,7 @@ test "named-column shorthands still bind values structurally":
     const statement = selectStatement(
         sqlTable("users"),
         [sqlNamedField("id")],
-        where = sqlColumnNotEqual("name", "Ada"),
+        where=sqlColumnNotEqual("name", "Ada"),
     ).render(DatabaseParameterStyle.questionMark)
     assert statement.text == `SELECT "id" FROM "users" WHERE ("name" <> ?)` else "Named-column shorthand changed"
     assert statement.parameters.size == 1 else "Named-column shorthand parameter count changed"
@@ -63,11 +63,11 @@ test "joins and tuple membership compose without placeholder text":
     const statement = selectStatement(
         state,
         [sqlField(sqlColumn("revision", qualifier="state"))],
-        joins = [sqlLeftJoin(overrideTable, sqlEqual(
+        joins=[sqlLeftJoin(overrideTable, sqlEqual(
             sqlColumn("world_id", qualifier="override"),
             sqlColumn("world_id", qualifier="state"),
         ))],
-        where = sqlTupleIn([
+        where=sqlTupleIn([
             sqlColumn("chunk_x", qualifier="state"),
             sqlColumn("chunk_y", qualifier="state"),
             sqlColumn("chunk_z", qualifier="state"),
@@ -82,8 +82,8 @@ test "insert update and delete builders keep writes bounded and structured":
         users,
         ["id", "display_name"],
         [["u-1", "Ada"], ["u-2", "Lin"]],
-        minimumAffected = 2,
-        maximumAffected = 2,
+        minimumAffected=2,
+        maximumAffected=2,
     )
     const inserted = insert.statement.render(DatabaseParameterStyle.questionMark)
     assert inserted.text == `INSERT INTO "users" ("id", "display_name") VALUES (?, ?), (?, ?)` else "INSERT rendering changed"
@@ -93,7 +93,7 @@ test "insert update and delete builders keep writes bounded and structured":
         users,
         [sqlSet("display_name", "Grace")],
         sqlEqual(sqlColumn("id"), sqlValue("u-1")),
-        maximumAffected = 1,
+        maximumAffected=1,
     ).statement.render(DatabaseParameterStyle.questionMark)
     assert update.text == `UPDATE "users" SET "display_name" = ? WHERE ("id" = ?)` else "UPDATE rendering changed"
     assert update.parameters.size == 2 else "UPDATE parameter count changed"
@@ -125,7 +125,7 @@ test "typed select queries preserve row validation metadata":
             sqlField(sqlColumn("display_name"), alias="displayName"),
         ],
         UserRow,
-        limit = 1,
-        maximumRows = 1,
+        limit=1,
+        maximumRows=1,
     )
     assert operation.maximumRows == 1 else "Typed SELECT maximumRows changed"

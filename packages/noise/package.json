@@ -48,5 +48,8 @@
   },
   "dependencies": {
     "simplex-noise": "^4.0.3"
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.18.0"
   }
 }

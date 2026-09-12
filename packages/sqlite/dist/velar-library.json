@@ -4,10 +4,10 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/sqlite",
-    "version": "0.3.4"
+    "version": "0.3.5"
   },
   "target": "node",
-  "compilerVersion": "0.30.1",
+  "compilerVersion": "0.34.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
@@ -24,9 +24,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "19509970a336e8edb6f87b41be76702681ee299aec4e05a7985f644872c4ea82",
-      "sourceMap": "efb722b4a3a0a3d257bcb4243cf7d6bb84ef3faf4878e1c0303715f34ca5af5e",
-      "interface": "790c858498140229ee22c7dd11af24f2333dd58c67657536bd85bf1c45454226"
+      "javascript": "562b5fe5be6f941a08b4e6c3dd36ac22063d20b8999e071fa9c8221942fcf216",
+      "sourceMap": "aae1cc33e3db4992e555c5040106cf7ac03212c9458ac78a1f75c1515966b0d3",
+      "interface": "295f3728498a4b5e549bb55f9820140c99a5ad93dce55f407a7e7075d218beba"
     }
   }
 }

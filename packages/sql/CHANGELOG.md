@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 — 2026-09-13
+
+- Rebuild with VelarScript 0.34 to retain Runtime Type validators for private
+  implementation types across package boundaries.
+- Use Database 0.3.4 with its complete runtime validator metadata.
+
 ## 0.1.3 — 2026-08-27
 
 - Rebuild the frozen library artifact with VelarScript 0.18 and depend on

@@ -48,5 +48,8 @@
   },
   "dependencies": {
     "fflate": "^0.8.3"
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.18.0"
   }
 }

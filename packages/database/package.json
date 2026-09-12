@@ -1,6 +1,6 @@
 {
   "name": "@velarscript-labs/database",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Injection-resistant structured SQL operations for VelarScript database drivers.",
   "license": "Apache-2.0",
   "type": "module",
@@ -43,7 +43,7 @@
     ],
     "requires": {
       "capabilities": [],
-      "language": ">=0.18 <0.19"
+      "language": ">=0.34 <0.35"
     }
   }
 }

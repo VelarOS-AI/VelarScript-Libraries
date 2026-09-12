@@ -71,6 +71,13 @@ runs its real dependency tests, packs all public artifacts, installs those
 tarballs into a clean consumer, compiles and runs a consumer program without
 compiling package source, and imports the packed editor tooling.
 
+Each library is validated with the exact compiler recorded in its artifact
+receipt. A package that uses a different compiler from the workspace root pins
+its own `@velarscript/cli` development dependency. Packed tests group libraries
+by that compiler version; SQL/SQLite integration and installed LSP validation
+use the current root toolchain. Updating one library therefore preserves the
+supported language generation of the others.
+
 Package publication is intentionally not part of `validate`. Commit, push,
 tag, npm publication, removal of the legacy `@velarscript/*` packages, and
 deprecation remain separately auditable operations.

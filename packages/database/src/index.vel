@@ -1,8 +1,8 @@
 /// One rendered statement ready for a database driver. Applications build the
 /// opaque DatabaseStatement value instead of authoring placeholder text.
-export type PreparedDatabaseStatement:
-    readonly text: string
-    readonly parameters: List<unknown>
+export readonly type PreparedDatabaseStatement:
+    text: string
+    parameters: List<unknown>
 
 /// The placeholder spelling is a driver concern. The statement retains the
 /// original fragment/value boundary until a driver deliberately renders it.
@@ -11,9 +11,9 @@ export enum DatabaseParameterStyle:
     dollarNumber
     colonNumber
 
-export type DatabaseStatementData:
-    readonly fragments: List<string>
-    readonly parameters: List<unknown>
+export readonly type DatabaseStatementData:
+    fragments: List<string>
+    parameters: List<unknown>
 
 def checkedFragment(value: string) -> string:
     assert value.size <= 1024 * 1024 and not value.has(Text.fromCodePoint(0)) else "Database SQL fragments must contain no NUL and be no longer than 1 MiB"
