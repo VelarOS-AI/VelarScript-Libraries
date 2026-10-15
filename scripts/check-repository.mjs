@@ -53,6 +53,10 @@ function stringLeaves(value) {
   return [];
 }
 
+function normalizedVelarScriptRange(value) {
+  return value.replace(/(\d+\.\d+)\.0(?=\s|$)/gu, "$1");
+}
+
 const catalog = await json(join(root, "catalog.json"));
 if (catalog?.formatVersion !== 2 || !Array.isArray(catalog.packages)) fail("catalog.json must use formatVersion 2 with a package list");
 if (catalog.distribution?.kind !== "npm-registry"
@@ -139,7 +143,13 @@ for (const entry of catalog.packages) {
   const velar = manifest.velar;
   if (!velar || typeof velar.entry !== "string") fail(`${entry.name} must declare velar.entry`);
   if (JSON.stringify(velar.targets) !== JSON.stringify(entry.targets)) fail(`${entry.name} target declarations drift from catalog.json`);
-  if (!velar.requires || !Array.isArray(velar.requires.capabilities)) fail(`${entry.name} must declare velar.requires.capabilities`);
+  if (!velar.requires || !Array.isArray(velar.requires.capabilities)
+    || typeof velar.requires.language !== "string" || velar.requires.language.length === 0) {
+    fail(`${entry.name} must declare velar.requires.capabilities and velar.requires.language`);
+  }
+  if (normalizedVelarScriptRange(velar.requires.language) !== normalizedVelarScriptRange(entry.supportedVelarScript)) {
+    fail(`${entry.name} VelarScript language range drifts from catalog.json`);
+  }
   await exists(join(packageRoot, velar.entry), `${entry.name} velar.entry does not exist`);
   await exists(join(packageRoot, "velar.json"), `${entry.name} is missing its check/test project manifest`);
   if (!manifest.files.includes(velar.entry) || !manifest.files.includes("dist")) {

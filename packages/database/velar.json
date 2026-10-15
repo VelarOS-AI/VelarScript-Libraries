@@ -2,5 +2,8 @@
   "formatVersion": 2,
   "kind": "library",
   "entry": "src/index.vel",
-  "extensions": []
+  "extensions": [],
+  "surfaces": {
+    "core": "0.10"
+  }
 }

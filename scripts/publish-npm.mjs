@@ -6,11 +6,19 @@ import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
+import {
+  parsePublishArguments,
+  selectCatalogPackages,
+} from "./publish-arguments.mjs";
+
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const run = promisify(execFile);
-const dryRun = process.argv.includes("--dry-run");
 const catalog = JSON.parse(await readFile(join(root, "catalog.json"), "utf8"));
+const { dryRun, packageNames } = parsePublishArguments(
+  process.argv.slice(2),
+  catalog.packages.map((entry) => entry.name),
+);
 
 async function npm(args) {
   return run(npmCommand, args, { cwd: root, maxBuffer: 10 * 1024 * 1024 });
@@ -30,7 +38,7 @@ async function registryHasVersion(name, version) {
 }
 
 const releases = [];
-for (const entry of catalog.packages) {
+for (const entry of selectCatalogPackages(catalog.packages, packageNames)) {
   const manifest = JSON.parse(await readFile(join(root, entry.path, "package.json"), "utf8"));
   if (manifest.private === true) continue;
   if (manifest.name !== entry.name) throw new Error(`Catalog mismatch for ${entry.path}`);
@@ -47,10 +55,6 @@ for (const release of releases) {
     console.log(`skip ${identity}`);
     continue;
   }
-  if (dryRun) {
-    console.log(`publish ${identity}`);
-    continue;
-  }
 
   const missingDependencies = [];
   for (const dependency of release.dependencies) {
@@ -62,6 +66,10 @@ for (const release of releases) {
     const message = `dependencies are not published: ${missingDependencies.join(", ")}`;
     console.error(`blocked ${identity}: ${message}`);
     failures.push(`${identity} (${message})`);
+    continue;
+  }
+  if (dryRun) {
+    console.log(`publish ${identity}`);
     continue;
   }
 

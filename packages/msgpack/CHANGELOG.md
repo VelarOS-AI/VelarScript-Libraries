@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.7 — 2026-09-06
+## 0.1.7 — 2026-09-07
 
 - Generate one closed, package-owned ESM runtime from the pinned `msgpackr`
   encoder and decoder. Frozen consumers no longer retain npm imports or the
@@ -8,6 +8,8 @@
 - Keep the production loader boundary fail-closed: the generation step checks
   and rewrites the exact upstream lookup instead of teaching the compiler to
   trust arbitrary computed global properties.
+
+- Build and validate the frozen artifact with VelarScript 0.30.1.
 
 ## 0.1.6 — 2026-08-27
 

@@ -49,11 +49,12 @@
     ],
     "requires": {
       "capabilities": [],
-      "language": ">=0.21 <0.22"
+      "language": ">=0.30 <0.31"
     }
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "msgpackr": "2.0.5"
+    "msgpackr": "2.0.5",
+    "@velarscript/cli": "0.30.1"
   }
 }

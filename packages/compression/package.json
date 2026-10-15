@@ -43,10 +43,13 @@
     ],
     "requires": {
       "capabilities": [],
-      "language": ">=0.21 <0.22"
+      "language": ">=0.18 <0.19"
     }
   },
   "dependencies": {
     "fflate": "^0.8.3"
+  },
+  "devDependencies": {
+    "@velarscript/cli": "0.18.0"
   }
 }

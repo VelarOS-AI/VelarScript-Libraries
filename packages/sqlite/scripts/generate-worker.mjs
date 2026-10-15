@@ -40,7 +40,7 @@ if (arguments_.length > (check ? 1 : 0)) {
   throw new Error("Usage: node scripts/generate-worker.mjs [--check]");
 }
 
-const banner = `/*!\n${notice.trimEnd().split("\n").map((line) => ` * ${line}`).join("\n")}\n */`;
+const banner = `/*!\n${notice.trimEnd().split("\n").map((line) => line.length === 0 ? " *" : ` * ${line}`).join("\n")}\n */`;
 const result = await build({
   absWorkingDir: packageRoot,
   entryPoints: [workerEntry],

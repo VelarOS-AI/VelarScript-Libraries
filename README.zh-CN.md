@@ -48,7 +48,9 @@ npm run validate
 ```
 
 验证会检查全部包、运行真实依赖测试、打包公开产物，并在干净消费者中安装和执行
-这些 tarball。仓库当前统一面向 VelarScript `>=0.21.0 <0.22.0`。
+这些 tarball。根工具链为 VelarScript `0.34.0`；每个库按产物回执中的编译器版本
+验证，使用其他代际的包单独固定 `@velarscript/cli` 开发依赖。准确兼容范围见
+`catalog.json`，升级一个库不会改变其他库的语言代际。
 
 发布不属于 `validate`。提交、推送、打标签、npm 发布、从旧 `@velarscript/*`
 命名空间移除非标准包与 deprecate 仍是可分别审计的操作。

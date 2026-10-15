@@ -1,9 +1,16 @@
 # Changelog
 
-## 0.3.4 — 2026-09-06
+## 0.3.5 — 2026-09-13
 
-- Bundle the SQLite grammar parser into a generated, package-owned module
-  Worker resource so application builds have no hidden runtime dependency.
+- Rebuild with VelarScript 0.34 to retain Runtime Type validators for private
+  implementation types across package boundaries.
+- Use Database 0.3.4 with its complete runtime validator metadata.
+
+## 0.3.4 — 2026-09-07
+
+- Generate an explicit module Worker resource containing the SQLite grammar
+  parser, and build the frozen artifact for VelarScript 0.30.
+- Harden Worker readiness, failure, exit, and close lifecycle handling.
 - Keep SQL parsing, synchronous SQLite access, statement caching, and result
   projection together in the connection's isolated Worker.
 
