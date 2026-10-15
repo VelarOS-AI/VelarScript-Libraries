@@ -46,6 +46,6 @@
     }
   },
   "devDependencies": {
-    "@velarscript/cli": "0.21.0"
+    "@velarscript/cli": "0.34.2"
   }
 }
