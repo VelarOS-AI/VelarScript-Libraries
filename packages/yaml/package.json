@@ -1,20 +1,26 @@
 {
   "name": "@velarscript-labs/yaml",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Bounded strict YAML parsing for VelarScript data boundaries.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
     "src/index.vel",
+    "src/generated/runtime.vel",
     "dist",
     "README.md",
     "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md",
     "LICENSE"
   ],
   "scripts": {
+    "generate:runtime": "node scripts/generate-runtime.mjs",
+    "prebuild": "npm run generate:runtime",
     "build": "velar build-library",
+    "precheck": "npm run generate:runtime -- --check",
     "check": "velar format --check && velar check",
-    "test": "velar test"
+    "pretest": "npm run generate:runtime -- --check",
+    "test": "velar test && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=24"
@@ -46,7 +52,8 @@
       "language": ">=0.21 <0.22"
     }
   },
-  "dependencies": {
-    "yaml": "^2.9.0"
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "yaml": "2.9.0"
   }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.4 — 2026-09-06
+
+- Bundle the SQLite grammar parser into a generated, package-owned module
+  Worker resource so application builds have no hidden runtime dependency.
+- Keep SQL parsing, synchronous SQLite access, statement caching, and result
+  projection together in the connection's isolated Worker.
+
 ## 0.3.3 — 2026-08-27
 
 - Rebuild the frozen Node library artifact with VelarScript 0.18 and depend on

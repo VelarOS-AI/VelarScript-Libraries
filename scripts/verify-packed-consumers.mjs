@@ -106,6 +106,7 @@ try {
   const verifyFrozenArtifacts = process.env.VELAR_VERIFY_FROZEN_ARTIFACTS !== "false";
   const dependencies = { "@velarscript/cli": velarPackage ? `file:${resolve(velarPackage)}` : velarVersion };
   const artifacts = [];
+  const packedPaths = new Map();
 
   for (const entry of catalog.packages) {
     const result = await run(npmCommand, ["pack", "--ignore-scripts", "--workspace", entry.name, "--pack-destination", packs, "--json"], root);
@@ -134,10 +135,49 @@ try {
       for (const required of ["dist/index.js", "dist/index.js.map", "dist/index.veli.json", "dist/velar-library.json"]) {
         assert.ok(files.has(required), `${entry.name} omitted frozen artifact file ${required}`);
       }
+      if (entry.name === "@velarscript-labs/sqlite") {
+        assert.equal(manifest.dependencies?.["sqlite3-parser"], undefined, "SQLite must not retain a Worker-local parser dependency");
+        assert.ok(files.has("src/generated/worker-source.vel"), "SQLite omitted its generated Worker source module");
+        assert.equal(files.has("worker/sqlite-worker.mjs"), false, "SQLite published its maintenance-only Worker entry");
+        assert.equal(files.has("scripts/generate-worker.mjs"), false, "SQLite published its maintenance-only Worker generator");
+        assert.ok(files.has("THIRD_PARTY_NOTICES.md"), "SQLite omitted its bundled parser notice");
+      }
+      if (entry.name === "@velarscript-labs/msgpack") {
+        assert.equal(manifest.dependencies?.msgpackr, undefined, "MessagePack must not retain its codec as a runtime dependency");
+        assert.equal(manifest.dependencies?.esbuild, undefined, "MessagePack must not retain its runtime generator as a runtime dependency");
+        assert.ok(files.has("src/generated/runtime.vel"), "MessagePack omitted its generated ESM runtime module");
+        assert.equal(files.has("scripts/generate-runtime.mjs"), false, "MessagePack published its maintenance-only runtime generator");
+        assert.equal(files.has("scripts/msgpack-runtime-entry.mjs"), false, "MessagePack published its maintenance-only runtime entry");
+        assert.ok(files.has("THIRD_PARTY_NOTICES.md"), "MessagePack omitted its bundled codec notice");
+      }
+      if (entry.name === "@velarscript-labs/yaml") {
+        assert.equal(manifest.dependencies?.yaml, undefined, "YAML must not retain its build-time parser as a runtime dependency");
+        assert.equal(manifest.dependencies?.esbuild, undefined, "YAML must not retain its runtime generator as a runtime dependency");
+        assert.ok(files.has("src/generated/runtime.vel"), "YAML omitted its generated ESM runtime module");
+        assert.equal(files.has("scripts/generate-runtime.mjs"), false, "YAML published its maintenance-only runtime generator");
+        assert.equal(files.has("scripts/yaml-runtime-entry.mjs"), false, "YAML published its maintenance-only runtime entry");
+        assert.ok(files.has("THIRD_PARTY_NOTICES.md"), "YAML omitted its bundled parser notice");
+      }
     }
     dependencies[entry.name] = `file:${path}`;
+    packedPaths.set(entry.name, path);
     artifacts.push(`${entry.name}@${artifact.version}`);
   }
+
+  const sqliteConsumer = join(temporary, "sqlite-consumer");
+  await mkdir(sqliteConsumer, { recursive: true });
+  await writeFile(join(sqliteConsumer, "package.json"), `${JSON.stringify({
+    name: "velarscript-sqlite-packed-consumer",
+    private: true,
+    type: "module",
+    dependencies: {
+      "@velarscript-labs/database": `file:${packedPaths.get("@velarscript-labs/database")}`,
+      "@velarscript-labs/sqlite": `file:${packedPaths.get("@velarscript-labs/sqlite")}`,
+    },
+  }, null, 2)}\n`, "utf8");
+  await run(npmCommand, ["install", "--ignore-scripts", "--omit=dev", "--no-audit", "--no-fund"], sqliteConsumer);
+  const isolatedSqliteManifest = JSON.parse(await readFile(join(sqliteConsumer, "node_modules", "@velarscript-labs", "sqlite", "package.json"), "utf8"));
+  assert.equal(isolatedSqliteManifest.dependencies?.["sqlite3-parser"], undefined, "Packed SQLite retained a parser runtime edge");
 
   await writeFile(join(consumer, "package.json"), `${JSON.stringify({
     name: "velarscript-libraries-packed-consumer",
@@ -214,7 +254,7 @@ print(f"{buffer.size}:{buffer.lineText(1)}:{user.name}:{field(0, 0)}:{configurat
   await writeFile(join(nodeConsumer, "tests", "sqlite.test.vel"), `
 import {execute, requireOne, trustedSql} from "@velarscript-labs/database"
 import {insertCommand, selectQuery, sqlColumnEqual, sqlNamedField, sqlTable} from "@velarscript-labs/sql"
-import {openSqlite} from "@velarscript-labs/sqlite"
+import {SqliteError, openSqlite} from "@velarscript-labs/sqlite"
 
 type PackedUser:
     id: string
@@ -222,6 +262,12 @@ type PackedUser:
 
 test "packed SQLite and database packages execute together":
     using database = await openSqlite(":memory:")
+    let multipleRejected = false
+    try: await database.execute(trustedSql("CREATE TABLE hidden (value INTEGER); DROP TABLE hidden"))
+    catch error:
+        if error is SqliteError: multipleRejected = error.sqliteCode == "SQLITE_INPUT"
+    assert multipleRejected else "Packed SQLite accepted multiple statements"
+
     await database.execute(trustedSql("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL)"))
     const users = sqlTable("users")
     const insertUser = insertCommand(

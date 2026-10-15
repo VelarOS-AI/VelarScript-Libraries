@@ -1,12 +1,4 @@
-type NativeYamlOptions:
-    strict: bool
-    uniqueKeys: bool
-    maxAliasCount: number
-
-extern module "yaml":
-    export def parse(source: string, options: NativeYamlOptions) -> unknown
-
-import js {parse} from "yaml"
+import {parseNativeYaml} from "./generated/runtime.vel"
 
 /// Parses one bounded YAML document as untrusted data. Callers validate the
 /// result with their own runtime type before it enters application logic.
@@ -15,4 +7,4 @@ export def parseYaml(source: string, maxBytes: number = 1048576, maxAliases: num
     assert maxAliases.isInteger() and maxAliases >= 0 and maxAliases <= 1000 else "YAML maxAliases must be an integer from 0 through 1000"
     assert not source.isBlank() else "YAML source cannot be blank"
     assert Text.utf8Size(source) <= maxBytes else "YAML source exceeds maxBytes"
-    return parse(source, {strict: true, uniqueKeys: true, maxAliasCount: maxAliases})
+    return parseNativeYaml(source, maxAliases)

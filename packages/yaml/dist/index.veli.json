@@ -126,51 +126,7 @@
           "tag": "map",
           "value": [
             [
-              "NativeYamlOptions",
-              {
-                "tag": "map",
-                "value": [
-                  [
-                    "strict",
-                    {
-                      "tag": "object",
-                      "value": [
-                        [
-                          "kind",
-                          "bool"
-                        ]
-                      ]
-                    }
-                  ],
-                  [
-                    "uniqueKeys",
-                    {
-                      "tag": "object",
-                      "value": [
-                        [
-                          "kind",
-                          "bool"
-                        ]
-                      ]
-                    }
-                  ],
-                  [
-                    "maxAliasCount",
-                    {
-                      "tag": "object",
-                      "value": [
-                        [
-                          "kind",
-                          "number"
-                        ]
-                      ]
-                    }
-                  ]
-                ]
-              }
-            ],
-            [
-              "velar:package:@velarscript-labs/yaml@0.1.5/src/index.vel#type:NativeYamlOptions",
+              "velar:package:@velarscript-labs/yaml@0.1.6/src/generated/runtime.vel#type:NativeYamlOptions",
               {
                 "tag": "map",
                 "value": [
@@ -229,8 +185,8 @@
           "tag": "map",
           "value": [
             [
-              "NativeYamlOptions",
-              "velar:package:@velarscript-labs/yaml@0.1.5/src/index.vel#type:NativeYamlOptions"
+              "velar:package:@velarscript-labs/yaml@0.1.6/src/generated/runtime.vel#type:NativeYamlOptions",
+              "velar:package:@velarscript-labs/yaml@0.1.6/src/generated/runtime.vel#type:NativeYamlOptions"
             ]
           ]
         }

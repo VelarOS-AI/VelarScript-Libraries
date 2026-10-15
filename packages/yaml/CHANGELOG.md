@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.6 — 2026-09-06
+
+- Ship the parser through a package-owned, generated ESM runtime so Node
+  production bundles never depend on `yaml`'s CommonJS bootstrap or a host
+  `require("process")` implementation.
+- Keep `yaml` and the runtime bundler as maintainer-only dependencies; packed
+  consumers receive the deterministic parser closure directly.
+
 ## 0.1.5 — 2026-08-27
 
 - Rebuild the frozen library artifact with VelarScript 0.18 and require the

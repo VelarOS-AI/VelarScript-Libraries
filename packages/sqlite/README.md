@@ -3,6 +3,13 @@
 An injection-resistant, bounded asynchronous SQLite capability for VelarScript
 Node applications, backed by Node's built-in SQLite driver on one owned Worker.
 
+During maintenance, `npm run generate:worker` bundles the readable
+`worker/sqlite-worker.mjs` entry and its grammar parser into the committed
+`src/generated/worker-source.vel` module. Published packages retain that
+generated module and its notices, but not the maintenance-only entry or
+generator. Application deployments therefore need no implicit Worker-local npm
+lookup.
+
 The API accepts only structured `DatabaseStatement` values from
 `@velarscript-labs/database`. Runtime values remain separate from SQL grammar,
 then Node's `SQLTagStore` binds them into cached prepared statements. Every SQL

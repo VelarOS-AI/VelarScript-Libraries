@@ -4,15 +4,19 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/yaml",
-    "version": "0.1.5"
+    "version": "0.1.6"
   },
   "target": "core",
   "compilerVersion": "0.21.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
+      "path": "src/generated/runtime.vel",
+      "sha256": "0cf02f127184d9a1404cc5533ec0ca59d20883745d6617f038c041268d7c0288"
+    },
+    {
       "path": "src/index.vel",
-      "sha256": "c9b108941cdd328c201d248356b9a436f73ac8aa832cd02b8b9962619dd5c9cb"
+      "sha256": "e03a3a92f0c4a12d70a0313eeb20620cdb9479a68cdbd263a0c6dc275012cc74"
     }
   ],
   "entry": {
@@ -20,9 +24,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "48f0ec5ab10993fc3d75e84f045457a33968a8e8c73c896a5bb44473ecb5534d",
-      "sourceMap": "821c964ac85df1640d0de29730eb6bc174749cad589a8f636f2c5ab2304c0ab4",
-      "interface": "d363d6ba64e3313f38c6e19995e7a5325218d923dfc15ba56486c67c324279aa"
+      "javascript": "324d13cdcde1b54987474e3c3892e718df3db967313704856d3b686c5d05510d",
+      "sourceMap": "3c40d69ef593f9f15354c4d67ff085b9ff5773d8d3aa338dd3a7642a043847cb",
+      "interface": "450fd75df68efcf6845f50b7bdcf9bcd054ca927ca7a921fb11282dcf2b1ecc4"
     }
   }
 }

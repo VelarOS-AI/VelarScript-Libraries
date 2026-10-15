@@ -4,15 +4,19 @@
   "abiVersion": 1,
   "package": {
     "name": "@velarscript-labs/sqlite",
-    "version": "0.3.3"
+    "version": "0.3.4"
   },
   "target": "node",
   "compilerVersion": "0.21.0",
   "sourceEntry": "src/index.vel",
   "sources": [
     {
+      "path": "src/generated/worker-source.vel",
+      "sha256": "c591fefab4d11c9f39ebbd882a94121d12c82b8058a1d4925357a32472898a01"
+    },
+    {
       "path": "src/index.vel",
-      "sha256": "d35ec69e071fdeab0e379a78209c7f075cabf1b9b5148c9ba033a325e9c482b6"
+      "sha256": "1e7f4eb04da301e11bcb19c4f367952991f8800b73d28c231418e1dfea7a778f"
     }
   ],
   "entry": {
@@ -20,9 +24,9 @@
     "sourceMap": "index.js.map",
     "interface": "index.veli.json",
     "sha256": {
-      "javascript": "70a276a2178fc040619d77da99eb7cd3ed7a2da9624cb27025311a4907ecd20e",
-      "sourceMap": "83b33bcb4df8dff82171be7a0bcc9f0edc3c5c5964f4dbfb4ec33500578beeb3",
-      "interface": "1b31c07db87797fc8c61a3f76d4203f0f5993a028f00f0572adde63004ab4980"
+      "javascript": "a5e22180a9e53aa528ef133c2068aa1ddacf29f79297740d37f1d347f1c0dafc",
+      "sourceMap": "76e61bede5feb149a934e11c62e3ea76281fe77b465a00a300a8bd806cbd1a88",
+      "interface": "e231a0462e747f548116d51532f82cabf1cc8cf6fe98664cb4883fecdff68bbf"
     }
   }
 }
